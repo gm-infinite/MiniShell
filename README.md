@@ -1,2 +1,4 @@
 # MiniShell
-its my project from 42 schools, 42cursus MiniShell.
+This project is about creating a simple shell.
+Yes, our own little bash.
+we will learn a lot about processes and file descriptors.
