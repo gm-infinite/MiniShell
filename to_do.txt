@@ -1,0 +1,34 @@
+main:
+    -we need to take input and display a prompt before parsing anything         | gm-infinite | done | [▮▮▮▮▮▮▮▮▮▮] | easy
+    -we need to have a working history, do not add empty strings to the history | gm-infinite | done | [▮▮▮▮▮▮▮▮▮▮] | easy
+    -we need a safe_exit function, this can be used for every exit we need \
+    later on (like ctrl - D)                                                    | | wip | [▮▯▯▯▯▯▯▯▯▯]
+    - we need memory free code at the end                                       | | wip | [▮▯▯▯▯▯▯▯▯▯]
+    -add libft (idk if we need it)                                              | thecloudrazor | wip | [▮▯▯▯▯▯▯▯▯▯] | easy
+
+signal's:
+- ctrl + C
+- ctrl + D                                                                      | gm-infinite | connnected to line 3 | [▮▮▮▮▮▮▮▮▮] | easy
+- ctrl + \
+- don't forget to handle child prosesses when handle'ing signals                | | wip | [▮▯▯▯▯▯▯▯▯▯] | null
+
+parser's:
+- || and && parser //bonus                                                      | | wip | [▮▯▯▯▯▯▯▯▯▯] | null
+- | parser                                                                      | | wip | [▮▯▯▯▯▯▯▯▯▯] | null
+- < << > >> parser                                                              | | wip | [▮▯▯▯▯▯▯▯▯▯] | null
+- '' "" $"" $environment_variables parser                                       | | wip | [▮▯▯▯▯▯▯▯▯▯] | null
+- * parser //bonus                                                              | | wip | [▮▯▯▯▯▯▯▯▯▯] | null
+
+execve:
+- after all parsers we need to execute our comands but we also have built in \
+commands                                                                        | | wip | [▮▯▯▯▯▯▯▯▯▯] | null
+    built in commands:
+        -echo with -n
+        -exit
+        -cd
+        -pwd
+        -export
+        -unset
+        -env
+- and we also need to handle "$?"                                               | | wip | [▮▯▯▯▯▯▯▯▯▯] | null
+
