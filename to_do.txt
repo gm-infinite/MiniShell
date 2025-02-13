@@ -4,7 +4,7 @@ main:
     -we need a safe_exit function, this can be used for every exit we need \
     later on (like ctrl - D)                                                    | | wip | [▮▯▯▯▯▯▯▯▯▯]
     - we need memory free code at the end                                       | | wip | [▮▯▯▯▯▯▯▯▯▯]
-    -add libft (idk if we need it)                                              | thecloudrazor | wip | [▮▯▯▯▯▯▯▯▯▯] | easy
+    -add libft (idk if we need it)                                              | thecloudrazor | wip | [▮▮▮▮▮▮▮▮▮▮] | easy
 
 signal's:
 - ctrl + C
