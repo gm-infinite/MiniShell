@@ -21,6 +21,10 @@ Please always feel free to reach out for any kind of collaboration.
 
 ## minishell
 
+The existence of shells is linked to the very existence of IT. 
+
+Initially, developers used `aligned 1/0 switches` to communicate with computers, which was quite cumbersome. The invention of shells allowed interactive command-line communication in a language closer to human language. With `minishell`, we revisit the fundamental problems faced before modern GUIs and sophisticated shells like `bash`.
+
 The **`minishell`** project is about creating a simple shell, but it’s also a deep-dive into how shells work under the hood. 
 
 By re-implementing main functionalities of the **`bash`** shell, we gain understanding of `syscalls`, `process creation`, `FD management`, `I/O redirections` and `command parsing` in a Unix environment.
