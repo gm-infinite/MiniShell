@@ -5,7 +5,7 @@
 - As the creators of this project, we hereby declare that we grant authorization to all 42 Campus Administrators worldwide, to take any action they deem necessary; in any occurance of plagiarism, blind copying and/or cheating. 
 - We also hereby declare that we reserve all our rights to take legal action in any detectance of non-compliance to the license. 
 
-## Who built this project?
+## Who's involved in this project?
 
 - **Kuzey Berk YILMAZ** – [GitHub Profile](https://github.com/gm-infinite) – [Intra 42 Profile](https://profile.intra.42.fr/users/kuzyilma)
 - **Emir İsmail GENÇ** – [GitHub Profile](https://github.com/thecloudrazor) – [Intra 42 Profile](https://profile.intra.42.fr/users/emgenc)
