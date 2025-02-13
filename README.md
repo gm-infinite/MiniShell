@@ -7,8 +7,8 @@
 
 ## Who built this project?
 
-- **Kuzey Berk YILMAZ** – [GitHub Profile](https://github.com/gm-infinite)
-- **Emir İsmail GENÇ** – [GitHub Profile](https://github.com/thecloudrazor)
+- **Kuzey Berk YILMAZ** – [GitHub Profile](https://github.com/gm-infinite) – [Intra 42 Profile](https://profile.intra.42.fr/users/kuzyilma)
+- **Emir İsmail GENÇ** – [GitHub Profile](https://github.com/thecloudrazor) – [Intra 42 Profile](https://profile.intra.42.fr/users/emgenc)
 
 Please always feel free to reach out for any kind of collaboration.
 
