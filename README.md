@@ -5,10 +5,10 @@
 - As the creators of this project, we hereby declare that we grant authorization to all 42 Campus Administrators worldwide, to take any action they deem necessary; in any occurance of plagiarism, blind copying and/or cheating. 
 - We also hereby declare that we reserve all our rights to take legal action in any detectance of non-compliance to the license. 
 
-## Who built this project?
+## Who's involved in this project?
 
-- **Kuzey Berk YILMAZ** – [GitHub Profile](https://github.com/gm-infinite)
-- **Emir İsmail GENÇ** – [GitHub Profile](https://github.com/thecloudrazor)
+- **Kuzey Berk YILMAZ** – [GitHub Profile](https://github.com/gm-infinite) – [Intra 42 Profile](https://profile.intra.42.fr/users/kuzyilma)
+- **Emir İsmail GENÇ** – [GitHub Profile](https://github.com/thecloudrazor) – [Intra 42 Profile](https://profile.intra.42.fr/users/emgenc)
 
 Please always feel free to reach out for any kind of collaboration.
 
@@ -20,6 +20,10 @@ Please always feel free to reach out for any kind of collaboration.
 4. [Testing & Validation](#test-cases)
 
 ## minishell
+
+The existence of shells is linked to the very existence of IT. 
+
+Initially, developers used `aligned 1/0 switches` to communicate with computers, which was quite cumbersome. The invention of shells allowed interactive command-line communication in a language closer to human language. With `minishell`, we revisit the fundamental problems faced before modern GUIs and sophisticated shells like `bash`.
 
 The **`minishell`** project is about creating a simple shell, but it’s also a deep-dive into how shells work under the hood. 
 
