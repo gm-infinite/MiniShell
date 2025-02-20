@@ -26,7 +26,7 @@ typedef struct s_shell
 {
 	int		past_exit_status;
 	char	*current_input;
-	char	**split_input;
+	t_split	split_input;
 }			t_shell;
 
 void	safe_exit(t_shell *shell);

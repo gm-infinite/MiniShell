@@ -12,12 +12,14 @@
 
 #include "minishell.h"
 
-//safe exit for ctrl + D 
+//safe exit for ctrl + D
 //(might be used later for other stuff)
 void	safe_exit(t_shell *shell)
 {
 	if (shell->current_input != NULL)
 		free(shell->current_input);
+	if (shell->split_input.start != NULL)
+		free_split(&(shell->split_input));
 	rl_clear_history();
 	exit(0);
 }
@@ -34,7 +36,9 @@ static void	start_shell(t_shell *shell)
 			safe_exit(shell);
 		if (!is_empty(shell->current_input))
 			add_history(shell->current_input);
+		shell->split_input = create_split_str(shell->current_input);
 		//parsing starts here
+		free_split(&(shell->split_input));
 		free(shell->current_input);
 	}
 }
