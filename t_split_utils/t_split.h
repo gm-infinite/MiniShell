@@ -13,7 +13,6 @@
 #ifndef T_SPLIT_H
 # define T_SPLIT_H
 # include "../e-libft/libft.h"
-# include <stdio.h>
 
 typedef struct s_split
 {
