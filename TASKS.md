@@ -55,15 +55,15 @@
 
 ## Parser
 
-- [ ] **Creation and implementation of the t_split struct**  
+- [x] **Creation and implementation of the t_split struct**  
   **Owner:** `@gm-infinite`  
-  **Progress:** [▮▯▯▯▯▯▯▯▯▯]  
+  **Progress:** [▮▮▮▮▮▮▮▮▮▮]  
   **Difficulty:** Easy-Medium
 
 - [ ] **Implement parser for `||` and `&&` (bonus)**  
   **Owner:** `@gm-infinite`  
   **Progress:** [▮▯▯▯▯▯▯▯▯▯]  
-  **Difficulty:** Medium
+  **Difficulty:** Medium-Hard kolay gelsin.
 
 - [ ] **Implement parser for single pipe (`|`)**  
   **Owner:** `@thecloudrazor`  

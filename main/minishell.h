@@ -18,14 +18,18 @@
 # include <readline/history.h>
 # define _POSIX_C_SOURCE 200809L
 # include <signal.h>
-//❍︎✋︎☠︎♓︎⬧︎♒︎♏︎●︎☹︎
-typedef struct s_shell {
+# include "../t_split_utils/t_split.h"
+
+// ❍︎✋︎☠︎♓︎⬧︎♒︎♏︎●︎☹︎ !!
+
+typedef struct s_shell
+{
 	int		past_exit_status;
 	char	*current_input;
-	char	**split_input;
-} t_shell;
+	t_split	split_input;
+}			t_shell;
 
-void safe_exit(t_shell *shell);
-int is_empty(char *str);
+void	safe_exit(t_shell *shell);
+int		is_empty(char *str);
 
 #endif

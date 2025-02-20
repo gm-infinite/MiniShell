@@ -12,19 +12,19 @@
 
 #include "minishell.h"
 
-//checks if the string given is only composed of white-space characters
-int is_empty(char *str)
+// Return 1 if string == NULL or only whitespace chars, else 0
+int	is_empty(char *str)
 {
-    int i;
+	int	i;
 
-    if(str == NULL)
-        return (1);
-    i = 0;
-    while (str[i] != '\0')
-    {
-        if (!(str[i] == ' ' || (str[i] <= 13 && str[i] >= 9)))
-            return (0);
-        i++;
-    }
-    return (1);
+	if (str == NULL)
+		return (1);
+	i = 0;
+	while (str[i] != '\0')
+	{
+		if (!(str[i] == ' ' || (str[i] <= 13 && str[i] >= 9)))
+			return (0);
+		i++;
+	}
+	return (1);
 }
