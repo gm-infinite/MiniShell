@@ -15,14 +15,15 @@
 # include "../e-libft/libft.h"
 # include <stdio.h>
 
-typedef struct s_split {
-	char    **start;
-    int     size;
-} t_split;
+typedef struct s_split
+{
+	char	**start;
+	int		size;
+}			t_split;
 
-t_split create_split_str(char *str);
-void    free_split(t_split *split);
-t_split create_split(char **start, int size);
-int strnsplit(t_split split, char *find);
+t_split	create_split_str(char *str);
+void	free_split(t_split *split);
+t_split	create_split(char **start, int size);
+int		strnsplit(t_split split, char *find);
 
 #endif
