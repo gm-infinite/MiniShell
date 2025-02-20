@@ -37,7 +37,7 @@ static void	start_shell(t_shell *shell)
 		if (!is_empty(shell->current_input))
 			add_history(shell->current_input);
 		shell->split_input = create_split_str(shell->current_input);
-		//parsing starts here
+		parser_and_or(shell, shell->split_input);
 		free_split(&(shell->split_input));
 		free(shell->current_input);
 	}

@@ -31,5 +31,6 @@ typedef struct s_shell
 
 void	safe_exit(t_shell *shell);
 int		is_empty(char *str);
+void parser_and_or(t_shell *shell, t_split split);
 
 #endif
