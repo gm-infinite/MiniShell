@@ -55,9 +55,9 @@
 
 ## Parser
 
-- [ ] **Creation and implementation of the t_split struct**  
+- [x] **Creation and implementation of the t_split struct**  
   **Owner:** `@gm-infinite`  
-  **Progress:** [▮▯▯▯▯▯▯▯▯▯]  
+  **Progress:** [▮▮▮▮▮▮▮▮▮▮]  
   **Difficulty:** Easy-Medium
 
 - [ ] **Implement parser for `||` and `&&` (bonus)**  
