@@ -18,6 +18,7 @@
 # include <readline/history.h>
 # define _POSIX_C_SOURCE 200809L
 # include <signal.h>
+# include "../t_split_utils/t_split.h"
 
 // ❍︎✋︎☠︎♓︎⬧︎♒︎♏︎●︎☹︎ !!
 
