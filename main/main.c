@@ -24,6 +24,24 @@ void	safe_exit(t_shell *shell)
 	exit(0);
 }
 
+//counts paranthesis amouth and takes input until theres an equal amouth of ( and )
+void paranthesis_parity(t_shell *shell)
+{
+	char *temp;
+	int count;
+
+	count = countchr_not_quote(shell->current_input, '(') \
+	- countchr_not_quote(shell->current_input, ')');
+	while (count != 0)
+	{
+		temp = shell->current_input;
+		shell->current_input = ft_strjoin(temp, readline(">"));
+		count = countchr_not_quote(shell->current_input, '(') \
+		- countchr_not_quote(shell->current_input, ')');
+		free(temp);
+	}
+}
+
 //initiates shell struct, signal's and start of readline sequence
 static void	start_shell(t_shell *shell)
 {
@@ -34,11 +52,14 @@ static void	start_shell(t_shell *shell)
 		shell->current_input = readline("minishell > ");
 		if (shell->current_input == NULL)
 			safe_exit(shell);
+		paranthesis_parity(shell);
 		if (!is_empty(shell->current_input))
+		{
 			add_history(shell->current_input);
-		shell->split_input = create_split_str(shell->current_input);
-		parser_and_or(shell, shell->split_input);
-		free_split(&(shell->split_input));
+			shell->split_input = create_split_str(shell->current_input);
+			parser_and_or(shell, shell->split_input);
+			free_split(&(shell->split_input));
+		}
 		free(shell->current_input);
 	}
 }

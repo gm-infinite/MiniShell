@@ -32,5 +32,7 @@ typedef struct s_shell
 void	safe_exit(t_shell *shell);
 int		is_empty(char *str);
 void parser_and_or(t_shell *shell, t_split split);
-
+int countchr_str(char*str,  char c);
+int countchr_quote(char*str,  char c);
+int countchr_not_quote(char*str,  char c);
 #endif
