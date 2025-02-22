@@ -12,7 +12,7 @@
 
 MAIN_SRC = main.c is_empty.c
 SPLIT_SRC = t_split_utils.c
-AOPSR_SRC = parser_and_or.c
+AOPSR_SRC = parser_and_or.c and_or_utils.c
 
 SRC = $(addprefix main/, $(MAIN_SRC)) $(addprefix t_split_utils/, $(SPLIT_SRC)) $(addprefix and_or_parser/, $(AOPSR_SRC))
 

@@ -62,7 +62,7 @@
 
 - [ ] **Implement parser for `||` and `&&` (bonus)**  
   **Owner:** `@gm-infinite`  
-  **Progress:** [▮▯▯▯▯▯▯▯▯▯]  
+  **Progress:** [▮▮▮▮▮▮▮▯▯▯]  
   **Difficulty:** Medium-Hard kolay gelsin.
 
 - [ ] **Implement parser for single pipe (`|`)**  
