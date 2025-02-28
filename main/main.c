@@ -27,7 +27,6 @@ void	safe_exit(t_shell *shell)
 //initiates shell struct, signal's and start of readline sequence
 static void	start_shell(t_shell *shell)
 {
-	//if needed initiate starting values for shell
 	//we need to handle signals at some point
 	while (1)
 	{
@@ -45,9 +44,20 @@ static void	start_shell(t_shell *shell)
 	}
 }
 
+//this is to stop some uninitilized values being used in if statements.
+//if shell struct grows please put a defult initilize here.
+void	shell_init(t_shell *shell)
+{
+	shell->child_pid = -1;
+	shell->current_input = NULL;
+	shell->past_exit_status = 0;
+	shell->split_input = create_split(NULL, 0);
+}
+
 int	main(void)
 {
 	t_shell	shell;
 
+	shell_init(&shell);
 	start_shell(&shell);
 }
