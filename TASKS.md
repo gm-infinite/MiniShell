@@ -83,7 +83,7 @@
   **Difficulty:** Medium-Hard
   **Additional Notes:** Quotes are already implemented in the current version of Pipex. Only some minor adjustments will be needed. However, they are not implemented in the parser. This task will be about implementing the parser for environment variables. It will need to be able to handle environment variables.
   
-    it semslike we misunderstood the evopage, and were about to try and implemen $"", which isn't needed. what the text meant is to parse envirement variables within the "...".
+    it seemslike we misunderstood the evopage, and were about to try and implemen $"", which isn't needed. what the text meant is to parse envirement variables within the "...".
   (ex/ '$HOME' = $HOME, "$HOME" = /home/42login)
     - [ ] Environment variables: `$environment_variable`
     - [ ] Environment variables in double quotes: `$"environment_variable"`
@@ -136,4 +136,20 @@
   **Progress:** [▮▯▯▯▯▯▯▯▯▯]  
   **Difficulty:** —
 
+- **EXTRA NOTES**
+  commands work like this too:
+    -"e""c""h""o" hello -> prints hello with newline
+    -"e"c"ho" hello     -> prints hello with newline
+    -"e"c "ho" hello    -> zsh: command not found: ec
+    -"l""s"             -> same output as ls command
+    as long as theres no seperating character for " or ' they count as one word
+
+  - echo with -n has weird interactions:
+    -echo -n hello      ->prints hello with NO newline
+    -echo -nnnnnn hello ->prints hello with NO newline
+    -echo hello -n      ->prints "hello -n" with newline
+    -echo -nk hello     ->prints "-nk hello" with newline
+    -echo -n -nn -nnn a ->prints "a" without newline
+    -echo -n -nk -nnn a ->prints "-nk -nnn a" without newline
+    -echo -n -nn -nkn a ->prints "-nkn a" without newline
 ---
