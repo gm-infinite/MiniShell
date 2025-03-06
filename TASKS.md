@@ -136,20 +136,20 @@
   **Progress:** [▮▯▯▯▯▯▯▯▯▯]  
   **Difficulty:** —
 
-- **EXTRA NOTES**
-  commands work like this too:
-    -"e""c""h""o" hello -> prints hello with newline
-    -"e"c"ho" hello     -> prints hello with newline
-    -"e"c "ho" hello    -> zsh: command not found: ec
-    -"l""s"             -> same output as ls command
-    as long as theres no seperating character for " or ' they count as one word
+- ## EXTRA NOTES
+  - commands work like this too:
+    - "e""c""h""o" hello -> prints hello with newline
+    - "e"c"ho" hello     -> prints hello with newline
+    - "e"c "ho" hello    -> zsh: command not found: ec
+    - "l""s"             -> same output as ls command
+    - as long as theres no seperating character for " or ' they count as one word
 
   - echo with -n has weird interactions:
-    -echo -n hello      ->prints hello with NO newline
-    -echo -nnnnnn hello ->prints hello with NO newline
-    -echo hello -n      ->prints "hello -n" with newline
-    -echo -nk hello     ->prints "-nk hello" with newline
-    -echo -n -nn -nnn a ->prints "a" without newline
-    -echo -n -nk -nnn a ->prints "-nk -nnn a" without newline
-    -echo -n -nn -nkn a ->prints "-nkn a" without newline
+    - echo -n hello      ->prints hello with NO newline
+    - echo -nnnnnn hello ->prints hello with NO newline
+    - echo hello -n      ->prints "hello -n" with newline
+    - echo -nk hello     ->prints "-nk hello" with newline
+    - echo -n -nn -nnn a ->prints "a" without newline
+    - echo -n -nk -nnn a ->prints "-nk -nnn a" without newline
+    - echo -n -nn -nkn a ->prints "-nkn a" without newline
 ---
