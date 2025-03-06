@@ -77,11 +77,14 @@
   **Difficulty:** Easy-Medium
   **Additional Notes:** Input and output redirections, as well as Here Document functionality will be re-implemented in accordance with the logic of Pipex project. 
 
-- [ ] **Implement parser for quotes and environment variable syntax (`''`, `""`, `$""`, `$environment_variables`)**  
+- [ ] **Implement parser for quotes and environment variable syntax (`''`, `""`,, `$environment_variables`)**  
   **Owner:** `@thecloudrazor`
   **Progress:** [▮▯▯▯▯▯▯▯▯▯]  
   **Difficulty:** Medium-Hard
   **Additional Notes:** Quotes are already implemented in the current version of Pipex. Only some minor adjustments will be needed. However, they are not implemented in the parser. This task will be about implementing the parser for environment variables. It will need to be able to handle environment variables.
+  
+    it semslike we misunderstood the evopage, and were about to try and implemen $"", which isn't needed. what the text meant is to parse envirement variables within the "...".
+  (ex/ '$HOME' = $HOME, "$HOME" = /home/42login)
     - [ ] Environment variables: `$environment_variable`
     - [ ] Environment variables in double quotes: `$"environment_variable"`
 

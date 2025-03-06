@@ -6,23 +6,11 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 10:55:46 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/02/13 14:26:00 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/03/06 11:18:58 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-//safe exit for ctrl + D
-//(might be used later for other stuff)
-void	safe_exit(t_shell *shell)
-{
-	if (shell->current_input != NULL)
-		free(shell->current_input);
-	if (shell->split_input.start != NULL)
-		free_split(&(shell->split_input));
-	rl_clear_history();
-	exit(0);
-}
 
 //initiates shell struct, signal's and start of readline sequence
 static void	start_shell(t_shell *shell)

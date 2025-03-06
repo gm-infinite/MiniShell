@@ -6,11 +6,11 @@
 #    By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/13 12:36:09 by kuzyilma          #+#    #+#              #
-#    Updated: 2025/02/13 13:52:07 by kuzyilma         ###   ########.fr        #
+#    Updated: 2025/03/06 11:18:37 by kuzyilma         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-MAIN_SRC = main.c is_empty.c
+MAIN_SRC = main.c main_utils.c
 SPLIT_SRC = t_split_utils.c
 AOPSR_SRC = parser_and_or.c and_or_utils.c
 
