@@ -6,14 +6,13 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:15:24 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/02/20 19:15:24 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/03/11 22:32:14 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../main/minishell.h"
 
-//cuts out the outer most (), if the cutting made the string empty, 
-//it removes it from split
+// Cuts out the outermost (). New string == empty? Remove it from 'split'
 static void	cut_out_par(t_split *split)
 {
 	char	*start;
@@ -22,7 +21,7 @@ static void	cut_out_par(t_split *split)
 	start = split->start[0];
 	end = split->start[split->size - 1];
 	if (start == end && (size_t)(countchr_str(start, '(') + \
-	countchr_str(start, ')')) == ft_strlen(start))
+		countchr_str(start, ')')) == ft_strlen(start))
 	{
 		split->size--;
 		return ;
@@ -41,14 +40,14 @@ static void	cut_out_par(t_split *split)
 		split->size--;
 }
 
-//sets cut index and return if && or || is found.
+// Search for ||,  && in 'split'. Return: (-1 for none, 0 for &&, 1 for ||)
 int	set_cut_index(t_split split, int *cut_index)
 {
-	cut_index = check_symbol(split, "||", 1);
-	if (cut_index < 0)
+	*cut_index = check_symbol(split, "||", 1);
+	if (*cut_index < 0)
 	{
-		cut_index = check_symbol(split, "&&", 1);
-		if (cut_index >= 0)
+		*cut_index = check_symbol(split, "&&", 1);
+		if (*cut_index >= 0)
 			return (0);
 	}
 	else
@@ -56,7 +55,7 @@ int	set_cut_index(t_split split, int *cut_index)
 	return (-1);
 }
 
-//parser for && and || with () priority
+// Parser for && and || with () priority
 void	parser_and_or(t_shell *shell, t_split split)
 {
 	int			and_or;
@@ -82,5 +81,5 @@ void	parser_and_or(t_shell *shell, t_split split)
 			split.size - cut_index - 1)));
 	}
 	else
-		{/* | parser */}
+		{/* | executor */}
 }

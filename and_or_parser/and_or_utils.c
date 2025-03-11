@@ -6,14 +6,13 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/22 18:55:15 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/02/28 23:20:43 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/03/11 22:32:10 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../main/minishell.h"
 
-//finds str given in split's string array, it searches for exact match,
-// flag 1 ignores phrases in paranthesis
+// Look for exact match of 'find' in split array. If flag == 1, ignore ().
 int	check_symbol(t_split split, char *find, int flag)
 {
 	int	count;
@@ -35,7 +34,7 @@ int	check_symbol(t_split split, char *find, int flag)
 	return (-2);
 }
 
-//counts the amouth of char c in string str
+// Counts the amount of char 'c' in string "str".
 int	countchr_str(char*str, char c)
 {
 	int	j;
@@ -52,7 +51,7 @@ int	countchr_str(char*str, char c)
 	return (count);
 }
 
-//counts the char c in string str only if its in "..."
+// Counts the char c in string str only if its in "..."
 int	countchr_quote(char *str, char c)
 {
 	int	j;
@@ -65,7 +64,7 @@ int	countchr_quote(char *str, char c)
 	while (str[j] != '\0')
 	{
 		if (str[j] == '"')
-			inquote = inquote ^ 1;
+			inquote ^= 1;
 		if (inquote == 1 && str[j] == c)
 			count++;
 		j++;
@@ -73,13 +72,13 @@ int	countchr_quote(char *str, char c)
 	return (count);
 }
 
-//counts the char c in string only if its NOT in "..."
+// Counts the char 'c' in "str" ONLY if it's NOT in quotes.
 int	countchr_not_quote(char*str, char c)
 {
 	return (countchr_str(str, c) - countchr_quote(str, c));
 }
 
-//checks the paranthesis on the outside is for each other
+// Checks the outermost parantheses are for each other or not.
 int	check_single_par(t_split split)
 {
 	char	*start;

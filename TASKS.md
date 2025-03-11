@@ -137,6 +137,11 @@
   **Difficulty:** —
 
 - ## EXTRA NOTES
+  - March 11: these additional conditions seem to be working and they need to be considered carefully.
+    - (echo Kuzey | grep K) && echo Emir    -->   pipe inside paranthesis AND also before another execution with &&
+    - (echo Kuzey || echo emir) | grep e    -->   pipe after paranthesis, taking UNIX SHELL OR's output
+    - Emir: regex ve math.exp.lere bakacağım. (tamamen bireysel araştırma konusu)
+
   - commands work like this too:
     - "e""c""h""o" hello -> prints hello with newline
     - "e"c"ho" hello     -> prints hello with newline

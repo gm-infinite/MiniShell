@@ -6,7 +6,7 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 10:55:46 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/03/06 11:18:58 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/03/11 22:32:24 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 //initiates shell struct, signal's and start of readline sequence
 static void	start_shell(t_shell *shell)
 {
-	//we need to handle signals at some point
+	// We need to handle signals at some point.
 	while (1)
 	{
 		shell->current_input = readline("minishell > ");
@@ -32,8 +32,8 @@ static void	start_shell(t_shell *shell)
 	}
 }
 
-//this is to stop some uninitilized values being used in if statements.
-//if shell struct grows please put a defult initilize here.
+// This is to stop some uninitilized values being used in if statements.
+// If shell struct grows, please put a defult initilize here.
 void	shell_init(t_shell *shell)
 {
 	shell->child_pid = -1;
