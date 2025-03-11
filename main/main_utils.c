@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   is_empty.c                                         :+:      :+:    :+:   */
+/*   main_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 13:29:14 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/02/13 14:17:26 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/03/06 11:19:06 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,4 +27,15 @@ int	is_empty(char *str)
 		i++;
 	}
 	return (1);
+}
+
+// Safe exit for ctrl + D. Might be used later for other stuff.
+void	safe_exit(t_shell *shell)
+{
+	if (shell->current_input != NULL)
+		free(shell->current_input);
+	if (shell->split_input.start != NULL)
+		free_split(&(shell->split_input));
+	rl_clear_history();
+	exit(0);
 }
