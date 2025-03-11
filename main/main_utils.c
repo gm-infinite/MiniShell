@@ -29,8 +29,7 @@ int	is_empty(char *str)
 	return (1);
 }
 
-//safe exit for ctrl + D
-//(might be used later for other stuff)
+// Safe exit for ctrl + D. Might be used later for other stuff.
 void	safe_exit(t_shell *shell)
 {
 	if (shell->current_input != NULL)
