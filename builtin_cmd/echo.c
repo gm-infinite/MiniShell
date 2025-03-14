@@ -6,7 +6,7 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/14 11:50:52 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/03/14 13:58:44 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/03/14 14:35:10 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ static int echo_n_flag_check(t_split split)
 	return i;
 }
 
-void echo(t_split split)
+int echo(t_split split)
 {
 	int indx;
 	int nflag;
@@ -57,6 +57,7 @@ void echo(t_split split)
 	}
 	if (nflag == 0)
 		printf("\n");
+	return (0);
 }
 
 int main()
