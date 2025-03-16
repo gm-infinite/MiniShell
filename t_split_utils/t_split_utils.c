@@ -6,7 +6,7 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 10:53:30 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/03/14 14:31:33 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/03/16 11:42:07 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,29 +76,24 @@ void	free_split(t_split *split)
 }
 
 //returns a array of string from split with malloc. it isnt tested. I thought it would be useful
-char **split_to_strarray(t_split split)
+void rearrange_split(t_split *split)
 {
 	int i;
-	int count;
-	char **ret;
+	int j;
 
-	i = -1;
-	while(++i < split.size)
-		if (split.start[i] != NULL || split.start[i][0] != '\0')
-			count++;
-	ret = (char **)ft_calloc(count + 1, sizeof(char *));
-	if (ret == NULL)
-		return (NULL);
 	i = 0;
-	count = 0;
-	while(i < split.size)
+	while (split->start[i] != NULL)
+		i++;
+	j = i + 1;
+	while (j < split->size)
 	{
-		if (split.start[i] != NULL || split.start[i][0] != '\0')
+		if (split->start[j] != NULL)
 		{
-			ret[count] = split.start[i];
-			count++;
+			split->start[i] = split->start[j];
+			split->start[j] = NULL;
+			i++;
 		}
-		i++; 
+		j++;
 	}
-	return (ret);
+	split->size = i;
 }
