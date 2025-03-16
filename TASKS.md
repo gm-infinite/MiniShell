@@ -104,17 +104,17 @@
   **Built-in Commands:**
   - [ ] **Implement `echo` with `-n` support**  
     **Owner:** `@gm-infinite`  
-    **Progress:** [▮▯▯▯▯▯▯▯▯▯]  
+    **Progress:** [▮▮▮▮▮▮▮▮▮▯]  
     **Difficulty:** —  
 
   - [ ] **Implement `exit`**  
     **Owner:** `@gm-infinite`  
-    **Progress:** [▮▯▯▯▯▯▯▯▯▯]  
+    **Progress:** [▮▮▮▮▮▮▮▮▮▯]  
     **Difficulty:** —  
 
   - [ ] **Implement `cd`**  
     **Owner:** `@thecloudrazor`  
-    **Progress:** [▮▯▯▯▯▯▯▯▯▯]  
+    **Progress:** [▮▮▮▮▮▮▮▮▮▯]  
     **Difficulty:** —  
     **Additional Notes:**  
     - **`opendir(".")`** opens the current directory.  
