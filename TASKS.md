@@ -148,6 +148,10 @@
     **Difficulty:** —
 
 - ## EXTRA NOTES
+  - March 16:
+    - echo kuzey > output.txt berk                --> creates file output.txt and puts kuzey berk in to it.
+    - echo kuzey > output.txt berk > outfile2.txt --> creates both output.txt and outfile2.txt but only puts kuzey berk in outfile2.txt.
+
   - March 11: these additional conditions seem to be working and they need to be considered carefully.
     - (echo Kuzey | grep K) && echo Emir    -->   pipe inside paranthesis AND also before another execution with &&
     - (echo Kuzey || echo emir) | grep e    -->   pipe after paranthesis, taking UNIX SHELL OR's output
