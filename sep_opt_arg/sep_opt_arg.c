@@ -6,20 +6,20 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/21 21:16:17 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/03/21 22:19:37 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/03/21 22:29:36 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../main/minishell.h"
 
-const char *get_opt(int indx)
+static const char *get_opt(int indx)
 {
 	static char *operator[] = {"||", "&&", "<<", ">>", "|", ">", "<"};
 
 	return (operator[indx]);
 }
 
-int get_inquote(char *un_sep, int size)
+static int get_inquote(char *un_sep, int size)
 {
 	int i;
 	int inquote;
@@ -35,7 +35,7 @@ int get_inquote(char *un_sep, int size)
 	return (inquote);
 }
 
-int get_sep_size(char *un_sep)
+static int get_sep_size(char *un_sep)
 {
 	int i;
 	int extra;
@@ -61,7 +61,7 @@ int get_sep_size(char *un_sep)
 	return (i + extra + 1);
 }
 
-void set_sep(char *sep, char *un_sep, int sep_size)
+static void set_sep(char *sep, char *un_sep, int sep_size)
 {
 	int i;
 	int offset;
