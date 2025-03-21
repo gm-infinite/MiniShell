@@ -153,9 +153,12 @@
     **Difficulty:** —
 
 - ## EXTRA NOTES
+<<<<<<< HEAD
   - March 21:
     - echo kuzey>out.txt berk&&grep<out.txt k   --> even thought operators are not seperate they work as if they are unless they are in "" or ''. creates out.txt and puts "kuzey berk" in it, grep takes input from out.txt (works as expected).
 
+=======
+>>>>>>> 54b61d2 (started on seperating some operation and arguments)
   - March 16:
     - echo kuzey > output.txt berk                --> creates file output.txt and puts kuzey berk in to it.
     - echo kuzey > output.txt berk > outfile2.txt --> creates both output.txt and outfile2.txt but only puts kuzey berk in outfile2.txt.
