@@ -6,7 +6,7 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 10:53:30 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/03/22 11:43:13 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/03/22 15:46:05 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,4 +41,5 @@ int		countchr_not_quote(char*str, char c);
 int		check_single_par(t_split split);
 int		check_symbol(t_split split, char *find, int flag);
 void	sep_opt_arg(t_shell *shell);
+
 #endif

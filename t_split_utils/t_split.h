@@ -6,7 +6,7 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 10:53:30 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/03/22 15:19:05 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/03/22 14:37:20 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,5 +25,6 @@ void	free_split(t_split *split);
 t_split	create_split(char **start, int size);
 int		strnsplit(t_split split, char *find);
 void	rearrange_split(t_split *split);
+char	**ft_split_quotes(const char *s);
 
 #endif

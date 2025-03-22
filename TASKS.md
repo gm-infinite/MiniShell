@@ -88,11 +88,6 @@
     - [ ] Environment variables:                  `$environment_variable`  
   CAREFUL: We will need to consider the '$' scenario!  
 
-- [ ] **Ensure operations and arguments are seperated before splitting**  
-  **Owner:** `@gm-infinite`  
-  **Progress:** [▮▮▮▮▮▮▮▯▯▯]  
-  **Difficulty:** medium
-
 - [ ] **Implement wildcard (`*`) parser (bonus)**  
   **Owner:** `@gm-infinite`  
   **Progress:** [▮▯▯▯▯▯▯▯▯▯]  
@@ -153,12 +148,12 @@
     **Difficulty:** —
 
 - ## EXTRA NOTES
-<<<<<<< HEAD
-  - March 21:
-    - echo kuzey>out.txt berk&&grep<out.txt k   --> even thought operators are not seperate they work as if they are unless they are in "" or ''. creates out.txt and puts "kuzey berk" in it, grep takes input from out.txt (works as expected).
-
-=======
->>>>>>> 54b61d2 (started on seperating some operation and arguments)
+  - march 22:
+    - cat a.txt > out.txt | cat << eof            --> it doesnt created or modifty out.txt until here_doc is satisfied.
+    - cat << 'eof' --> inputs given: hello, $HOME --> output:hello $HOME (not HOME equivelent in env just "$HOME")
+    - when $HOME or similar enviroment variables are given to here_doc, if the deliminer is in quotes it takes the as literal.
+    - cat << eof --> inputs given: inputs given: hello, $HOME --> output:hello /home/username
+    
   - March 16:
     - echo kuzey > output.txt berk                --> creates file output.txt and puts kuzey berk in to it.
     - echo kuzey > output.txt berk > outfile2.txt --> creates both output.txt and outfile2.txt but only puts kuzey berk in outfile2.txt.
