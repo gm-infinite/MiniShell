@@ -6,22 +6,23 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 10:55:46 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/03/22 13:53:46 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/03/22 14:07:53 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static void	print_result(t_split test)
+static void	print_result(t_shell *shell)
 {
 	int	i;
 
-	printf("\n\tsize: %d", test.size);
-	printf("\n\tstart:%3p", test.start);
+	printf("\n\tseperated:%s", shell->current_input);
+	printf("\n\tsize: %d", shell->split_input.size);
+	printf("\n\tstart:%3p", shell->split_input.start);
 	i = 0;
-	while(i <= test.size)
+	while(i <= shell->split_input.size)
 	{
-		printf("\n\t\t%-2d:%s", i, test.start[i]);
+		printf("\n\t\t%-2d:%s", i, shell->split_input.start[i]);
 		i++;
 	}
 	printf(" -> after last value\n\n");
@@ -41,7 +42,7 @@ static void	start_shell(t_shell *shell)
 			add_history(shell->current_input);
 			sep_opt_arg(shell);
 			shell->split_input = create_split_str(shell->current_input);
-			print_result(shell->split_input);
+			print_result(shell);
 			parser_and_or(shell, shell->split_input);
 			free_split(&(shell->split_input));
 		}
