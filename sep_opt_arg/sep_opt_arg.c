@@ -6,7 +6,7 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/21 21:16:17 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/03/22 13:45:26 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/03/22 14:01:46 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,15 +101,14 @@ void sep_opt_arg(t_shell *shell)
 		return ;
 	shell->current_input = (char *)ft_calloc(sep_size, sizeof(char));
 	set_sep(shell->current_input, temp, sep_size);
+	free(temp);
 }
 
-/* int main(int ac, char **av)
+int main(int ac, char **av)
 {
-	char *un_sep = ft_strdup(av[1]);
-	int sep_size = get_sep_size(un_sep);
-	char *sep = calloc(sep_size, sizeof(char));
-	set_sep(sep, un_sep, sep_size);
-	printf("%s\n", sep);
-	printf("%*c\n",sep_size+ 5, '^');
-	free(sep);
-} */
+	t_shell shell;
+	shell.current_input = ft_strdup(av[1]);
+	sep_opt_arg(&shell);
+	printf("%s\n", shell.current_input);
+	free(shell.current_input);
+} 

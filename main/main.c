@@ -6,11 +6,26 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 10:55:46 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/03/22 13:43:07 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/03/22 13:53:46 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+static void	print_result(t_split test)
+{
+	int	i;
+
+	printf("\n\tsize: %d", test.size);
+	printf("\n\tstart:%3p", test.start);
+	i = 0;
+	while(i <= test.size)
+	{
+		printf("\n\t\t%-2d:%s", i, test.start[i]);
+		i++;
+	}
+	printf(" -> after last value\n\n");
+}
 
 //initiates shell struct, signal's and start of readline sequence
 static void	start_shell(t_shell *shell)
@@ -26,6 +41,7 @@ static void	start_shell(t_shell *shell)
 			add_history(shell->current_input);
 			sep_opt_arg(shell);
 			shell->split_input = create_split_str(shell->current_input);
+			print_result(shell->split_input);
 			parser_and_or(shell, shell->split_input);
 			free_split(&(shell->split_input));
 		}
