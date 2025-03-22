@@ -6,11 +6,10 @@
 #    By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/13 12:36:09 by kuzyilma          #+#    #+#              #
-#    Updated: 2025/03/22 15:17:39 by kuzyilma         ###   ########.fr        #
+#    Updated: 2025/03/22 15:19:40 by kuzyilma         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-MAIN_SRC = main.c main_utils.c
 SPLIT_SRC = t_split_utils.c ft_split_quotes.c
 AOPSR_SRC = parser_and_or.c and_or_utils.c
 SOA_SRC = sep_opt_arg/sep_opt_arg.c
