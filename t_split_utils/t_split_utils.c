@@ -6,7 +6,7 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 10:53:30 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/03/16 11:42:07 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/03/22 15:17:57 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,13 +39,13 @@ t_split	create_split(char **start, int size)
 	return (ret);
 }
 
-// Creates a t_split struct from a string using ft_split and counts elements.
+// Creates a t_split struct from a string using ft_split_quotes and counts elements.
 t_split	create_split_str(char *str)
 {
 	t_split	ret;
 	int		i;
 
-	ret.start = ft_split(str, ' ');
+	ret.start = ft_split_quotes(str);
 	if (ret.start == NULL)
 	{
 		ret.size = -1;
