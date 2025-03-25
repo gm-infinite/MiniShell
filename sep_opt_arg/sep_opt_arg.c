@@ -6,23 +6,23 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/21 21:16:17 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/03/22 15:22:01 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/03/25 16:14:17 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../main/minishell.h"
 
-static const char *get_opt(int indx)
+static const char	*get_opt(int indx)
 {
-	static char *operator[] = {"||", "&&", "<<", ">>", "|", ">", "<"};
+	static char	*operator[] = {"||", "&&", "<<", ">>", "|", ">", "<"};
 
 	return (operator[indx]);
 }
 
-static int get_inquote(char *un_sep, int size)
+static int	get_inquote(char *un_sep, int size)
 {
-	int i;
-	int inquote;
+	int	i;
+	int	inquote;
 
 	i = 0;
 	inquote = 0;
@@ -35,11 +35,11 @@ static int get_inquote(char *un_sep, int size)
 	return (inquote);
 }
 
-static int get_sep_size(char *un_sep)
+static int	get_sep_size(char *un_sep)
 {
-	int i;
-	int extra;
-	int j;
+	int	i;
+	int	extra;
+	int	j;
 
 	i = 0;
 	extra = 0;
@@ -61,11 +61,11 @@ static int get_sep_size(char *un_sep)
 	return (i + extra + 1);
 }
 
-static void set_sep(char *sep, char *un_sep, int sep_size)
+static void	set_sep(char *sep, char *un_sep, int sep_size)
 {
-	int i;
-	int offset;
-	int j;
+	int	i;
+	int	offset;
+	int	j;
 
 	i = 0;
 	offset = 0;
@@ -90,10 +90,10 @@ static void set_sep(char *sep, char *un_sep, int sep_size)
 	}
 }
 
-void sep_opt_arg(t_shell *shell)
+void	sep_opt_arg(t_shell *shell)
 {
-	char *temp;
-	int sep_size;
+	char	*temp;
+	int		sep_size;
 
 	temp = shell->current_input;
 	sep_size = get_sep_size(temp);
