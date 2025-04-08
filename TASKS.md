@@ -99,17 +99,17 @@
 
 - [ ] **Implement command execution (including built-in commands)**  
   **Progress:** [▮▯▯▯▯▯▯▯▯▯]  
-  **Difficulty:** —
+  **Difficulty:** medium
 
   **Built-in Commands:**
   - [ ] **Implement `echo` with `-n` support**  
     **Owner:** `@gm-infinite`  
-    **Progress:** [▮▯▯▯▯▯▯▯▯▯]  
+    **Progress:** [▮▮▮▮▮▮▮▮▯▯]  
     **Difficulty:** —  
 
   - [ ] **Implement `exit`**  
     **Owner:** `@gm-infinite`  
-    **Progress:** [▮▯▯▯▯▯▯▯▯▯]  
+    **Progress:** [▮▮▮▮▮▮▮▮▯▯]  
     **Difficulty:** —  
 
   - [ ] **Implement `cd`**  

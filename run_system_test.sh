@@ -13,6 +13,7 @@ $1
 EOF
     echo ""
 	echo "-----------------------"
+    echo ""
 }
 
 # Define test cases with adjacent separators and quoted operators
@@ -57,6 +58,9 @@ tests=(
     "echo 'hello   |   world'"
     "echo \"this    >   should    >    not   >   redirect\""
     "echo 'fail   ||    success'"
+    "echo<<\"/endofline\"|grep \"kuzey\">>         output.txt"
+    "echo 'He said, \"Hello World!\"' | tr '\"' \"'\""
+    "echo 'He said, \"Hello World!\"' | tr '\"' \"$\""
 )
 
 # Run each test
