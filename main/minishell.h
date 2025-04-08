@@ -6,7 +6,7 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 10:53:30 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/02/13 14:27:14 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/03/25 16:00:06 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ typedef struct s_shell
 	char	*current_input;
 	t_split	split_input;
 	pid_t	child_pid;
+	int		exec_flag;			//will be used to control SIGINT(ctrl + c) and SIGQUIT (ctrl + \)
 }			t_shell;
 
 void	safe_exit(t_shell *shell);
@@ -40,4 +41,6 @@ int		countchr_quote(char*str, char c);
 int		countchr_not_quote(char*str, char c);
 int		check_single_par(t_split split);
 int		check_symbol(t_split split, char *find, int flag);
+void	sep_opt_arg(t_shell *shell);
+
 #endif

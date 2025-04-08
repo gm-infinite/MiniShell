@@ -6,7 +6,7 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 10:53:30 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/03/22 14:37:47 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/03/25 16:13:24 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,10 +76,10 @@ void	free_split(t_split *split)
 }
 
 //returns a array of string from split with malloc. it isnt tested. I thought it would be useful
-void rearrange_split(t_split *split)
+void	rearrange_split(t_split *split)
 {
-	int i;
-	int j;
+	int	i;
+	int	j;
 
 	i = 0;
 	while (split->start[i] != NULL)
