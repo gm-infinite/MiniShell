@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split_quotes.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 16:30:24 by emgenc            #+#    #+#             */
-/*   Updated: 2025/03/25 16:13:32 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/04/08 19:48:15 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

@@ -148,6 +148,9 @@
     **Difficulty:** —
 
 - ## EXTRA NOTES
+  - april 8th, 2025
+    - sep_opt_arg.c must be revised to comply with non-bonus requirements of the project. (|| and && won't be checked).
+
   - march 22:
     - cat a.txt > out.txt | cat << eof            --> it doesnt created or modifty out.txt until here_doc is satisfied.
     - cat << 'eof' --> inputs given: hello, $HOME --> output:hello $HOME (not HOME equivelent in env just "$HOME")

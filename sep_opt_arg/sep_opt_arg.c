@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   sep_opt_arg.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/21 21:16:17 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/03/25 16:14:17 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/04/08 20:05:45 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,8 @@ static const char	*get_opt(int indx)
 
 static int	get_inquote(char *un_sep, int size)
 {
-	int	i;
-	int	inquote;
+	int		i;
+	char	inquote;
 
 	i = 0;
 	inquote = 0;
@@ -48,7 +48,7 @@ static int	get_sep_size(char *un_sep)
 		j = 0;
 		while (get_inquote(un_sep, i) == 0 && j < 7)
 		{
-			if (strncmp(&(un_sep[i]), get_opt(j), 1 + (j < 4)) == 0)
+			if (ft_strncmp(&(un_sep[i]), get_opt(j), 1 + (j < 4)) == 0)
 			{
 				extra += (un_sep[i - 1] != ' ') + \
 				(un_sep[i + 1 + (j < 4)] != ' ');
@@ -74,7 +74,7 @@ static void	set_sep(char *sep, char *un_sep, int sep_size)
 		j = -1;
 		while (get_inquote(un_sep, i) == 0 && ++j < 7)
 		{
-			if (strncmp(&(un_sep[i]), get_opt(j), 1 + (j < 4)) == 0)
+			if (ft_strncmp(&(un_sep[i]), get_opt(j), 1 + (j < 4)) == 0)
 			{
 				if (un_sep[i - 1] != ' ')
 					sep[i + offset++] = ' ';
@@ -97,7 +97,7 @@ void	sep_opt_arg(t_shell *shell)
 
 	temp = shell->current_input;
 	sep_size = get_sep_size(temp);
-	if ((size_t)sep_size == ft_strlen(shell->current_input))
+	if ((size_t)sep_size == ft_strlen(shell->current_input) + 1)
 		return ;
 	shell->current_input = (char *)ft_calloc(sep_size, sizeof(char));
 	set_sep(shell->current_input, temp, sep_size);
