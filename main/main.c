@@ -6,7 +6,7 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 10:55:46 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/03/25 16:11:25 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/04/15 14:03:32 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,14 +23,12 @@ static void	start_shell(t_shell *shell)
 			safe_exit(shell);
 		if (!is_empty(shell->current_input))
 		{
-			shell->exec_flag = 1;
 			add_history(shell->current_input);
 			sep_opt_arg(shell);
 			shell->split_input = create_split_str(shell->current_input);
 			printf("%s\n", shell->current_input);
 			parser_and_or(shell, shell->split_input);
 			free_split(&(shell->split_input));
-			shell->exec_flag = 0;
 		}
 		free(shell->current_input);
 	}
@@ -44,7 +42,6 @@ void	shell_init(t_shell *shell)
 	shell->current_input = NULL;
 	shell->past_exit_status = 0;
 	shell->split_input = create_split(NULL, 0);
-	shell->exec_flag = 0;
 }
 
 int	main(void)
