@@ -6,7 +6,7 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 10:55:46 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/04/15 14:03:32 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/04/15 14:06:19 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,9 @@ static void	start_shell(t_shell *shell)
 		shell->current_input = readline("minishell > ");
 		if (shell->current_input == NULL)
 			safe_exit(shell);
+		add_history(shell->current_input);
 		if (!is_empty(shell->current_input))
 		{
-			add_history(shell->current_input);
 			sep_opt_arg(shell);
 			shell->split_input = create_split_str(shell->current_input);
 			printf("%s\n", shell->current_input);
