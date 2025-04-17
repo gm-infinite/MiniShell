@@ -148,9 +148,9 @@
     **Difficulty:** —
 
 - ## EXTRA NOTES
-  - april 15th
-    - when using wildcard with bash I discovered that if the string with wildcard doesnt end with one, it doesnt count as a wilcard
-  
+  - april 17
+    - I made many discoveries with wildcard and how it works. heres some examples:
+    - cat \*" "\* , here if you have a file with space as a character in their name, this command works if not it looks for a file named '\*" "\*' .
 
   - april 8th, 2025
     - sep_opt_arg.c must be revised to comply with non-bonus requirements of the project. (|| and && won't be checked).
