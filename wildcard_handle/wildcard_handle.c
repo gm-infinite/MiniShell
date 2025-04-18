@@ -82,21 +82,49 @@ t_split	create_filter(const char *wildcard)
 	return (filter);
 }
 
-void	wildcard_handle(t_shell shell)
+void apply_filter(t_split filter, t_split cur_dir, char *check_list)
 {
-	t_split	cur_dir_entries;
+	int i;
 
-	cur_dir_entries = get_cur_dir_entries(".");
+	i = 0;
+	if (filter.start[0][0] == '\0')
+	{
+		while (i < cur_dir.size)
+		{
+			if (cur_dir.start[i][0] == '.')
+				check_list[i] = '0';
+			i++;
+		}
+	}
+	else
+	{
+		while (i < cur_dir.size)
+		{
+			if (ft_strncmp(filter.start[0], cur_dir.start[i], ft_strlen(filter.start[0])))
+				check_list[i] = '0';
+			i++;
+		}
+	}
+}
+
+void	wildcard_handle(char *wildcard)
+{
+	t_split	cur_dir;
+	t_split filter;
+	char *check_list;
+
+	cur_dir = get_cur_dir_entries(".");
+	check_list = (char *)ft_calloc(cur_dir.size + 1, sizeof(char));
+	ft_memset(check_list, '1', cur_dir.size);
+	filter = create_filter(wildcard);
+	apply_filter(filter, cur_dir, check_list);
+	printf("%s", check_list);
+	free(check_list);
+	free_split(&cur_dir);
+	free_split(&filter);
 }
 
 int	main(int ac, char **av)
 {
-	t_split test_filter = create_filter(av[1]);
-	int i = 0;
-	while (i < test_filter.size)
-	{
-		printf("%s\n", test_filter.start[i]);
-		i++;
-	}
-	free_split(&test_filter);
+	wildcard_handle(av[1]);
 }
