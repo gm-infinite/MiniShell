@@ -134,13 +134,71 @@ void apply_filter_end(t_split filter, t_split cur_dir, char *check_list)
 
 	filter_end = filter.start[filter.size - 1];
 	i = 0;
+	while (i < cur_dir.size && check_list[i] == '0')
+				i++;
 	if (filter.start[filter.size - 1][0] != '\0')
 		while (i < cur_dir.size)
 		{
 			if (ft_strrcmp(filter_end, cur_dir.start[i]))
 				check_list[i] = '0';
 			i++;
+			while (check_list[i] == '0')
+				i++;
 		}
+}
+
+void apply_filter_minlen(t_split filter, t_split cur_dir, char *check_list, char *wildcard)
+{
+	int i;
+	char *filter_end;
+	int minlen;
+
+	i = 0;
+	minlen = ft_strlen(wildcard) - filter.size + 1;
+	while (i < cur_dir.size)
+	{
+		if (ft_strlen(cur_dir.start[i]) < minlen)
+			check_list[i] = '0';
+		i++;
+	}
+}
+
+void apply_filter_midsin(t_split filter, char *cur_dir_i, char *check_list_i)
+{
+	int filter_i;
+	char *index;
+
+	filter_i = 1;
+	index = &(cur_dir_i[ft_strlen(filter.start[0])]);
+	while (filter_i < filter.size - 1)
+	{
+		index = (ft_strnstr(index, filter.start[filter_i], ft_strlen(index)));
+		if (index == NULL)
+		{
+			*check_list_i = '0';
+			return ;
+		}
+		filter_i++;
+	}
+	if (index + ft_strlen(filter.start[filter_i - 1]) - 1 > &(cur_dir_i[ft_strlen(cur_dir_i) - 1 \
+	- ft_strlen(filter.start[filter.size - 1])]))
+		*check_list_i = '0';
+}
+
+void apply_filter_middle(t_split filter, t_split cur_dir, char *check_list)
+{
+	int i;
+	char *filter_middle;
+	
+	i = 0;
+	if (filter.size < 3)
+		return ;
+	while (i < cur_dir.size)
+	{
+		if (check_list[i] != '0')
+			apply_filter_midsin(filter, cur_dir.start[i], &(check_list[i]));
+		i++;
+	}
 }
 
 void	wildcard_handle(char *wildcard)
@@ -155,15 +213,16 @@ void	wildcard_handle(char *wildcard)
 	check_list = (char *)ft_calloc(cur_dir.size + 1, sizeof(char));
 	ft_memset(check_list, '1', cur_dir.size);
 	filter = create_filter(wildcard);
+	apply_filter_minlen(filter, cur_dir, check_list, wildcard);
 	apply_filter_start(filter, cur_dir, check_list);
 	apply_filter_end(filter, cur_dir, check_list);
+	apply_filter_middle(filter, cur_dir, check_list);
 	while (i < cur_dir.size)
 	{
 		if (check_list[i] == '1')
 			printf("%s ", cur_dir.start[i]);
 		i++;
 	}
-	printf("\n");
 	free(check_list);
 	free_split(&cur_dir);
 	free_split(&filter);
@@ -171,6 +230,5 @@ void	wildcard_handle(char *wildcard)
 //cc wildcard_handle/wildcard_handle.c e-libft/libft.a and_or_parser/and_or_utils.c  t_split_utils/t_split_utils.c t_split_utils/ft_split_quotes.c
 int	main(int ac, char **av)
 {	
-
 	wildcard_handle(av[1]);
 }
