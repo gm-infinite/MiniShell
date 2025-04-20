@@ -39,7 +39,9 @@ t_split	get_cur_dir_entries(const char *direc)
 	struct dirent	*entry;
 
 	cur_dir_ent.size = count_dir_entries(direc);
-	cur_dir_ent.start = (char **)ft_calloc(cur_dir_ent.size, sizeof(char *));
+	cur_dir_ent.start = (char **)ft_calloc(cur_dir_ent.size + 1, sizeof(char *));
+	if (cur_dir_ent.start == NULL)
+		return (create_split(NULL, 0));
 	dir = opendir(direc);
 	entry = readdir(dir);
 	i = 0;
@@ -59,25 +61,24 @@ t_split	create_filter(const char *wildcard)
 	int			i;
 	int			j;
 	int			k;
-	int			size;
 
 	i = 0;
 	j = 0;
 	k = 0;
-	size = ft_strlen(wildcard);
 	filter.size = countchr_not_quote((char *)wildcard, '*') + 1;
-	filter.start = (char **)ft_calloc(filter.size, sizeof(char *));
-	while (i <= size && j <= size)
+	filter.start = (char **)ft_calloc(filter.size + 1, sizeof(char *));
+	if (filter.start == NULL)
+		return (create_split(NULL, 0));
+	while (i <= ft_strlen(wildcard))
 	{
 		while (wildcard[j] != '\0' && wildcard[j] != '*')
 			j++;
 		if (i != j)
-			filter.start[k] = ft_substr(wildcard, i, j - i);
+			filter.start[k++] = ft_substr(wildcard, i, j - i);
 		else
-			filter.start[k] = ft_strdup("");
+			filter.start[k++] = ft_strdup("");
 		i = j + 1;
 		j = i;
-		k++;
 	}
 	return (filter);
 }
@@ -107,38 +108,23 @@ void apply_filter_start(t_split filter, t_split cur_dir, char *check_list)
 	}
 }
 
-char *rev_str(const char *str)
+int ft_strrcmp(const char *s1, const char *s2)
 {
-	char *ret;
-	int start;
-	int end;
+	int s1i;
+	int s2i;
 
-	ret = ft_strdup(str);
-	start = 0;
-	end = ft_strlen(ret) - 1;
-	while (end > start)
+	s1i = ft_strlen(s1) - 1;
+	s2i = ft_strlen(s2) - 1;
+	if (s2i < s1i)
+		return (1);
+	while (s1i > 0)
 	{
-		ret[start] = str[end];
-		ret[end] = str[start];
-		start++;
-		end--;
+		if (s1[s1i] != s2[s2i])
+			return (s1[s1i] - s2[s2i]);
+		s2i--;
+		s1i--;
 	}
-	return (ret);
-}
-
-
-int ft_strrncmp(const char *s1, const char *s2, size_t n)
-{
-	char	*rev_str1;
-	char	*rev_str2;
-	int		ret;
-
-	rev_str1 = rev_str(s1);
-	rev_str2 = rev_str(s2);
-	ret = ft_strncmp(rev_str1, rev_str2, n);
-	free(rev_str1);
-	free(rev_str2);
-	return (ret);
+	return (s1[0] - s2[s2i]);
 }
 
 void apply_filter_end(t_split filter, t_split cur_dir, char *check_list)
@@ -151,7 +137,7 @@ void apply_filter_end(t_split filter, t_split cur_dir, char *check_list)
 	if (filter.start[filter.size - 1][0] != '\0')
 		while (i < cur_dir.size)
 		{
-			if (ft_strrncmp(filter_end, cur_dir.start[i], ft_strlen(filter_end)))
+			if (ft_strrcmp(filter_end, cur_dir.start[i]))
 				check_list[i] = '0';
 			i++;
 		}
@@ -162,23 +148,29 @@ void	wildcard_handle(char *wildcard)
 	t_split	cur_dir;
 	t_split filter;
 	char *check_list;
+	int i;
 
+	i = 0;
 	cur_dir = get_cur_dir_entries(".");
 	check_list = (char *)ft_calloc(cur_dir.size + 1, sizeof(char));
 	ft_memset(check_list, '1', cur_dir.size);
 	filter = create_filter(wildcard);
 	apply_filter_start(filter, cur_dir, check_list);
 	apply_filter_end(filter, cur_dir, check_list);
-	printf("%s", check_list);
+	while (i < cur_dir.size)
+	{
+		if (check_list[i] == '1')
+			printf("%s ", cur_dir.start[i]);
+		i++;
+	}
+	printf("\n");
 	free(check_list);
 	free_split(&cur_dir);
 	free_split(&filter);
 }
-
+//cc wildcard_handle/wildcard_handle.c e-libft/libft.a and_or_parser/and_or_utils.c  t_split_utils/t_split_utils.c t_split_utils/ft_split_quotes.c
 int	main(int ac, char **av)
 {	
 
-	char *a;
-	a = rev_str(av[1]);
-	printf("%s", a);
+	wildcard_handle(av[1]);
 }
