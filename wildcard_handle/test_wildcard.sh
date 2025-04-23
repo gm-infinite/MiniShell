@@ -22,6 +22,8 @@ TEST_FILES=(
   "beta.txt"
   "a_apple.txt"
   "foo.bar"
+  "hello world!"
+  "hel*l*lo*oasf"
 )
 
 # Wildcard patterns to test (only containing at least one `*`)
@@ -43,6 +45,21 @@ PATTERNS=(
   "*secret*"
   "*config*"
   ".*"
+  "a*a*t"
+  "*a*b*c*d*"
+  "*abcd*"
+  "*hello*"
+  ".*****"
+  "****************************"
+  "*.*.*****"
+  ".*."
+  ".*.*"
+  "*.*."
+  ".*."
+  "* *"
+  "*e* *w*"
+  "* *"
+  "*\"*\"*"
 )
 
 # Create test files

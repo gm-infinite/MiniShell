@@ -58,27 +58,28 @@ t_split	get_cur_dir_entries(const char *direc)
 t_split	create_filter(const char *wildcard)
 {
 	t_split		filter;
-	int			i;
-	int			j;
-	int			k;
+	int			indx[3];
+	char 		quote;
 
-	i = 0;
-	j = 0;
-	k = 0;
+	indx[0] = 0;
+	indx[1] = 0;
+	indx[2] = 0;
+	quote  =  0;
+	ft_memset
 	filter.size = countchr_not_quote((char *)wildcard, '*') + 1;
 	filter.start = (char **)ft_calloc(filter.size + 1, sizeof(char *));
 	if (filter.start == NULL)
 		return (create_split(NULL, 0));
-	while (i <= ft_strlen(wildcard))
+	while (indx[0] <= ft_strlen(wildcard))
 	{
-		while (wildcard[j] != '\0' && wildcard[j] != '*')
-			j++;
-		if (i != j)
-			filter.start[k++] = ft_substr(wildcard, i, j - i);
+		while (wildcard[indx[1]] != '\0' && wildcard[indx[1]] != '*')
+			indx[1]++;
+		if (indx[0] != indx[1])
+			filter.start[indx[2]++] = ft_substr(wildcard, indx[0], indx[1] - indx[0]);
 		else
-			filter.start[k++] = ft_strdup("");
-		i = j + 1;
-		j = i;
+			filter.start[indx[2]++] = ft_strdup("");
+		indx[0] = indx[1] + 1;
+		indx[1] = indx[0];
 	}
 	return (filter);
 }
@@ -172,17 +173,19 @@ void apply_filter_midsin(t_split filter, char *cur_dir_i, char *check_list_i)
 	index = &(cur_dir_i[ft_strlen(filter.start[0])]);
 	while (filter_i < filter.size - 1)
 	{
-		index = (ft_strnstr(index, filter.start[filter_i], ft_strlen(index)));
+		index = (ft_strnstr(index, filter.start[filter_i], ft_strlen(index) \
+		- ft_strlen(filter.start[filter.size - 1])));
 		if (index == NULL)
 		{
 			*check_list_i = '0';
 			return ;
 		}
+		if (ft_strlen(index) > ft_strlen(filter.start[filter_i]))
+			index = &(index[ft_strlen(filter.start[filter_i])]);
+		else
+			index = &(index[ft_strlen(index)]);
 		filter_i++;
 	}
-	if (index + ft_strlen(filter.start[filter_i - 1]) - 1 > &(cur_dir_i[ft_strlen(cur_dir_i) - 1 \
-	- ft_strlen(filter.start[filter.size - 1])]))
-		*check_list_i = '0';
 }
 
 void apply_filter_middle(t_split filter, t_split cur_dir, char *check_list)
@@ -200,35 +203,70 @@ void apply_filter_middle(t_split filter, t_split cur_dir, char *check_list)
 		i++;
 	}
 }
-
-void	wildcard_handle(char *wildcard)
+void apply_filter(t_split cur_dir, char *check_list, char *wildcard)
 {
-	t_split	cur_dir;
 	t_split filter;
-	char *check_list;
-	int i;
 
-	i = 0;
-	cur_dir = get_cur_dir_entries(".");
-	check_list = (char *)ft_calloc(cur_dir.size + 1, sizeof(char));
-	ft_memset(check_list, '1', cur_dir.size);
 	filter = create_filter(wildcard);
 	apply_filter_minlen(filter, cur_dir, check_list, wildcard);
 	apply_filter_start(filter, cur_dir, check_list);
 	apply_filter_end(filter, cur_dir, check_list);
 	apply_filter_middle(filter, cur_dir, check_list);
+	free_split(&filter);
+}
+
+char *ft_strjoin_f(char **to_free, const char *to_add)
+{
+	char *ret;
+	int ret_size;
+
+	if (*to_free == NULL)
+	{
+		ret = ft_strdup(to_add);
+	}
+	else
+	{
+		ret_size = ft_strlen(*to_free) + ft_strlen(to_add) + 2;
+		ret = (char *)ft_calloc(ret_size, sizeof(char));
+		if (ret == NULL)
+			return (NULL);
+		ft_strlcpy(ret, *to_free, ret_size);
+		ft_strlcat(ret, " ", ret_size);
+		ft_strlcat(ret, to_add, ret_size);
+		free(*to_free);
+	}
+	return (ret);
+}
+
+char	*wildcard_handle(char *wildcard)
+{
+	t_split	cur_dir;
+	char *check_list;
+	char *ret;
+	int i;
+
+	i = 0;
+	ret = NULL;
+	cur_dir = get_cur_dir_entries(".");
+	check_list = (char *)ft_calloc(cur_dir.size + 1, sizeof(char));
+	ft_memset(check_list, '1', cur_dir.size);
+	apply_filter(cur_dir, check_list, wildcard);
 	while (i < cur_dir.size)
 	{
 		if (check_list[i] == '1')
-			printf("%s ", cur_dir.start[i]);
+			ret = ft_strjoin_f(&ret, cur_dir.start[i]); 
 		i++;
 	}
 	free(check_list);
 	free_split(&cur_dir);
-	free_split(&filter);
+	return (ret);
 }
 //cc wildcard_handle/wildcard_handle.c e-libft/libft.a and_or_parser/and_or_utils.c  t_split_utils/t_split_utils.c t_split_utils/ft_split_quotes.c
 int	main(int ac, char **av)
 {	
-	wildcard_handle(av[1]);
+	char *a = wildcard_handle(av[1]);
+
+	printf("%s\n", a);
+	free (a);
+
 }
