@@ -61,11 +61,8 @@ t_split	create_filter(const char *wildcard)
 	int			indx[3];
 	char 		quote;
 
-	indx[0] = 0;
-	indx[1] = 0;
-	indx[2] = 0;
 	quote  =  0;
-	ft_memset
+	ft_memset(indx, 0, sizeof(int) * 3);
 	filter.size = countchr_not_quote((char *)wildcard, '*') + 1;
 	filter.start = (char **)ft_calloc(filter.size + 1, sizeof(char *));
 	if (filter.start == NULL)
@@ -215,26 +212,32 @@ void apply_filter(t_split cur_dir, char *check_list, char *wildcard)
 	free_split(&filter);
 }
 
-char *ft_strjoin_f(char **to_free, const char *to_add)
+char *ft_strjoin_sq_f(char **to_free, const char *to_add)
 {
 	char *ret;
 	int ret_size;
 
+	
 	if (*to_free == NULL)
 	{
-		ret = ft_strdup(to_add);
+		ret_size = ft_strlen(to_add) + 3;
+		ret = (char *)ft_calloc(ret_size, sizeof(char));
+		if (ret == NULL)
+			return (NULL);
+		ft_strlcpy(ret, "'", ret_size);
 	}
 	else
 	{
-		ret_size = ft_strlen(*to_free) + ft_strlen(to_add) + 2;
+		ret_size = ft_strlen(*to_free) + ft_strlen(to_add) + 4;
 		ret = (char *)ft_calloc(ret_size, sizeof(char));
 		if (ret == NULL)
 			return (NULL);
 		ft_strlcpy(ret, *to_free, ret_size);
-		ft_strlcat(ret, " ", ret_size);
-		ft_strlcat(ret, to_add, ret_size);
+		ft_strlcat(ret, " '", ret_size);
 		free(*to_free);
 	}
+	ft_strlcat(ret, to_add, ret_size);
+	ft_strlcat(ret, "'", ret_size);
 	return (ret);
 }
 
@@ -254,13 +257,35 @@ char	*wildcard_handle(char *wildcard)
 	while (i < cur_dir.size)
 	{
 		if (check_list[i] == '1')
-			ret = ft_strjoin_f(&ret, cur_dir.start[i]); 
+			ret = ft_strjoin_sq_f(&ret, cur_dir.start[i]); 
 		i++;
 	}
 	free(check_list);
 	free_split(&cur_dir);
 	return (ret);
 }
+
+/* void wildcard_input_modify(t_shell *shell)
+{
+	t_split modified_input;
+	int i;
+	char *temp;
+
+	modified_input = create_split_str(shell->current_input);
+	i = 0;
+	while (i < modified_input.size)
+	{
+		if (countchr_not_quote(modified_input.start[i], '*') > 0)
+		{
+			temp = modified_input.start[i];
+			modified_input.start[i] = wildcard_handle(temp);
+			free(temp);
+		}
+	}
+
+} */
+
+
 //cc wildcard_handle/wildcard_handle.c e-libft/libft.a and_or_parser/and_or_utils.c  t_split_utils/t_split_utils.c t_split_utils/ft_split_quotes.c
 int	main(int ac, char **av)
 {	
