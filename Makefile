@@ -11,7 +11,7 @@
 # **************************************************************************** #
 
 MAIN_SRC = main.c main_utils.c
-SPLIT_SRC = t_split_utils.c ft_split_quotes.c
+SPLIT_SRC = t_split_utils.c t_split_utils2.c ft_split_quotes.c
 AOPSR_SRC = parser_and_or.c and_or_utils.c
 SOA_SRC = sep_opt_arg/sep_opt_arg.c
 

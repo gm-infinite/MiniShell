@@ -26,7 +26,6 @@ static void	start_shell(t_shell *shell)
 		{
 			sep_opt_arg(shell);
 			shell->split_input = create_split_str(shell->current_input);
-			printf("%s\n", shell->current_input);
 			parser_and_or(shell, shell->split_input);
 			free_split(&(shell->split_input));
 		}
