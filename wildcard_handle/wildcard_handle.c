@@ -13,6 +13,21 @@
 #include "../main/minishell.h"
 #include <dirent.h>
 
+void print_result(t_split *test)
+{
+    int i;
+    printf("\n\tsize: %d", test->size);
+    printf("\n\tstart:%3p", test->start);
+    i = 0;
+    while(i <= test->size)
+    {
+        printf("\n\t\t%-2d:%s", i, test->start[i]);
+        i++;
+    }
+    printf(" -> after last value\n");
+}
+
+
 int	count_dir_entries(const char *directory)
 {
 	DIR				*dir;
@@ -265,13 +280,15 @@ char	*wildcard_handle(char *wildcard)
 	return (ret);
 }
 
-/* void wildcard_input_modify(t_shell *shell)
+char *wildcard_input_modify(char *current_input)
 {
 	t_split modified_input;
 	int i;
 	char *temp;
+	char *ret;
 
-	modified_input = create_split_str(shell->current_input);
+	modified_input = create_split_str(current_input);
+	print_result(&modified_input);
 	i = 0;
 	while (i < modified_input.size)
 	{
@@ -281,17 +298,16 @@ char	*wildcard_handle(char *wildcard)
 			modified_input.start[i] = wildcard_handle(temp);
 			free(temp);
 		}
+		i++;
 	}
+	printf("\n----------------------------------------------\n");
+	print_result(&modified_input);
+	return ;
+}
 
-} */
 
-
-//cc wildcard_handle/wildcard_handle.c e-libft/libft.a and_or_parser/and_or_utils.c  t_split_utils/t_split_utils.c t_split_utils/ft_split_quotes.c
+//cc wildcard_handle/wildcard_handle.c e-libft/libft.a and_or_parser/and_or_utils.c  t_split_utils/t_split_utils.c t_split_utils/ft_split_quotes.c -o test
 int	main(int ac, char **av)
 {	
-	char *a = wildcard_handle(av[1]);
-
-	printf("%s\n", a);
-	free (a);
-
+	char *a = wildcard_input_modify(av[1]);
 }
