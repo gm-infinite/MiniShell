@@ -288,26 +288,32 @@ char *wildcard_input_modify(char *current_input)
 	char *ret;
 
 	modified_input = create_split_str(current_input);
-	print_result(&modified_input);
 	i = 0;
 	while (i < modified_input.size)
 	{
 		if (countchr_not_quote(modified_input.start[i], '*') > 0)
 		{
-			temp = modified_input.start[i];
-			modified_input.start[i] = wildcard_handle(temp);
-			free(temp);
+			temp = wildcard_handle(modified_input.start[i]);
+			if (temp != NULL && temp[0] != '\0')
+			{
+				free(modified_input.start[i]);
+				modified_input.start[i] = temp;
+			}
+			else if (temp != NULL)
+				free(temp);
 		}
 		i++;
 	}
-	printf("\n----------------------------------------------\n");
-	print_result(&modified_input);
-	return ;
+	temp = revert_split_str(modified_input);
+	free_split(&modified_input);
+	return (temp);
 }
 
 
-//cc wildcard_handle/wildcard_handle.c e-libft/libft.a and_or_parser/and_or_utils.c  t_split_utils/t_split_utils.c t_split_utils/ft_split_quotes.c -o test
+//cc wildcard_handle/wildcard_handle.c e-libft/libft.a and_or_parser/and_or_utils.c  t_split_utils/t_split_utils.c t_split_utils/t_split_utils2.c t_split_utils/ft_split_quotes.c -o test
 int	main(int ac, char **av)
 {	
 	char *a = wildcard_input_modify(av[1]);
+	printf("%s\n", a);
+	free(a);
 }
