@@ -38,7 +38,8 @@ static t_split	get_cur_dir_entries(const char *direc)
 	struct dirent	*entry;
 
 	cur_dir_ent.size = count_dir_entries(direc);
-	cur_dir_ent.start = (char **)ft_calloc(cur_dir_ent.size + 1, sizeof(char *));
+	cur_dir_ent.start = (char **)ft_calloc(cur_dir_ent.size + 1, \
+						sizeof(char *));
 	if (cur_dir_ent.start == NULL)
 		return (create_split(NULL, 0));
 	dir = opendir(direc);
@@ -57,9 +58,9 @@ static t_split	get_cur_dir_entries(const char *direc)
 static char	*wildcard_handle(char *wildcard)
 {
 	t_split	cur_dir;
-	char *check_list;
-	char *ret;
-	int i;
+	char	*check_list;
+	char	*ret;
+	int		i;
 
 	i = 0;
 	ret = NULL;
@@ -70,7 +71,7 @@ static char	*wildcard_handle(char *wildcard)
 	while (i < cur_dir.size)
 	{
 		if (check_list[i] == '1')
-			ret = ft_strjoin_sq_f(&ret, cur_dir.start[i]); 
+			ret = ft_strjoin_sq_f(&ret, cur_dir.start[i]);
 		i++;
 	}
 	free(check_list);
@@ -78,12 +79,12 @@ static char	*wildcard_handle(char *wildcard)
 	return (ret);
 }
 
-char *wildcard_input_modify(char *current_input)
+char	*wildcard_input_modify(char *current_input)
 {
-	t_split modified_input;
-	int i;
-	char *temp;
-	char *ret;
+	t_split	modified_input;
+	int		i;
+	char	*temp;
+	char	*ret;
 
 	modified_input = create_split_str(current_input);
 	i = 0;
@@ -105,13 +106,4 @@ char *wildcard_input_modify(char *current_input)
 	temp = revert_split_str(modified_input);
 	free_split(&modified_input);
 	return (temp);
-}
-
-
-//cc wildcard_handle/wildcard_handle.c wildcard_handle/wildcard_filter.c wildcard_handle/wildcard_filter2.c wildcard_handle/wildcard_utils.c  e-libft/libft.a and_or_parser/and_or_utils.c  t_split_utils/t_split_utils.c t_split_utils/t_split_utils2.c t_split_utils/ft_split_quotes.c
-int	main(int ac, char **av)
-{	
-	char *a = wildcard_input_modify(av[1]);
-	printf("%s\n", a);
-	free(a);
 }

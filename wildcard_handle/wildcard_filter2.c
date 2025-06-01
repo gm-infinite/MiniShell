@@ -6,7 +6,7 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 13:57:09 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/06/01 14:09:34 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/06/01 16:04:02 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,9 +16,9 @@ static t_split	create_filter(const char *wildcard)
 {
 	t_split		filter;
 	int			indx[3];
-	char 		quote;
+	char		quote;
 
-	quote  =  0;
+	quote = 0;
 	ft_memset(indx, 0, sizeof(int) * 3);
 	filter.size = countchr_not_quote((char *)wildcard, '*') + 1;
 	filter.start = (char **)ft_calloc(filter.size + 1, sizeof(char *));
@@ -29,7 +29,8 @@ static t_split	create_filter(const char *wildcard)
 		while (wildcard[indx[1]] != '\0' && wildcard[indx[1]] != '*')
 			indx[1]++;
 		if (indx[0] != indx[1])
-			filter.start[indx[2]++] = ft_substr(wildcard, indx[0], indx[1] - indx[0]);
+			filter.start[indx[2]++] = ft_substr(wildcard, indx[0], \
+			indx[1] - indx[0]);
 		else
 			filter.start[indx[2]++] = ft_strdup("");
 		indx[0] = indx[1] + 1;
@@ -38,9 +39,9 @@ static t_split	create_filter(const char *wildcard)
 	return (filter);
 }
 
-void apply_filter(t_split cur_dir, char *check_list, char *wildcard)
+void	apply_filter(t_split cur_dir, char *check_list, char *wildcard)
 {
-	t_split filter;
+	t_split	filter;
 
 	filter = create_filter(wildcard);
 	apply_filter_minlen(filter, cur_dir, check_list, wildcard);

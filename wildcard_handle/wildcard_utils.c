@@ -6,16 +6,16 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 14:02:22 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/06/01 15:50:55 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/06/01 16:02:08 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "wildcard_handler.h"
 
-int ft_strrcmp(const char *s1, const char *s2)
+int	ft_strrcmp(const char *s1, const char *s2)
 {
-	int s1i;
-	int s2i;
+	int	s1i;
+	int	s2i;
 
 	s1i = ft_strlen(s1) - 1;
 	s2i = ft_strlen(s2) - 1;
@@ -31,12 +31,11 @@ int ft_strrcmp(const char *s1, const char *s2)
 	return (s1[0] - s2[s2i]);
 }
 
-char *ft_strjoin_sq_f(char **to_free, const char *to_add)
+char	*ft_strjoin_sq_f(char **to_free, const char *to_add)
 {
-	char *ret;
-	int ret_size;
+	char	*ret;
+	int		ret_size;
 
-	
 	if (*to_free == NULL)
 	{
 		ret_size = ft_strlen(to_add) + 3;

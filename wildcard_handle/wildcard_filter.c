@@ -6,15 +6,15 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 13:57:14 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/06/01 14:10:06 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/06/01 16:09:24 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "wildcard_handler.h"
 
-void apply_filter_start(t_split filter, t_split cur_dir, char *check_list)
+void	apply_filter_start(t_split filter, t_split cur_dir, char *check_list)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	if (filter.start[0][0] == '\0')
@@ -30,23 +30,25 @@ void apply_filter_start(t_split filter, t_split cur_dir, char *check_list)
 	{
 		while (i < cur_dir.size)
 		{
-			if (ft_strncmp(filter.start[0], cur_dir.start[i], ft_strlen(filter.start[0])))
+			if (ft_strncmp(filter.start[0], cur_dir.start[i], \
+				ft_strlen(filter.start[0])))
 				check_list[i] = '0';
 			i++;
 		}
 	}
 }
 
-void apply_filter_end(t_split filter, t_split cur_dir, char *check_list)
+void	apply_filter_end(t_split filter, t_split cur_dir, char *check_list)
 {
-	int i;
-	char *filter_end;
+	int		i;
+	char	*filter_end;
 
 	filter_end = filter.start[filter.size - 1];
 	i = 0;
 	while (i < cur_dir.size && check_list[i] == '0')
-				i++;
+		i++;
 	if (filter.start[filter.size - 1][0] != '\0')
+	{
 		while (i < cur_dir.size)
 		{
 			if (ft_strrcmp(filter_end, cur_dir.start[i]))
@@ -55,13 +57,15 @@ void apply_filter_end(t_split filter, t_split cur_dir, char *check_list)
 			while (check_list[i] == '0')
 				i++;
 		}
+	}
 }
 
-void apply_filter_minlen(t_split filter, t_split cur_dir, char *check_list, char *wildcard)
+void	apply_filter_minlen(t_split filter, t_split cur_dir, \
+							char *check_list, char *wildcard)
 {
-	int i;
-	char *filter_end;
-	int minlen;
+	int		i;
+	char	*filter_end;
+	int		minlen;
 
 	i = 0;
 	minlen = ft_strlen(wildcard) - filter.size + 1;
@@ -73,10 +77,11 @@ void apply_filter_minlen(t_split filter, t_split cur_dir, char *check_list, char
 	}
 }
 
-static void apply_filter_midsin(t_split filter, char *cur_dir_i, char *check_list_i)
+static void	apply_filter_midsin(t_split filter, char *cur_dir_i, \
+								char *check_list_i)
 {
-	int filter_i;
-	char *index;
+	int		filter_i;
+	char	*index;
 
 	filter_i = 1;
 	index = &(cur_dir_i[ft_strlen(filter.start[0])]);
@@ -97,11 +102,11 @@ static void apply_filter_midsin(t_split filter, char *cur_dir_i, char *check_lis
 	}
 }
 
-void apply_filter_middle(t_split filter, t_split cur_dir, char *check_list)
+void	apply_filter_middle(t_split filter, t_split cur_dir, char *check_list)
 {
-	int i;
-	char *filter_middle;
-	
+	int		i;
+	char	*filter_middle;
+
 	i = 0;
 	if (filter.size < 3)
 		return ;
