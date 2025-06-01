@@ -6,11 +6,25 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:15:24 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/03/16 17:47:31 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/06/01 17:50:54 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../main/minishell.h"
+
+void print_result(t_split *test)
+{
+    int i;
+    printf("\n\tsize: %d", test->size);
+    printf("\n\tstart:%3p", test->start);
+    i = 0;
+    while(i <= test->size)
+    {
+        printf("\n\t\t%-2d:%s", i, test->start[i]);
+        i++;
+    }
+    printf(" -> after last value\n");
+}
 
 // Cuts out the outermost (). New string == empty? Remove it from 'split'
 static void	cut_out_par(t_split *split)
@@ -40,27 +54,91 @@ static void	cut_out_par(t_split *split)
 		split->size--;
 }
 
-// Search for ||,  && in 'split'. Return: (-1 for none, 0 for &&, 1 for ||)
-int	set_cut_index(t_split split, int *cut_index)
+// counts exact str in split's str array . if flag = 1 does not count str in paranthesis
+int	count_str_split(t_split split, const char *str, int flag)
 {
-	*cut_index = check_symbol(split, "||", 1);
-	if (*cut_index < 0)
+	int i;
+	int count;
+	int par;
+
+	i = 0;
+	count = 0;
+	par = 0;
+	while (i < split.size)
 	{
-		*cut_index = check_symbol(split, "&&", 1);
-		if (*cut_index >= 0)
-			return (0);
+		par += countchr_not_quote(split.start[i], '(');
+		if ((flag == 1 || par == 0) && (strncmp(str, split.start[i], 4) == 0))
+			count++;
+		par -= countchr_not_quote(split.start[i], ')');
+		i++;
 	}
-	else
-		return (1);
-	return (-1);
+	return (count);
+}
+
+char *get_cut_indexs(t_split split)
+{
+	int i;
+	int par;
+	char *ret;
+
+	i = 0;
+	par = 0;
+	ret = ft_calloc(count_str_split(split, "||", 1) + count_str_split(split, "&&", 1) + 1, sizeof(char));
+	if (ret == NULL)
+		return (NULL);
+	while (i < split.size)
+	{
+		par += countchr_not_quote(split.start[i], '(');
+		if (par == 0) 
+		{
+			if(strncmp("||", split.start[i], 4) == 0)
+				ret[i] = 1;
+			else if (strncmp("&&", split.start[i], 4) == 0)
+				ret[i] = 0;
+		}
+		par -= countchr_not_quote(split.start[i], ')');
+		i++;
+	}
+	return (ret);
+}
+
+void parse_and_or(t_shell *shell, t_split split, char *cut_indexs)
+{
+	int i;
+	int par;
+	int start;
+	int check;
+
+	i = 0;
+	par = 0;
+	start = 0;
+	check = -1;
+	while (i <= split.size)
+	{
+		par += countchr_not_quote(split.start[i], '(');
+		if (i = split.size || strncmp("&&", split.start[i], 4) == 0 || strncmp("||", split.start[i], 4) == 0)
+		{
+			if (split.start[i] != NULL)
+				free(split.start[i]);
+			split.start[i] = NULL;
+			if (check == -1 || \
+				(cut_indexs[check] == 0 && shell->past_exit_status == 0) || \
+				(cut_indexs[check] == 1 && shell->past_exit_status != 0))
+				parser_and_or(shell, create_split(&(split.start[start]), i - start));
+			start = i + 1;
+			check++;
+		}
+		par -= countchr_not_quote(split.start[i], ')');
+		i++;
+	}
 }
 
 // Parser for && and || with () priority
 void	parser_and_or(t_shell *shell, t_split split)
 {
-	int			and_or;
-	int			cut_index;
+	char	*cut_indexs;
 
+	print_result(&split);
 	if (split.size <= 0 || split.start == NULL)
 		return ;
 	if (check_single_par(split) != 0)
@@ -69,18 +147,12 @@ void	parser_and_or(t_shell *shell, t_split split)
 		parser_and_or(shell, split);
 		return ;
 	}
-	and_or = set_cut_index(split, &cut_index);
-	if (cut_index >= 0)
+	if (count_str_split(split, "||", 1) + count_str_split(split, "&&", 1) > 0)
 	{
-		if (cut_index > 0)
-			parser_and_or(shell, (create_split(split.start, cut_index)));
-		free(split.start[cut_index]);
-		split.start[cut_index] = NULL;
-		if (cut_index < split.size && ((and_or == 1 && shell->past_exit_status \
-			> 0) || (and_or == 0 && shell->past_exit_status == 0)))
-			parser_and_or(shell, (create_split(&(split.start[cut_index + 1]), \
-			split.size - cut_index - 1)));
+	cut_indexs = get_cut_indexs(split);
+	parse_and_or(shell, split, cut_indexs);
+	free(cut_indexs);
 	}
 	else
-		{/* | executor */}
+		{/*executer*/}
 }
