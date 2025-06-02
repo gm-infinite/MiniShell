@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strlcat.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 12:29:09 by emgenc            #+#    #+#             */
-/*   Updated: 2024/10/27 12:29:10 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/05/11 12:46:47 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@ size_t	ft_strlcat(char *dst, const char *src, size_t dstsize)
 	size_t	srclen;
 
 	dstlen = 0;
+	if (dst == NULL || src == NULL)
+		return (0);
 	while (dstlen < dstsize && *dst)
 	{
 		dstlen++;
