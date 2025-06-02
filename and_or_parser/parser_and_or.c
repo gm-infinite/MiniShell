@@ -6,7 +6,7 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:15:24 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/06/01 17:50:54 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/06/02 13:23:48 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ int	count_str_split(t_split split, const char *str, int flag)
 	while (i < split.size)
 	{
 		par += countchr_not_quote(split.start[i], '(');
-		if ((flag == 1 || par == 0) && (strncmp(str, split.start[i], 4) == 0))
+		if ((flag == 0 || par == 0) && (strncmp(str, split.start[i], 4) == 0))
 			count++;
 		par -= countchr_not_quote(split.start[i], ')');
 		i++;
@@ -80,9 +80,11 @@ char *get_cut_indexs(t_split split)
 	int i;
 	int par;
 	char *ret;
+	int check;
 
 	i = 0;
 	par = 0;
+	check = 0;
 	ret = ft_calloc(count_str_split(split, "||", 1) + count_str_split(split, "&&", 1) + 1, sizeof(char));
 	if (ret == NULL)
 		return (NULL);
@@ -91,12 +93,13 @@ char *get_cut_indexs(t_split split)
 		par += countchr_not_quote(split.start[i], '(');
 		if (par == 0) 
 		{
-			if(strncmp("||", split.start[i], 4) == 0)
-				ret[i] = 1;
-			else if (strncmp("&&", split.start[i], 4) == 0)
-				ret[i] = 0;
+			if(strncmp("||", split.start[i], 3) == 0)
+				ret[check++] = '1';
+			else if (strncmp("&&", split.start[i], 3) == 0)
+				ret[check++] = '0';
 		}
 		par -= countchr_not_quote(split.start[i], ')');
+		printf("%d-%s ",i ,ret);
 		i++;
 	}
 	return (ret);
@@ -116,14 +119,14 @@ void parse_and_or(t_shell *shell, t_split split, char *cut_indexs)
 	while (i <= split.size)
 	{
 		par += countchr_not_quote(split.start[i], '(');
-		if (i = split.size || strncmp("&&", split.start[i], 4) == 0 || strncmp("||", split.start[i], 4) == 0)
+		if ((par == 0) && ((i == split.size) || (strncmp("&&", split.start[i], 4) == 0) || (strncmp("||", split.start[i], 4) == 0)))
 		{
 			if (split.start[i] != NULL)
 				free(split.start[i]);
 			split.start[i] = NULL;
 			if (check == -1 || \
-				(cut_indexs[check] == 0 && shell->past_exit_status == 0) || \
-				(cut_indexs[check] == 1 && shell->past_exit_status != 0))
+				(cut_indexs[check] == '0' && shell->past_exit_status == 0) || \
+				(cut_indexs[check] == '1' && shell->past_exit_status != 0))
 				parser_and_or(shell, create_split(&(split.start[start]), i - start));
 			start = i + 1;
 			check++;
