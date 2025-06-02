@@ -6,7 +6,7 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:15:24 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/06/02 13:23:48 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/06/02 13:51:27 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,6 @@ char *get_cut_indexs(t_split split)
 				ret[check++] = '0';
 		}
 		par -= countchr_not_quote(split.start[i], ')');
-		printf("%d-%s ",i ,ret);
 		i++;
 	}
 	return (ret);
@@ -141,7 +140,6 @@ void	parser_and_or(t_shell *shell, t_split split)
 {
 	char	*cut_indexs;
 
-	print_result(&split);
 	if (split.size <= 0 || split.start == NULL)
 		return ;
 	if (check_single_par(split) != 0)
@@ -157,5 +155,5 @@ void	parser_and_or(t_shell *shell, t_split split)
 	free(cut_indexs);
 	}
 	else
-		{/*executer*/}
+		{printf("%s\n", split.start[0]);}
 }

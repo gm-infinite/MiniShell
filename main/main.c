@@ -6,7 +6,7 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 10:55:46 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/04/15 14:06:19 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/06/02 14:04:30 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,6 @@ static void	start_shell(t_shell *shell)
 		{
 			sep_opt_arg(shell);
 			shell->split_input = create_split_str(shell->current_input);
-			printf("%s\n", shell->current_input);
 			parser_and_or(shell, shell->split_input);
 			free_split(&(shell->split_input));
 		}
