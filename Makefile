@@ -11,10 +11,11 @@
 # **************************************************************************** #
 
 MAIN_SRC = main.c main_utils.c
-SPLIT_SRC = t_split_utils.c
+SPLIT_SRC = t_split_utils.c ft_split_quotes.c
 AOPSR_SRC = parser_and_or.c and_or_utils.c
+SOA_SRC = sep_opt_arg/sep_opt_arg.c
 
-SRC = $(addprefix main/, $(MAIN_SRC)) $(addprefix t_split_utils/, $(SPLIT_SRC)) $(addprefix and_or_parser/, $(AOPSR_SRC))
+SRC = $(addprefix main/, $(MAIN_SRC)) $(addprefix t_split_utils/, $(SPLIT_SRC)) $(addprefix and_or_parser/, $(AOPSR_SRC)) $(SOA_SRC)
 
 CC = cc
 CFLAGS = -Wall -Werror -Wextra

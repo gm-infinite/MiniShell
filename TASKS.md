@@ -99,17 +99,17 @@
 
 - [ ] **Implement command execution (including built-in commands)**  
   **Progress:** [▮▯▯▯▯▯▯▯▯▯]  
-  **Difficulty:** —
+  **Difficulty:** medium
 
   **Built-in Commands:**
   - [ ] **Implement `echo` with `-n` support**  
     **Owner:** `@gm-infinite`  
-    **Progress:** [▮▯▯▯▯▯▯▯▯▯]  
+    **Progress:** [▮▮▮▮▮▮▮▮▯▯]  
     **Difficulty:** —  
 
   - [ ] **Implement `exit`**  
     **Owner:** `@gm-infinite`  
-    **Progress:** [▮▯▯▯▯▯▯▯▯▯]  
+    **Progress:** [▮▮▮▮▮▮▮▮▯▯]  
     **Difficulty:** —  
 
   - [ ] **Implement `cd`**  
@@ -148,6 +148,19 @@
     **Difficulty:** —
 
 - ## EXTRA NOTES
+  - april 8th, 2025
+    - sep_opt_arg.c must be revised to comply with non-bonus requirements of the project. (|| and && won't be checked).
+
+  - march 22:
+    - cat a.txt > out.txt | cat << eof            --> it doesnt created or modifty out.txt until here_doc is satisfied.
+    - cat << 'eof' --> inputs given: hello, $HOME --> output:hello $HOME (not HOME equivelent in env just "$HOME")
+    - when $HOME or similar enviroment variables are given to here_doc, if the deliminer is in quotes it takes the as literal.
+    - cat << eof --> inputs given: inputs given: hello, $HOME --> output:hello /home/username
+    
+  - March 16:
+    - echo kuzey > output.txt berk                --> creates file output.txt and puts kuzey berk in to it.
+    - echo kuzey > output.txt berk > outfile2.txt --> creates both output.txt and outfile2.txt but only puts kuzey berk in outfile2.txt.
+
   - March 11: these additional conditions seem to be working and they need to be considered carefully.
     - (echo Kuzey | grep K) && echo Emir    -->   pipe inside paranthesis AND also before another execution with &&
     - (echo Kuzey || echo emir) | grep e    -->   pipe after paranthesis, taking UNIX SHELL OR's output
