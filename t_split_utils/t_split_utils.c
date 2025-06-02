@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   t_split_utils.h                                    :+:      :+:    :+:   */
+/*   t_split_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 10:53:30 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/02/13 14:27:14 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/03/25 16:13:24 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,13 +39,13 @@ t_split	create_split(char **start, int size)
 	return (ret);
 }
 
-// Creates a t_split struct from a string using ft_split and counts elements.
+// Creates a t_split struct from a string using ft_split_quotes and counts elements.
 t_split	create_split_str(char *str)
 {
 	t_split	ret;
 	int		i;
 
-	ret.start = ft_split(str, ' ');
+	ret.start = ft_split_quotes(str);
 	if (ret.start == NULL)
 	{
 		ret.size = -1;
@@ -73,4 +73,27 @@ void	free_split(t_split *split)
 	free(split->start);
 	split->start = NULL;
 	split->size = 0;
+}
+
+//returns a array of string from split with malloc. it isnt tested. I thought it would be useful
+void	rearrange_split(t_split *split)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	while (split->start[i] != NULL)
+		i++;
+	j = i + 1;
+	while (j < split->size)
+	{
+		if (split->start[j] != NULL)
+		{
+			split->start[i] = split->start[j];
+			split->start[j] = NULL;
+			i++;
+		}
+		j++;
+	}
+	split->size = i;
 }

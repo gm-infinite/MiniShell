@@ -6,7 +6,7 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:15:24 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/03/11 22:32:14 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/03/16 17:47:31 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,9 +74,10 @@ void	parser_and_or(t_shell *shell, t_split split)
 	{
 		if (cut_index > 0)
 			parser_and_or(shell, (create_split(split.start, cut_index)));
-		if (cut_index < split.size && \
-			((and_or == 1 && shell->past_exit_status > 0) || \
-			(and_or == 0 && shell->past_exit_status == 0)))
+		free(split.start[cut_index]);
+		split.start[cut_index] = NULL;
+		if (cut_index < split.size && ((and_or == 1 && shell->past_exit_status \
+			> 0) || (and_or == 0 && shell->past_exit_status == 0)))
 			parser_and_or(shell, (create_split(&(split.start[cut_index + 1]), \
 			split.size - cut_index - 1)));
 	}
