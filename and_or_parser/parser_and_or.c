@@ -6,7 +6,7 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:15:24 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/06/02 13:51:27 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/06/02 14:22:35 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,11 +111,11 @@ void parse_and_or(t_shell *shell, t_split split, char *cut_indexs)
 	int start;
 	int check;
 
-	i = 0;
+	i = -1;
 	par = 0;
 	start = 0;
-	check = -1;
-	while (i <= split.size)
+	check = -2;
+	while (++i <= split.size)
 	{
 		par += countchr_not_quote(split.start[i], '(');
 		if ((par == 0) && ((i == split.size) || (strncmp("&&", split.start[i], 4) == 0) || (strncmp("||", split.start[i], 4) == 0)))
@@ -123,18 +123,32 @@ void parse_and_or(t_shell *shell, t_split split, char *cut_indexs)
 			if (split.start[i] != NULL)
 				free(split.start[i]);
 			split.start[i] = NULL;
-			if (check == -1 || \
+			if (++check == -1 || \
 				(cut_indexs[check] == '0' && shell->past_exit_status == 0) || \
 				(cut_indexs[check] == '1' && shell->past_exit_status != 0))
 				parser_and_or(shell, create_split(&(split.start[start]), i - start));
 			start = i + 1;
-			check++;
 		}
+		par -= countchr_not_quote(split.start[i], ')');
+	}
+}
+int paranthesis_parity_check(t_split split)
+{
+	int i;
+	int par;
+
+	i = 0;
+	par = 0;
+	while (i < split.size)
+	{
+		par += countchr_not_quote(split.start[i], '(');
 		par -= countchr_not_quote(split.start[i], ')');
 		i++;
 	}
+	if (par == 0)
+		return (1);
+	return (0);
 }
-
 // Parser for && and || with () priority
 void	parser_and_or(t_shell *shell, t_split split)
 {
@@ -142,6 +156,11 @@ void	parser_and_or(t_shell *shell, t_split split)
 
 	if (split.size <= 0 || split.start == NULL)
 		return ;
+	if (paranthesis_parity_check(split) == 0)
+	{
+		printf("paranthesis parity isn't correct\n");
+		return ;
+	}
 	if (check_single_par(split) != 0)
 	{
 		cut_out_par(&split);
