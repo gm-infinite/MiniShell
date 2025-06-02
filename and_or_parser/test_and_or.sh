@@ -110,7 +110,8 @@ test_case "1&&(2||3)&&4&&(5||6)&&7" "Alternating nested structure"
 test_case "1&&(2||3||(4&&5||(6&&7)))" "Complex nested fallback logic"
 test_case "((((1||2)&&3)||4)&&5)||(6&&7)" "Stress test for parser"
 test_case "1||(2&&(3||(4&&(5||(6&&(7))))))" "Deep hybrid nest"
-
+test_case "1&&(2||(3&&4&&5)&&7||8)||9&&10" "random stuff"
+test_case "1 && (2 ||( 3&&  4&&  5) &&7  ||8)   ||9  && 10" "random stuff"
 
 
 # ========== SUMMARY ==========
