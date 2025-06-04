@@ -6,7 +6,7 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/22 18:55:15 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/03/22 14:58:01 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/06/01 17:41:08 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,8 @@ int	countchr_str(char*str, char c)
 
 	j = 0;
 	count = 0;
+	if (str == NULL || *str == '\0')
+		return (0);
 	while (str[j] != '\0')
 	{
 		if (str[j] == c)
@@ -61,6 +63,8 @@ int	countchr_quote(char *str, char c)
 	j = 0;
 	count = 0;
 	inquote = 0;
+	if (str == NULL || *str == '\0')
+		return (0);
 	while (str[j] != '\0')
 	{
 		inquote ^= (str[j] == '\"' && inquote != 2);
