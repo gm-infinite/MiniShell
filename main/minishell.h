@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 10:53:30 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/06/02 15:08:43 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/06/04 21:51:06 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,8 @@ typedef struct s_shell
 	int		past_exit_status;
 	char	*current_input;
 	t_split	split_input;
-	pid_t	child_pid;
+	pid_t	*child_pids;
+	char	parent_or_child; //classify parent or child
 }			t_shell;
 
 void	safe_exit(t_shell *shell);

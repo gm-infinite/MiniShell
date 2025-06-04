@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 10:55:46 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/06/02 14:04:30 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/06/04 21:52:29 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,8 @@ void	shell_init(t_shell *shell)
 	shell->current_input = NULL;
 	shell->past_exit_status = 0;
 	shell->split_input = create_split(NULL, 0);
+	shell->child_pids = NULL;
+	shell->parent_or_child = 'p';
 }
 
 int	main(void)
