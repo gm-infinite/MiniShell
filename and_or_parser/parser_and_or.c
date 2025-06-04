@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_and_or.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:15:24 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/06/02 15:11:00 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/06/04 21:42:20 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,9 +59,9 @@ char	*get_cut_indexs(t_split split)
 		par += countchr_not_quote(split.start[i], '(');
 		if (par == 0)
 		{
-			if (strncmp("||", split.start[i], 3) == 0)
+			if (ft_strncmp("||", split.start[i], 3) == 0)
 				ret[check++] = '1';
-			else if (strncmp("&&", split.start[i], 3) == 0)
+			else if (ft_strncmp("&&", split.start[i], 3) == 0)
 				ret[check++] = '0';
 		}
 		par -= countchr_not_quote(split.start[i], ')');
@@ -83,8 +83,8 @@ void	parse_and_or(t_shell *shell, t_split split, char *c_i)
 	while (++i <= split.size)
 	{
 		par += countchr_not_quote(split.start[i], '(');
-		if ((par == 0) && ((i == split.size) || (strncmp("&&", split.start[i], \
-		4) == 0) || (strncmp("||", split.start[i], 4) == 0)))
+		if (par == 0 && (i == split.size || ft_strncmp("&&", split.start[i], \
+			4) == 0 || ft_strncmp("||", split.start[i], 4) == 0))
 		{
 			if (split.start[i] != NULL)
 				free(split.start[i]);
