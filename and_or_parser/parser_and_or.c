@@ -6,7 +6,7 @@
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:15:24 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/06/04 21:42:20 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/13 15:18:53 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,19 +82,22 @@ void	parse_and_or(t_shell *shell, t_split split, char *c_i)
 	check = -2;
 	while (++i <= split.size)
 	{
-		par += countchr_not_quote(split.start[i], '(');
+		if (i < split.size)
+			par += countchr_not_quote(split.start[i], '(');
 		if (par == 0 && (i == split.size || ft_strncmp("&&", split.start[i], \
-			4) == 0 || ft_strncmp("||", split.start[i], 4) == 0))
+			3) == 0 || ft_strncmp("||", split.start[i], 3) == 0))
 		{
-			if (split.start[i] != NULL)
+			if (i < split.size && split.start[i] != NULL)
 				free(split.start[i]);
-			split.start[i] = NULL;
+			if (i < split.size)
+				split.start[i] = NULL;
 			if (++check == -1 || (c_i[check] == '0' && shell->past_exit_status \
 			== 0) || (c_i[check] == '1' && shell->past_exit_status != 0))
 				parser_and_or(shell, create_split(&(split.start[st]), i - st));
 			st = i + 1;
 		}
-		par -= countchr_not_quote(split.start[i], ')');
+		if (i < split.size)
+			par -= countchr_not_quote(split.start[i], ')');
 	}
 }
 
@@ -141,5 +144,5 @@ void	parser_and_or(t_shell *shell, t_split split)
 		free(cut_indexs);
 	}
 	else
-		{/*executer*/}
+		shell->past_exit_status = execute_command(split, shell);
 }

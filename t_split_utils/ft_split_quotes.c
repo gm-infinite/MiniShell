@@ -6,7 +6,7 @@
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 16:30:24 by emgenc            #+#    #+#             */
-/*   Updated: 2025/04/08 19:48:15 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/13 16:32:57 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,51 +14,49 @@
 
 static int	count_tokens(const char *s, int *i, int *cnt)
 {
-	char	q;
+	unsigned char	quote_state;
 
 	while (s[*i])
 	{
-		while (s[*i] == ' ' || s[*i] == '\t')
+		while (s[*i] && (s[*i] == ' ' || s[*i] == '\t') && !quote_state)
 			(*i)++;
 		if (!s[*i])
 			break ;
 		(*cnt)++;
-		if (s[*i] == '\'' || s[*i] == '\"')
+		quote_state = 0;
+		while (s[*i])
 		{
-			q = s[(*i)++];
-			while (s[*i] && s[*i] != q)
-				(*i)++;
-			if (s[*i])
-				(*i)++;
+			if (s[*i] == '\'' && !(quote_state & 2))  // bit 1 (double quote) not set
+				quote_state ^= 1;  // XOR toggle bit 0 (single quote)
+			else if (s[*i] == '"' && !(quote_state & 1))  // bit 0 (single quote) not set
+				quote_state ^= 2;  // XOR toggle bit 1 (double quote)
+			else if ((s[*i] == ' ' || s[*i] == '\t') && !quote_state)
+				break;  // End of token when no quotes active
+			(*i)++;
 		}
-		else
-			while (s[*i] && s[*i] != ' ' && s[*i] != '\t')
-				(*i)++;
 	}
 	return (*cnt);
 }
 
-static void	quote_seperator(int *i, const char *s, char ***tab, int *j)
+static void	extract_token(int *i, const char *s, char ***tab, int *j)
 {
-	int		start;
-	char	q;
-
-	q = s[(*i)++];
-	start = (*i) - 1;
-	while (s[*i] && s[*i] != q)
-		(*i)++;
-	(*tab)[(*j)++] = ft_substr(s, start, (*i) - start + 1);
-	if (s[*i])
-		(*i)++;
-}
-
-static void	normal_splitter(int *i, const char *s, char ***tab, int *j)
-{
-	int	start;
+	int				start;
+	unsigned char	quote_state;
 
 	start = *i;
-	while (s[*i] && s[*i] != ' ' && s[*i] != '\t')
+	quote_state = 0;
+	
+	// Process the entire token (including quoted sections)
+	while (s[*i])
+	{
+		if (s[*i] == '\'' && !(quote_state & 2))  // bit 1 (double quote) not set
+			quote_state ^= 1;  // XOR toggle bit 0 (single quote)
+		else if (s[*i] == '"' && !(quote_state & 1))  // bit 0 (single quote) not set
+			quote_state ^= 2;  // XOR toggle bit 1 (double quote)
+		else if ((s[*i] == ' ' || s[*i] == '\t') && !quote_state)
+			break;  // End of token when no quotes active
 		(*i)++;
+	}
 	(*tab)[(*j)++] = ft_substr(s, start, (*i) - start);
 }
 
@@ -78,14 +76,12 @@ char	**ft_split_quotes(const char *s)
 	i = 0;
 	while (s[i])
 	{
-		while (s[i] == ' ' || s[i] == '\t')
+		// Skip whitespace when not inside quotes
+		while (s[i] && (s[i] == ' ' || s[i] == '\t'))
 			i++;
 		if (!s[i])
 			break ;
-		if (s[i] == '\'' || s[i] == '\"')
-			quote_seperator(&i, s, &tab, &j);
-		else
-			normal_splitter(&i, s, &tab, &j);
+		extract_token(&i, s, &tab, &j);
 	}
 	tab[j] = NULL;
 	return (tab);
