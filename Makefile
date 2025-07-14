@@ -6,16 +6,17 @@
 #    By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/13 12:36:09 by kuzyilma          #+#    #+#              #
-#    Updated: 2025/07/14 15:04:43 by emgenc           ###   ########.fr        #
+#    Updated: 2025/07/14 18:14:29 by emgenc           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 MAIN_SRC = main.c main_utils.c signals.c environment.c builtins.c executor.c globals.c pipes.c redirections.c quotes.c
-SPLIT_SRC = t_split_utils.c ft_split_quotes.c
+SPLIT_SRC = t_split_utils.c ft_split_quotes.c t_split_utils2.c
 AOPSR_SRC = parser_and_or.c and_or_utils.c parser_and_or2.c
 SOA_SRC = sep_opt_arg/sep_opt_arg.c
+WILDCARD_SRC = wildcard_handle.c wildcard_filter.c wildcard_filter2.c wildcard_utils.c
 
-SRC = $(addprefix main/, $(MAIN_SRC)) $(addprefix t_split_utils/, $(SPLIT_SRC)) $(addprefix and_or_parser/, $(AOPSR_SRC)) $(SOA_SRC)
+SRC = $(addprefix main/, $(MAIN_SRC)) $(addprefix t_split_utils/, $(SPLIT_SRC)) $(addprefix and_or_parser/, $(AOPSR_SRC)) $(SOA_SRC) $(addprefix wildcard_handle/, $(WILDCARD_SRC))
 
 CC = cc
 CFLAGS = -Wall -Werror -Wextra

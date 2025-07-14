@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 10:53:30 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/07/13 09:28:59 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/14 18:38:26 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -751,6 +751,15 @@ char	*expand_variables_quoted(char *str, t_shell *shell);
 char	**split_to_args(t_split split);
 
 /*
+** REVERT_SPLIT_STR - Split Structure to String Converter
+** Converts a t_split structure back to a single string with tokens
+** separated by spaces, useful for reconstructing processed input.
+** @split: Token structure to convert
+** @returns: String with space-separated tokens (newly allocated)
+*/
+char	*revert_split_str(t_split split);
+
+/*
 ** FREE_ARGS - Argument Array Cleanup
 ** Properly deallocates a null-terminated string array including all
 ** individual strings and the array itself.
@@ -775,5 +784,23 @@ char	*find_executable(char *cmd, t_shell *shell);
 ** @args: NULL-terminated string array to compact in-place
 */
 void	compact_args(char **args);
+
+/*
+** ────────────────────────────────────────────────────────────────────────────
+**                           WILDCARD EXPANSION SUBSYSTEM
+** ────────────────────────────────────────────────────────────────────────────
+** File pattern matching and globbing with * wildcard support.
+*/
+
+/*
+** WILDCARD_INPUT_MODIFY - Wildcard Expansion Engine
+** Processes input string to expand wildcard patterns (*) to matching filenames
+** in the current directory. Handles quote-aware expansion to prevent expansion
+** of wildcards within quotes.
+** @current_input: Input string potentially containing wildcard patterns
+** @shell: Shell context for variable expansion in quoted sections
+** @returns: Modified string with wildcards expanded to matching files (or original if no matches)
+*/
+char	*wildcard_input_modify(char *current_input, t_shell *shell);
 
 #endif  /* MINISHELL_H */

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 10:55:46 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/07/13 16:17:55 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/14 18:38:26 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -255,6 +255,16 @@ static void	start_shell(t_shell *shell)
 			else
 			{
 				// COMMAND PROCESSING PIPELINE: Parse and execute valid input
+				
+				// STEP 0: Wildcard expansion
+				// Process wildcard patterns (*) before other parsing operations
+				// This expands patterns like "*.c" to matching filenames
+				char *expanded_input = wildcard_input_modify(shell->current_input, shell);
+				if (expanded_input && expanded_input != shell->current_input)
+				{
+					free(shell->current_input);
+					shell->current_input = expanded_input;
+				}
 				
 				// STEP 1: Option and argument separation
 				// Processes input to separate command options from arguments
