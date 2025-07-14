@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strlen.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 12:28:32 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/13 07:10:18 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/05/10 20:30:38 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@ size_t	ft_strlen(const char *s)
 {
 	const char	*str;
 
+	if (s == NULL || *s == '\0')
+		return (0);
 	str = s;
 	while (*str)
 		str++;
