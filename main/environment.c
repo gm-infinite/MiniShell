@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   environment.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 00:00:00 by user              #+#    #+#             */
-/*   Updated: 2025/07/13 19:52:25 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/16 20:58:00 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,18 @@
 */
 
 #include "minishell.h"
+
+typedef struct s_expand
+{
+	char	*result;
+	char	*var_start;
+	char	*var_end;
+	char	*var_name;
+	char	*var_value;
+	char	*expanded;
+	int		indx;
+	int		var_len;
+}	t_expand;
 
 /*
 ** ============================================================================
@@ -113,236 +125,86 @@ char	*get_env_value(char *var_name, t_shell *shell)
 	return (NULL);
 }
 
-int	set_env_var(char *var_name, char *value, t_shell *shell)
-{
-	int		i;
-	int		len;
-	char	*eq_pos;
-	char	**new_envp;
 
-	if (!var_name || !value)
-		return (1);
-	len = ft_strlen(var_name);
-	i = 0;
-	while (shell->envp[i])
-	{
-		eq_pos = ft_strchr(shell->envp[i], '=');
-		if (eq_pos && (eq_pos - shell->envp[i]) == len)
-		{
-			if (ft_strncmp(shell->envp[i], var_name, len) == 0)
-			{
-				char *temp = ft_strjoin(var_name, "=");
-				if (!temp)
-					return (1);
-				free(shell->envp[i]);
-				shell->envp[i] = ft_strjoin(temp, value);
-				free(temp);
-				if (!shell->envp[i])
-					return (1);
-				return (0);
-			}
-		}
-		i++;
-	}
-	new_envp = malloc(sizeof(char *) * (i + 2));
-	if (!new_envp)
-		return (1);
-	ft_memcpy(new_envp, shell->envp, sizeof(char *) * i);
-	char *temp = ft_strjoin(var_name, "=");
-	if (!temp)
-	{
-		free(new_envp);
-		return (1);
-	}
-	new_envp[i] = ft_strjoin(temp, value);
+int replace_var_with_value(t_expand* holder, t_shell *shell, int flag)
+{
+	char *before;
+	char *after;
+	char *temp;
+	
+	(void)shell;
+	before = ft_substr(holder->result, 0, holder->indx);
+	if (flag == 1)
+		after = ft_strdup(&holder->result[holder->indx + 2]);
+	else
+		after = ft_strdup(holder->var_end);
+	temp = ft_strjoin(before, holder->var_value);
+	holder->expanded = ft_strjoin(temp, after);
+	free(before);
+	free(after);
 	free(temp);
-	if (!new_envp[i])
+	if (!holder->expanded)
 	{
-		free(new_envp);
-		return (1);
+		free(holder->var_value);
+		return 0;
 	}
-	new_envp[i + 1] = NULL;
-	free(shell->envp);
-	shell->envp = new_envp;
-	return (0);
+	holder->var_len = ft_strlen(holder->var_value);
+	free(holder->result);
+	free(holder->var_value);
+	holder->result = holder->expanded;
+	holder->indx += holder->var_len;
+	return 1;
 }
 
-
-int	unset_env_var(char *var_name, t_shell *shell)
+int handle_question_mark(t_expand *holder, t_shell *shell)
 {
-	int		i;
-	int		j;
-	int		len;
-	int		count;
-	char	*eq_pos;
-	char	**new_envp;
-
-	if (!var_name || !shell->envp)
-		return (1);
-	
-	len = ft_strlen(var_name);
-	count = 0;
-	while (shell->envp[count])
-		count++;
-	
-	// Find and remove the variable
-	i = 0;
-	while (shell->envp[i])
-	{
-		eq_pos = ft_strchr(shell->envp[i], '=');
-		if (eq_pos && (eq_pos - shell->envp[i]) == len)
-		{
-			if (ft_strncmp(shell->envp[i], var_name, len) == 0)
-			{
-				// Found variable to remove
-				new_envp = malloc(sizeof(char *) * count);
-				if (!new_envp)
-					return (1);
-				
-				// Copy all except the one to remove
-				j = 0;
-				while (j < i)
-				{
-					new_envp[j] = shell->envp[j];
-					j++;
-				}
-				free(shell->envp[i]); // Free the removed variable
-				while (j < count - 1)
-				{
-					new_envp[j] = shell->envp[j + 1];
-					j++;
-				}
-				new_envp[j] = NULL;
-				
-				free(shell->envp);
-				shell->envp = new_envp;
-				return (0);
-			}
-		}
-		i++;
-	}
-	return (1); // Variable not found
+	holder->var_value = ft_itoa(shell->past_exit_status);
+	if (!holder->var_value)
+		return 0 ;
+	if(!replace_var_with_value(holder, shell, 1))
+		return 0 ;
+	return 1;
 }
 
-/*
-** Expand environment variables in a string
-** Handles $VAR and $? expansion
-*/
 char	*expand_variables(char *str, t_shell *shell)
 {
-	char	*result;
-	char	*var_start;
-	char	*var_end;
-	char	*var_name;
-	char	*var_value;
-	char	*expanded;
-	int		i;
-	int		var_len;
+	t_expand	holder;
 
 	if (!str)
 		return (NULL);
-	
-	result = ft_strdup(str);
-	if (!result)
+	holder.result = ft_strdup(str);
+	if (!holder.result)
 		return (NULL);
-	
-	i = 0;
-	while (result[i])
+	holder.indx = 0;
+	while (holder.result[holder.indx])
 	{
-		if (result[i] == '$')
+		if (holder.result[holder.indx] == '$')
 		{
-			var_start = &result[i + 1];
-			
-			// Handle $? special case
-			if (*var_start == '?')
+			holder.var_start = &holder.result[holder.indx + 1];
+			if (*holder.var_start == '?')
 			{
-				var_value = ft_itoa(shell->past_exit_status);
-				if (!var_value)
-					break;
-				
-				// Replace $? with exit status
-				char *before = ft_substr(result, 0, i);
-				char *after = ft_strdup(&result[i + 2]);
-				char *temp = ft_strjoin(before, var_value);
-				expanded = ft_strjoin(temp, after);
-				free(before);
-				free(after);
-				free(temp);
-				if (!expanded)
-				{
-					free(var_value);
-					break;
-				}
-				
-				var_len = ft_strlen(var_value);
-				free(result);
-				free(var_value);
-				result = expanded;
-				i += var_len;
-				continue;
+				if(!handle_question_mark(&holder, shell))
+					break ;
+				continue ;
 			}
-			
-			// Find end of variable name
-			var_end = var_start;
-			while (*var_end && (ft_isalnum(*var_end) || *var_end == '_'))
-				var_end++;
-			
-			if (var_end > var_start)
+			holder.var_end = holder.var_start;
+			while (*(holder.var_end) && (ft_isalnum(*(holder.var_end)) || *(holder.var_end) == '_'))
+				holder.var_end++;
+			if (holder.var_end > holder.var_start)
 			{
-				// Extract variable name
-				var_name = ft_substr(var_start, 0, var_end - var_start);
-				if (!var_name)
+				holder.var_name = ft_substr(holder.var_start, 0, holder.var_end - holder.var_start);
+				if (!holder.var_name)
 					break;
-				
-				// Get variable value
-				var_value = get_env_value(var_name, shell);
-				if (!var_value)
-					var_value = ""; // Empty string if variable doesn't exist
-				
-				// Replace $VAR with value
-				char *before = ft_substr(result, 0, i);
-				char *after = ft_strdup(var_end);
-				char *temp = ft_strjoin(before, var_value);
-				expanded = ft_strjoin(temp, after);
-				free(before);
-				free(after);
-				free(temp);
-				if (!expanded)
-				{
-					free(var_name);
+				holder.var_value = get_env_value(holder.var_name, shell);
+				if (!holder.var_value)
+					holder.var_value = ""; // Empty string if variable doesn't exist
+				if (!replace_var_with_value(&holder, shell, 0))
 					break;
-				}
-				
-				var_len = ft_strlen(var_value);
-				free(result);
-				free(var_name);
-				result = expanded;
-				i += var_len;
 				continue;
 			}
 		}
-		i++;
+		holder.indx++;
 	}
-	
-	return (result);
+	return (holder.result);
 }
 
-/*
-** Free all environment variables
-*/
-void	free_environment(t_shell *shell)
-{
-	int	i;
-
-	if (!shell->envp)
-		return ;
-	
-	i = 0;
-	while (shell->envp[i])
-	{
-		free(shell->envp[i]);
-		i++;
-	}
-	free(shell->envp);
-	shell->envp = NULL;
-}

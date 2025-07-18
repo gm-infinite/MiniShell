@@ -3,20 +3,37 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+         #
+#    By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/13 12:36:09 by kuzyilma          #+#    #+#              #
-#    Updated: 2025/07/14 18:14:29 by emgenc           ###   ########.fr        #
+#    Updated: 2025/07/18 22:03:44 by emgenc           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-MAIN_SRC = main.c main_utils.c signals.c environment.c builtins.c executor.c globals.c pipes.c redirections.c quotes.c
+# Source files organized by functionality
+MAIN_SRC = main.c main_utils.c environment.c
+BUILTIN_SRC = builtin_utils.c cd.c echo.c env.c exit.c export.c pwd.c unset.c
+EXECUTE_SRC = execute.c exec_utils.c signal.c
+PIPES_SRC = pipes.c count_pipes.c split_by_pipes.c
+REDIR_SRC = redirections.c heredoc.c redir_utils.c
+PARSER_SRC = quotes.c
 SPLIT_SRC = t_split_utils.c ft_split_quotes.c t_split_utils2.c
 AOPSR_SRC = parser_and_or.c and_or_utils.c parser_and_or2.c
-SOA_SRC = sep_opt_arg/sep_opt_arg.c
+SOA_SRC = sep_opt_arg.c
 WILDCARD_SRC = wildcard_handle.c wildcard_filter.c wildcard_filter2.c wildcard_utils.c
+GLOBAL_SRC = global.c
 
-SRC = $(addprefix main/, $(MAIN_SRC)) $(addprefix t_split_utils/, $(SPLIT_SRC)) $(addprefix and_or_parser/, $(AOPSR_SRC)) $(SOA_SRC) $(addprefix wildcard_handle/, $(WILDCARD_SRC))
+SRC = $(addprefix main/, $(MAIN_SRC)) \
+      $(addprefix builtin_cmd/, $(BUILTIN_SRC)) \
+      $(addprefix execute/, $(EXECUTE_SRC)) \
+      $(addprefix execute/pipes/, $(PIPES_SRC)) \
+      $(addprefix execute/redirections/, $(REDIR_SRC)) \
+      $(addprefix parser/, $(PARSER_SRC)) \
+      $(addprefix parser/t_split_utils/, $(SPLIT_SRC)) \
+      $(addprefix parser/and_or_parser/, $(AOPSR_SRC)) \
+      $(addprefix parser/sep_opt_arg/, $(SOA_SRC)) \
+      $(addprefix parser/wildcard_handle/, $(WILDCARD_SRC)) \
+      $(addprefix global/, $(GLOBAL_SRC))
 
 CC = cc
 CFLAGS = -Wall -Werror -Wextra
@@ -27,6 +44,9 @@ OSRC = $(SRC:.c=.o)
 NAME = minishell
 
 all: $(NAME)
+
+bonus: $(OSRC) $(LIBFT)
+	$(CC) $(CFLAGS) $(OSRC) $(LIBFT) $(LFLAGS) -o minishell_bonus
 
 $(LIBFT):
 	make all -C e-libft/
