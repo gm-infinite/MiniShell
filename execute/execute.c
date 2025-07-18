@@ -227,6 +227,7 @@ int	execute_single_command(char **args, t_shell *shell)
 		i++;
 	}
 	
+	compact_args(args);
 	// PHASE 3: Quote processing
 	// Remove quotes and process escape sequences
 	// This happens after variable expansion to preserve expansion context
@@ -235,7 +236,6 @@ int	execute_single_command(char **args, t_shell *shell)
 	// PHASE 3.5: Argument compaction
 	// Remove empty strings from arguments array (from undefined variable expansion)
 	// This shifts remaining arguments to fill gaps (e.g., "$EMPTY echo hi" -> "echo hi")
-	compact_args(args);
 	
 	// PHASE 3.6: Empty command validation after compaction
 	// Check if we have any arguments left after compaction
@@ -897,13 +897,13 @@ void	execute_pipe_child_with_redirections(t_split cmd, int cmd_index, int **pipe
 		i++;
 	}
 	
+	compact_args(args);
 	// PHASE 8: Quote processing
 	// Remove quotes and process escape sequences in arguments
 	// This happens after variable expansion to preserve expansion context
 	process_args_quotes(args, shell);
 	
 	// Compact arguments to remove empty strings from variable expansion
-	compact_args(args);
 	
 	// PHASE 8.5: Empty command validation after compaction
 	// Check if command became empty after variable expansion and compaction

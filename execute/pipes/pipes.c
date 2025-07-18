@@ -575,8 +575,8 @@ void	execute_pipe_child(t_split cmd, int cmd_index, int **pipes, int cmd_count, 
 		}
 		i++;  // Continue to next argument
 	}
-	process_args_quotes(args, shell);
 	compact_args(args);
+	process_args_quotes(args, shell);
 	
 	// PHASE 6.5: EMPTY COMMAND VALIDATION
 	// Check if command became empty after variable expansion and compaction

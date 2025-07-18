@@ -373,10 +373,10 @@ int	execute_with_redirections(t_split split, t_shell *shell)
 	}
 	
 	// Process quotes after variable expansion
+	compact_args(args);
 	process_args_quotes(args, shell);
 	
 	// Compact arguments to remove empty strings from variable expansion
-	compact_args(args);
 	
 	// Check for empty command after variable expansion and compaction
 	if (!args[0])
