@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 13:36:19 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/19 08:07:33 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/19 15:20:02 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,56 @@ int	set_env_var(char *var_name, char *value, t_shell *shell)
 	free(shell->envp);
 	shell->envp = new_envp;
 	return (0);
+}
+
+int	append_env_var(char *var_name, char *value, t_shell *shell)
+{
+	int		i;
+	int		len;
+	char	*eq_pos;
+	char	*current_value;
+	char	*new_value;
+
+	if (!var_name || !value)
+		return (1);
+	len = ft_strlen(var_name);
+	i = 0;
+	while (shell->envp[i])
+	{
+		eq_pos = ft_strchr(shell->envp[i], '=');
+		if (eq_pos && (eq_pos - shell->envp[i]) == len)
+		{
+			if (ft_strncmp(shell->envp[i], var_name, len) == 0)
+			{
+				// Variable exists, append to it
+				current_value = ft_strdup(eq_pos + 1);
+				if (!current_value)
+					return (1);
+				new_value = ft_strjoin(current_value, value);
+				free(current_value);
+				if (!new_value)
+					return (1);
+				
+				char *temp = ft_strjoin(var_name, "=");
+				if (!temp)
+				{
+					free(new_value);
+					return (1);
+				}
+				free(shell->envp[i]);
+				shell->envp[i] = ft_strjoin(temp, new_value);
+				free(temp);
+				free(new_value);
+				if (!shell->envp[i])
+					return (1);
+				return (0);
+			}
+		}
+		i++;
+	}
+	
+	// Variable doesn't exist, create it with the value
+	return (set_env_var(var_name, value, shell));
 }
 
 int	builtin_export(char **args, t_shell *shell)
@@ -139,33 +189,67 @@ int	builtin_export(char **args, t_shell *shell)
 		eq_pos = ft_strchr(args[i], '=');
 		if (eq_pos)
 		{
-			// name=value format - extract and validate name
-			var_name = ft_substr(args[i], 0, eq_pos - args[i]);
-			if (!var_name)
+			// Check if it's += syntax
+			if (eq_pos > args[i] && *(eq_pos - 1) == '+')
 			{
-				i++;
-				continue;
-			}
-			
-			// Validate variable name
-			if (!is_valid_var_name(var_name))
-			{
-				// Print error message to stderr like bash
-				write(STDERR_FILENO, "export: `", 9);
-				write(STDERR_FILENO, args[i], ft_strlen(args[i]));
-				write(STDERR_FILENO, "': not a valid identifier\n", 26);
+				// name+=value format - extract and validate name
+				var_name = ft_substr(args[i], 0, eq_pos - args[i] - 1);
+				if (!var_name)
+				{
+					i++;
+					continue;
+				}
+				
+				// Validate variable name
+				if (!is_valid_var_name(var_name))
+				{
+					// Print error message to stderr like bash
+					write(STDERR_FILENO, "export: `", 9);
+					write(STDERR_FILENO, args[i], ft_strlen(args[i]));
+					write(STDERR_FILENO, "': not a valid identifier\n", 26);
+					free(var_name);
+					i++;
+					exit_status = 1;  // Set error exit status for this command
+					continue;
+				}
+				
+				var_value = ft_strdup(eq_pos + 1);
+				if (var_value)
+					append_env_var(var_name, var_value, shell);
+				
 				free(var_name);
-				i++;
-				exit_status = 1;  // Set error exit status for this command
-				continue;
+				free(var_value);
 			}
-			
-			var_value = ft_strdup(eq_pos + 1);
-			if (var_value)
-				set_env_var(var_name, var_value, shell);
-			
-			free(var_name);
-			free(var_value);
+			else
+			{
+				// name=value format - extract and validate name
+				var_name = ft_substr(args[i], 0, eq_pos - args[i]);
+				if (!var_name)
+				{
+					i++;
+					continue;
+				}
+				
+				// Validate variable name
+				if (!is_valid_var_name(var_name))
+				{
+					// Print error message to stderr like bash
+					write(STDERR_FILENO, "export: `", 9);
+					write(STDERR_FILENO, args[i], ft_strlen(args[i]));
+					write(STDERR_FILENO, "': not a valid identifier\n", 26);
+					free(var_name);
+					i++;
+					exit_status = 1;  // Set error exit status for this command
+					continue;
+				}
+				
+				var_value = ft_strdup(eq_pos + 1);
+				if (var_value)
+					set_env_var(var_name, var_value, shell);
+				
+				free(var_name);
+				free(var_value);
+			}
 		}
 		else
 		{

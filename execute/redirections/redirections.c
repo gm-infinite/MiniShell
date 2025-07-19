@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirections.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 14:15:09 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/19 08:07:33 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/19 17:15:40 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,7 +117,7 @@ void redirection_fail_procedure(int *input_fd, int *output_fd, int *stderr_fd)
 	}
 }
 
-char	**parse_redirections(t_split split, int *input_fd, int *output_fd, int *stderr_fd)
+char	**parse_redirections(t_split split, int *input_fd, int *output_fd, int *stderr_fd, t_shell *shell)
 {
 	char	**args;              // Initial argument array from tokenization
 	char	**clean_args;        // Clean argument array without redirection syntax
@@ -219,15 +219,24 @@ char	**parse_redirections(t_split split, int *input_fd, int *output_fd, int *std
 			}
 			
 			// QUOTE PROCESSING: Remove quotes from filename before file operations
-			char *processed_filename = remove_quotes_for_redirection(args[filename_index]);
-			if (!processed_filename)
+			char *quoted_removed = remove_quotes_for_redirection(args[filename_index]);
+			if (!quoted_removed)
 			{
-				processed_filename = ft_strdup(args[filename_index]);  // Fallback to copy of original
-				if (!processed_filename)
+				quoted_removed = ft_strdup(args[filename_index]);  // Fallback to copy of original
+				if (!quoted_removed)
 				{
 					redirection_failed = 1;
 					break;
 				}
+			}
+			
+			// ENVIRONMENT VARIABLE EXPANSION: Expand any environment variables in filename
+			char *processed_filename = expand_variables(quoted_removed, shell);
+			free(quoted_removed);  // Clean up intermediate result
+			if (!processed_filename)
+			{
+				redirection_failed = 1;
+				break;
 			}
 			
 			// REDIRECTION TYPE DISPATCH: Process based on operator type
@@ -347,7 +356,7 @@ int	execute_with_redirections(t_split split, t_shell *shell)
 	int		i;
 
 	// Parse redirections and get clean arguments
-	args = parse_redirections(split, &input_fd, &output_fd, &stderr_fd);
+	args = parse_redirections(split, &input_fd, &output_fd, &stderr_fd, shell);
 	if (!args)
 		return (1);
 	
@@ -441,6 +450,15 @@ int	execute_with_redirections(t_split split, t_shell *shell)
 	}
 	else
 	{
+		// Check for empty command name (like "")
+		// This should be treated as "command not found" not "is a directory"
+		if (args[0][0] == '\0')
+		{
+			write(STDERR_FILENO, ": command not found\n", 20);
+			free_args(args);
+			return (127);
+		}
+		
 		// For external commands, handle in child process
 		char *executable = find_executable(args[0], shell);
 		if (!executable)
@@ -473,8 +491,15 @@ int	execute_with_redirections(t_split split, t_shell *shell)
 				close(stderr_fd);
 			}
 			
-			execve(executable, args, shell->envp);
+			char **filtered_args = filter_empty_args(args);
+			if (!filtered_args)
+			{
+				perror("filter_empty_args");
+				exit(127);
+			}
+			execve(executable, filtered_args, shell->envp);
 			perror("execve");
+			free_args(filtered_args);
 			exit(127);
 		}
 		else

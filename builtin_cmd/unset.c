@@ -6,7 +6,7 @@
 /*   By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 13:35:56 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/16 20:58:00 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/19 15:37:43 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,26 @@ int	builtin_unset(char **args, t_shell *shell)
 	i = 1;
 	while (args[i])
 	{
-		unset_env_var(args[i], shell);
+		// Check for invalid options (starting with -)
+		if (args[i][0] == '-')
+		{
+			// Handle bash-style error message for invalid options
+			write(STDERR_FILENO, "bash: unset: ", 13);
+			write(STDERR_FILENO, args[i], ft_strlen(args[i]));
+			write(STDERR_FILENO, ": invalid option\n", 17);
+			write(STDERR_FILENO, "unset: usage: unset [-f] [-v] [-n] [name ...]\n", 47);
+			shell->past_exit_status = 2;
+			return (2);
+		}
+		
+		// Only attempt to unset if it's a valid variable name
+		// Invalid names are silently ignored (bash behavior)
+		if (is_valid_var_name(args[i]))
+		{
+			unset_env_var(args[i], shell);
+		}
+		// Note: bash silently ignores invalid variable names, no error message
+		
 		i++;
 	}
 	

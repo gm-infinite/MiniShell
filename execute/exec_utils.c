@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 13:40:47 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/19 11:45:37 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/19 17:15:40 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,23 +23,89 @@ char	**split_to_args(t_split split)
 {
 	char	**args;
 	int		i;
+	int		j;
 
 	args = malloc(sizeof(char *) * (split.size + 1));
 	if (!args)
 		return (NULL);
 	i = 0;
+	j = 0;
 	while (i < split.size)
 	{
-		args[i] = ft_strdup(split.start[i]);
-		if (!args[i])
+		if (split.start[i] && split.start[i][0] != '\0')
 		{
-			free_args(args);
-			return (NULL);
+			// Skip arguments that are only whitespace
+			int k = 0;
+			while (split.start[i][k] && (split.start[i][k] == ' ' || split.start[i][k] == '\t'))
+				k++;
+			if (split.start[i][k] == '\0')
+			{
+				i++;
+				continue;
+			}
+			
+			args[j] = ft_strdup(split.start[i]);
+			if (!args[j])
+			{
+				free_args(args);
+				return (NULL);
+			}
+			j++;
 		}
 		i++;
 	}
-	args[i] = NULL;
+	args[j] = NULL;
 	return (args);
+}
+
+/**
+ * Filters out empty strings from a char** array before execve
+ * Returns a new array with empty arguments removed
+ */
+char	**filter_empty_args(char **args)
+{
+	int		count;
+	int		i;
+	int		j;
+	char	**filtered;
+
+	if (!args)
+		return (NULL);
+	
+	// Count non-empty arguments
+	count = 0;
+	i = 0;
+	while (args[i])
+	{
+		if (args[i][0] != '\0')
+			count++;
+		i++;
+	}
+	
+	// Allocate new array
+	filtered = malloc(sizeof(char *) * (count + 1));
+	if (!filtered)
+		return (NULL);
+	
+	// Copy non-empty arguments
+	i = 0;
+	j = 0;
+	while (args[i])
+	{
+		if (args[i][0] != '\0')
+		{
+			filtered[j] = ft_strdup(args[i]);
+			if (!filtered[j])
+			{
+				free_args(filtered);
+				return (NULL);
+			}
+			j++;
+		}
+		i++;
+	}
+	filtered[j] = NULL;
+	return (filtered);
 }
 
 /**

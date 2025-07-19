@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_and_or.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:15:24 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/07/19 11:45:37 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/19 15:37:43 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -203,7 +203,8 @@ int	check_parentheses_syntax_errors(t_split split)
 		if (ft_strchr(split.start[i], ')') && split.start[i + 1] && 
 			!ft_strchr(split.start[i + 1], '(') && 
 			ft_strncmp(split.start[i + 1], "&&", 3) != 0 && 
-			ft_strncmp(split.start[i + 1], "||", 3) != 0)
+			ft_strncmp(split.start[i + 1], "||", 3) != 0 &&
+			ft_strncmp(split.start[i + 1], "|", 2) != 0)
 		{
 			write(STDERR_FILENO, "bash: syntax error near unexpected token `", 42);
 			write(STDERR_FILENO, split.start[i + 1], ft_strlen(split.start[i + 1]));

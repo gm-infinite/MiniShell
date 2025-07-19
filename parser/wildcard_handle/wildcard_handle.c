@@ -23,7 +23,8 @@ static int	count_dir_entries(const char *directory)
 	count = 0;
 	while (entry != NULL)
 	{
-		count++;
+		if (entry->d_name[0] != '\0')
+			count++;
 		entry = readdir(dir);
 	}
 	closedir(dir);
@@ -47,8 +48,11 @@ static t_split	get_cur_dir_entries(const char *direc)
 	i = 0;
 	while (entry != NULL)
 	{
-		cur_dir_ent.start[i] = ft_strdup(entry->d_name);
-		i++;
+		if (entry->d_name[0] != '\0')
+		{
+			cur_dir_ent.start[i] = ft_strdup(entry->d_name);
+			i++;
+		}
 		entry = readdir(dir);
 	}
 	closedir(dir);
@@ -70,7 +74,7 @@ static char	*wildcard_handle(char *wildcard, t_shell *shell)
 	apply_filter(cur_dir, check_list, wildcard, shell);
 	while (i < cur_dir.size)
 	{
-		if (check_list[i] == '1')
+		if (check_list[i] == '1' && cur_dir.start[i] && cur_dir.start[i][0] != '\0')
 			ret = ft_strjoin_sq_f(&ret, cur_dir.start[i]);
 		i++;
 	}

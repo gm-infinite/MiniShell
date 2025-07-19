@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipes.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 15:24:56 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/18 21:07:11 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/19 17:15:40 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -211,10 +211,17 @@ int	execute_pipe_command(t_split cmd, int input_fd, int output_fd, t_shell *shel
 		}
 		
 		// COMMAND EXECUTION: Replace child process with target command
-		if (execve(executable, args, shell->envp) == -1)
+		char **filtered_args = filter_empty_args(args);
+		if (!filtered_args)
+		{
+			perror("filter_empty_args");
+			exit(127);
+		}
+		if (execve(executable, filtered_args, shell->envp) == -1)
 		{
 			// EXEC FAILURE: Command exists but cannot be executed
 			perror("execve");
+			free_args(filtered_args);
 			exit(127);
 		}
 		// execve() only returns on failure - successful exec never returns
@@ -601,8 +608,15 @@ void	execute_pipe_child(t_split cmd, int cmd_index, int **pipes, int cmd_count, 
 		}
 		
 		// PROCESS REPLACEMENT: Replace child with target command
-		execve(executable, args, shell->envp);
+		char **filtered_args = filter_empty_args(args);
+		if (!filtered_args)
+		{
+			perror("filter_empty_args");
+			exit(127);
+		}
+		execve(executable, filtered_args, shell->envp);
 		perror("execve");
+		free_args(filtered_args);
 		exit(127);
 	}
 	// This point should never be reached in normal execution

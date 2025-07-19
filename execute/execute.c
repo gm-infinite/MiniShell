@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 13:50:25 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/19 08:07:33 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/19 17:15:40 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -241,6 +241,16 @@ int	execute_single_command(char **args, t_shell *shell)
 	// Check if we have any arguments left after compaction
 	if (!args[0])
 		return (0);         // Empty command is a successful no-op (matches bash behavior)
+	
+	// PHASE 3.7: Empty command name validation
+	// Check if the command name is an empty string (like "")
+	// This should be treated as "command not found" not "is a directory"
+	if (args[0][0] == '\0')
+	{
+		write(STDERR_FILENO, ": command not found\n", 20);
+		return (127);       // Empty command name is command not found
+	}
+	
 	if (is_builtin(args[0]))
 		return (execute_builtin(args, shell));
 	executable = find_executable(args[0], shell);
@@ -300,11 +310,19 @@ int	execute_single_command(char **args, t_shell *shell)
 		
 		// Execute the command using execve system call
 		// This replaces the child process image with the new program
-		if (execve(executable, args, shell->envp) == -1)
+		char **filtered_args = filter_empty_args(args);
+		if (!filtered_args)
+		{
+			perror("filter_empty_args");
+			free(executable);
+			exit(127);
+		}
+		if (execve(executable, filtered_args, shell->envp) == -1)
 		{
 			// execve failed - report error and exit with standard error code
 			perror("execve");
 			free(executable);
+			free_args(filtered_args);
 			exit(127);      // Standard exit code for exec failure
 		}
 		// execve never returns on success - child process is replaced
@@ -845,7 +863,7 @@ void	execute_pipe_child_with_redirections(t_split cmd, int cmd_index, int **pipe
 	// Parse command for redirection operators and extract clean arguments
 	// This function may modify input_fd, output_fd, and stderr_fd based on
 	// redirection operators found in the command arguments
-	args = parse_redirections(cmd, &input_fd, &output_fd, &stderr_fd);
+	args = parse_redirections(cmd, &input_fd, &output_fd, &stderr_fd, shell);
 	if (!args)
 		exit(1);        // Redirection parsing failed - exit child process
 	
@@ -923,6 +941,14 @@ void	execute_pipe_child_with_redirections(t_split cmd, int cmd_index, int **pipe
 		exit(0);  // Empty command is successful no-op
 	}
 	
+	// Check for empty command name (like "")
+	if (args[0][0] == '\0')
+	{
+		write(STDERR_FILENO, ": command not found\n", 20);
+		free_args(args);
+		exit(127);  // Empty command name is command not found
+	}
+	
 	// PHASE 9: Command execution dispatch
 	// Determine execution path based on command type and execute
 	if (is_builtin(args[0]))
@@ -946,10 +972,17 @@ void	execute_pipe_child_with_redirections(t_split cmd, int cmd_index, int **pipe
 		}
 		
 		// Execute the resolved command
-		execve(executable, args, shell->envp);
+		char **filtered_args = filter_empty_args(args);
+		if (!filtered_args)
+		{
+			perror("filter_empty_args");
+			exit(127);
+		}
+		execve(executable, filtered_args, shell->envp);
 		
 		// If execve returns, it failed - report error and exit
 		perror("execve");
+		free_args(filtered_args);
 		exit(127);          // Standard exit code for exec failure
 	}
 }

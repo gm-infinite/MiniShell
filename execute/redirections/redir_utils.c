@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redir_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 13:52:11 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/19 08:07:33 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/19 15:37:43 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,20 @@ int	validate_redirection_syntax(t_split split)
 	int	i;
 	int	redirect_type;
 	int	numbered_redirect;
+	int	has_parentheses = 0;
+
+	// Check if command contains parentheses - if so, skip pipe validation
+	// as parentheses will be processed first and may resolve apparent pipe issues
+	i = 0;
+	while (i < split.size)
+	{
+		if (ft_strchr(split.start[i], '(') || ft_strchr(split.start[i], ')'))
+		{
+			has_parentheses = 1;
+			break;
+		}
+		i++;
+	}
 
 	i = 0;
 	while (i < split.size)
@@ -115,11 +129,16 @@ int	validate_redirection_syntax(t_split split)
 		}
 		else if (ft_strncmp(split.start[i], "|", 2) == 0 && ft_strlen(split.start[i]) == 1)
 		{
-			// Check for pipe syntax errors
-			if (i == 0 || i == split.size - 1)
+			// Skip pipe syntax validation if parentheses are present
+			// as they will be processed first and may resolve the pipe context
+			if (!has_parentheses)
 			{
-				write(STDERR_FILENO, "bash: syntax error near unexpected token `|'\n", 45);
-				return (2);
+				// Check for pipe syntax errors
+				if (i == 0 || i == split.size - 1)
+				{
+					write(STDERR_FILENO, "bash: syntax error near unexpected token `|'\n", 45);
+					return (2);
+				}
 			}
 			i++;
 		}

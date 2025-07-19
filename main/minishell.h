@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 10:53:30 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/07/19 11:45:37 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/19 17:15:40 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,7 +150,7 @@ int		is_numbered_redirection(char *num_token, char *redir_token);
 int		validate_redirection_syntax(t_split split);
 char	*remove_quotes_for_redirection(char *str);
 int		handle_here_doc(char *delimiter, int *pipe_fd);
-char	**parse_redirections(t_split split, int *input_fd, int *output_fd, int *stderr_fd);
+char	**parse_redirections(t_split split, int *input_fd, int *output_fd, int *stderr_fd, t_shell *shell);
 int		execute_with_redirections(t_split split, t_shell *shell);
 
 /*
@@ -171,6 +171,7 @@ char	*expand_variables_quoted(char *str, t_shell *shell);
 ** General-purpose utility functions for common operations
 */
 char	**split_to_args(t_split split);
+char	**filter_empty_args(char **args);
 char	*revert_split_str(t_split split);
 void	free_args(char **args);
 char	*find_executable(char *cmd, t_shell *shell);
