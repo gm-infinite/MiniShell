@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   quotes.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 00:00:00 by user              #+#    #+#             */
-/*   Updated: 2025/07/16 20:58:00 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/19 11:45:37 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -264,6 +264,7 @@ char	*expand_variables_quoted(char *str, t_shell *shell)
 	char	*var_name;
 	char	*var_value;
 	char	*expanded;
+	char	*tilde_expanded;
 	int		i;
 	int		in_single;
 	int		in_double;
@@ -272,9 +273,12 @@ char	*expand_variables_quoted(char *str, t_shell *shell)
 	if (!str)
 		return (NULL);
 	
-	result = ft_strdup(str);
-	if (!result)
+	// Handle tilde expansion first
+	tilde_expanded = expand_tilde(str, shell);
+	if (!tilde_expanded)
 		return (NULL);
+	
+	result = tilde_expanded;  // Use tilde-expanded string as base
 	
 	i = 0;
 	in_single = 0;
@@ -333,8 +337,13 @@ char	*expand_variables_quoted(char *str, t_shell *shell)
 			
 			// Find end of variable name
 			var_end = var_start;
-			while (*var_end && (ft_isalnum(*var_end) || *var_end == '_'))
-				var_end++;
+			
+			// Check if this is a valid variable name (can't start with digit)
+			if (*var_start && (ft_isalpha(*var_start) || *var_start == '_'))
+			{
+				while (*var_end && (ft_isalnum(*var_end) || *var_end == '_'))
+					var_end++;
+			}
 			
 			if (var_end > var_start)
 			{

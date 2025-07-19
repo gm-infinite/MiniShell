@@ -6,7 +6,7 @@
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:15:24 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/07/18 21:56:50 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/19 11:45:37 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,6 +131,90 @@ int	paranthesis_parity_check(t_split split)
 	return (0);
 }
 
+// Check for syntax errors in logical operators
+int	check_operator_syntax_errors(t_split split)
+{
+	int i;
+	
+	// Check for incomplete operators at the end
+	if (split.size > 0)
+	{
+		char *last_token = split.start[split.size - 1];
+		if (ft_strncmp(last_token, "&&", 3) == 0 || ft_strncmp(last_token, "||", 3) == 0)
+		{
+			write(STDERR_FILENO, "bash: syntax error: unexpected end of file\n", 44);
+			return (0);  // Syntax error found
+		}
+	}
+	
+	// Check for consecutive operators
+	for (i = 0; i < split.size - 1; i++)
+	{
+		if ((ft_strncmp(split.start[i], "&&", 3) == 0 || ft_strncmp(split.start[i], "||", 3) == 0) &&
+			(ft_strncmp(split.start[i + 1], "&&", 3) == 0 || ft_strncmp(split.start[i + 1], "||", 3) == 0))
+		{
+			write(STDERR_FILENO, "bash: syntax error near unexpected token `", 42);
+			write(STDERR_FILENO, split.start[i + 1], ft_strlen(split.start[i + 1]));
+			write(STDERR_FILENO, "'\n", 2);
+			return (0);  // Syntax error found
+		}
+	}
+	
+	return (1);  // No syntax errors
+}
+
+// Check for parentheses syntax errors  
+int	check_parentheses_syntax_errors(t_split split)
+{
+	int i;
+	
+	// Check for empty parentheses within tokens or adjacent tokens
+	for (i = 0; i < split.size; i++)
+	{
+		// Check for "()" within a single token
+		if (ft_strnstr(split.start[i], "()", ft_strlen(split.start[i])))
+		{
+			write(STDERR_FILENO, "bash: syntax error near unexpected token `)'\n", 45);
+			return (0);
+		}
+		
+		// Check for consecutive "(" ")" tokens  
+		if (i < split.size - 1)
+		{
+			if (ft_strncmp(split.start[i], "(", 2) == 0 && ft_strncmp(split.start[i + 1], ")", 2) == 0)
+			{
+				write(STDERR_FILENO, "bash: syntax error near unexpected token `)'\n", 45);
+				return (0);
+			}
+		}
+	}
+	
+	// Check for adjacent parenthetical groups
+	for (i = 0; i < split.size - 1; i++)
+	{
+		// Look for ) followed by (
+		if (ft_strchr(split.start[i], ')') && ft_strchr(split.start[i + 1], '('))
+		{
+			write(STDERR_FILENO, "bash: syntax error near unexpected token `('\n", 45);
+			return (0);
+		}
+		
+		// Look for ) followed by command
+		if (ft_strchr(split.start[i], ')') && split.start[i + 1] && 
+			!ft_strchr(split.start[i + 1], '(') && 
+			ft_strncmp(split.start[i + 1], "&&", 3) != 0 && 
+			ft_strncmp(split.start[i + 1], "||", 3) != 0)
+		{
+			write(STDERR_FILENO, "bash: syntax error near unexpected token `", 42);
+			write(STDERR_FILENO, split.start[i + 1], ft_strlen(split.start[i + 1]));
+			write(STDERR_FILENO, "'\n", 2);
+			return (0);
+		}
+	}
+	
+	return (1);  // No syntax errors
+}
+
 // Parser for && and || with () priority
 void	parser_and_or(t_shell *shell, t_split split)
 {
@@ -138,9 +222,25 @@ void	parser_and_or(t_shell *shell, t_split split)
 
 	if (split.size <= 0 || split.start == NULL)
 		return ;
+		
+	// Check for operator syntax errors first
+	if (!check_operator_syntax_errors(split))
+	{
+		shell->past_exit_status = 2;  // Bash uses exit code 2 for syntax errors
+		return ;
+	}
+	
+	// Check for parentheses syntax errors
+	if (!check_parentheses_syntax_errors(split))
+	{
+		shell->past_exit_status = 2;  // Bash uses exit code 2 for syntax errors
+		return ;
+	}
+	
 	if (paranthesis_parity_check(split) == 0)
 	{
-		printf("paranthesis parity isn't correct\n");
+		write(STDERR_FILENO, "bash: syntax error: unexpected end of file\n", 44);
+		shell->past_exit_status = 2;
 		return ;
 	}
 	if (check_single_par(split) != 0)

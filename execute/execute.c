@@ -6,7 +6,7 @@
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 13:50:25 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/18 21:56:56 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/19 08:07:33 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -439,11 +439,21 @@ int	execute_command(t_split split, t_shell *shell)
 	int		exit_status;    // Command execution result
 	int		has_pipes;      // Number of pipe operators found
 	int		has_redir;      // Boolean: redirections present
+	int		syntax_error;   // Syntax validation result
 
 	// PHASE 1: Empty command optimization
 	// Handle empty commands efficiently without overhead
 	if (split.size == 0)
 		return (0);         // Empty command is successful no-op
+	
+	// PHASE 1.5: Syntax validation
+	// Check for syntax errors before processing
+	syntax_error = validate_redirection_syntax(split);
+	if (syntax_error != 0)
+	{
+		shell->past_exit_status = syntax_error;
+		return (syntax_error);
+	}
 	
 	// PHASE 2: Command feature detection
 	// Analyze command structure to determine execution requirements

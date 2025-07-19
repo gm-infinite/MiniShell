@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 13:40:47 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/16 20:58:00 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/19 11:45:37 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,11 +127,33 @@ char	*find_executable(char *cmd, t_shell *shell)
 		return (NULL);                // File doesn't exist at specified path
 	}
 	
+	// PHASE 1.5: Special handling for directory names without path separators
+	// Commands like ".." should be treated as "command not found" in bash
+	// Only check if it's a directory that exists in current dir but has no execute permission
+	if (access(cmd, F_OK) == 0)
+	{
+		struct stat file_stat;
+		if (stat(cmd, &file_stat) == 0 && S_ISDIR(file_stat.st_mode))
+		{
+			// For pure directory names like "..", ".", return NULL to trigger "command not found"
+			// This matches bash behavior where ".." gives "command not found"
+			if ((ft_strncmp(cmd, "..", 3) == 0 && ft_strlen(cmd) == 2) || 
+				(ft_strncmp(cmd, ".", 2) == 0 && ft_strlen(cmd) == 1))
+				return (NULL);
+		}
+	}
+	
 	// PHASE 2: PATH environment variable resolution
 	// Retrieve PATH environment variable for directory search
 	path_env = get_env_value("PATH", shell);
 	if (!path_env)
-		return (NULL);    // No PATH variable means no executable resolution
+	{
+		// When PATH is unset, check current directory (bash behavior)
+		// This allows commands like "ls" to work when cd'ed to /bin and PATH is unset
+		if (access(cmd, F_OK) == 0)
+			return (ft_strdup(cmd));
+		return (NULL);    // No PATH variable and not in current directory
+	}
 	
 	// Split PATH into individual directory components
 	// PATH format: "/usr/bin:/bin:/usr/local/bin:..."

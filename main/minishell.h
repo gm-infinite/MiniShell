@@ -6,7 +6,7 @@
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 10:53:30 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/07/18 20:16:46 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/19 11:45:37 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,7 @@ void	cut_out_par(t_split *split);
 ** Dynamic environment management with variable expansion and modification support
 */
 char	*expand_variables(char *str, t_shell *shell);
+char	*expand_tilde(char *str, t_shell *shell);
 char	*get_env_value(char *var_name, t_shell *shell);
 void	init_environment(t_shell *shell, char **envp);
 void	free_environment(t_shell *shell);
@@ -146,6 +147,7 @@ void	execute_pipe_child_with_redirections(t_split cmd, int cmd_index, int **pipe
 int		is_redirection(char *token);
 int		has_redirections(t_split split);
 int		is_numbered_redirection(char *num_token, char *redir_token);
+int		validate_redirection_syntax(t_split split);
 char	*remove_quotes_for_redirection(char *str);
 int		handle_here_doc(char *delimiter, int *pipe_fd);
 char	**parse_redirections(t_split split, int *input_fd, int *output_fd, int *stderr_fd);

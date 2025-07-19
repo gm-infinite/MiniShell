@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   environment.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 00:00:00 by user              #+#    #+#             */
-/*   Updated: 2025/07/16 20:58:00 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/19 11:45:37 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,7 +126,7 @@ char	*get_env_value(char *var_name, t_shell *shell)
 }
 
 
-int replace_var_with_value(t_expand* holder, t_shell *shell, int flag)
+int replace_var_with_value(t_expand* holder, t_shell *shell, int flag, int should_free_value)
 {
 	char *before;
 	char *after;
@@ -145,12 +145,14 @@ int replace_var_with_value(t_expand* holder, t_shell *shell, int flag)
 	free(temp);
 	if (!holder->expanded)
 	{
-		free(holder->var_value);
+		if (should_free_value)
+			free(holder->var_value);
 		return 0;
 	}
 	holder->var_len = ft_strlen(holder->var_value);
 	free(holder->result);
-	free(holder->var_value);
+	if (should_free_value)
+		free(holder->var_value);
 	holder->result = holder->expanded;
 	holder->indx += holder->var_len;
 	return 1;
@@ -161,20 +163,52 @@ int handle_question_mark(t_expand *holder, t_shell *shell)
 	holder->var_value = ft_itoa(shell->past_exit_status);
 	if (!holder->var_value)
 		return 0 ;
-	if(!replace_var_with_value(holder, shell, 1))
+	if(!replace_var_with_value(holder, shell, 1, 1))  // should_free_value = 1 for ft_itoa result
 		return 0 ;
 	return 1;
+}
+
+/**
+ * Expand tilde (~) to home directory
+ * Returns new string if expansion needed, or original string if not
+ */
+char	*expand_tilde(char *str, t_shell *shell)
+{
+	char	*home;
+
+	if (!str || str[0] != '~')
+		return (ft_strdup(str));
+		
+	// Handle ~ at beginning
+	if (str[0] == '~' && (str[1] == '\0' || str[1] == '/'))
+	{
+		home = get_env_value("HOME", shell);
+		if (home)
+		{
+			if (str[1] == '\0')
+				return (ft_strdup(home));
+			else
+				return (ft_strjoin(home, &str[1]));
+		}
+	}
+	
+	return (ft_strdup(str));
 }
 
 char	*expand_variables(char *str, t_shell *shell)
 {
 	t_expand	holder;
+	char		*tilde_expanded;
 
 	if (!str)
 		return (NULL);
-	holder.result = ft_strdup(str);
-	if (!holder.result)
+		
+	// Handle tilde expansion first
+	tilde_expanded = expand_tilde(str, shell);
+	if (!tilde_expanded)
 		return (NULL);
+	
+	holder.result = tilde_expanded;  // Use tilde-expanded string as base
 	holder.indx = 0;
 	while (holder.result[holder.indx])
 	{
@@ -187,20 +221,30 @@ char	*expand_variables(char *str, t_shell *shell)
 					break ;
 				continue ;
 			}
-			holder.var_end = holder.var_start;
-			while (*(holder.var_end) && (ft_isalnum(*(holder.var_end)) || *(holder.var_end) == '_'))
-				holder.var_end++;
-			if (holder.var_end > holder.var_start)
+			
+			// Check if this is a valid variable name (can't start with digit)
+			if (*holder.var_start && (ft_isalpha(*holder.var_start) || *holder.var_start == '_'))
 			{
-				holder.var_name = ft_substr(holder.var_start, 0, holder.var_end - holder.var_start);
-				if (!holder.var_name)
-					break;
-				holder.var_value = get_env_value(holder.var_name, shell);
-				if (!holder.var_value)
-					holder.var_value = ""; // Empty string if variable doesn't exist
-				if (!replace_var_with_value(&holder, shell, 0))
-					break;
-				continue;
+				holder.var_end = holder.var_start;
+				while (*(holder.var_end) && (ft_isalnum(*(holder.var_end)) || *(holder.var_end) == '_'))
+					holder.var_end++;
+				
+				if (holder.var_end > holder.var_start)
+				{
+					holder.var_name = ft_substr(holder.var_start, 0, holder.var_end - holder.var_start);
+					if (!holder.var_name)
+						break;
+					holder.var_value = get_env_value(holder.var_name, shell);
+					if (!holder.var_value)
+						holder.var_value = ""; // Empty string if variable doesn't exist
+					if (!replace_var_with_value(&holder, shell, 0, 0))  // should_free_value = 0 for env strings
+					{
+						free(holder.var_name);  // Clean up allocated variable name
+						break;
+					}
+					free(holder.var_name);  // Clean up allocated variable name after successful replacement
+					continue;
+				}
 			}
 		}
 		holder.indx++;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirections.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 14:15:09 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/16 20:58:00 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/19 08:07:33 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -222,7 +222,12 @@ char	**parse_redirections(t_split split, int *input_fd, int *output_fd, int *std
 			char *processed_filename = remove_quotes_for_redirection(args[filename_index]);
 			if (!processed_filename)
 			{
-				processed_filename = args[filename_index];  // Fallback to original
+				processed_filename = ft_strdup(args[filename_index]);  // Fallback to copy of original
+				if (!processed_filename)
+				{
+					redirection_failed = 1;
+					break;
+				}
 			}
 			
 			// REDIRECTION TYPE DISPATCH: Process based on operator type
