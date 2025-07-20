@@ -6,7 +6,7 @@
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 10:53:30 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/07/20 12:36:22 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/20 13:02:00 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,6 +139,10 @@ t_split	process_parentheses_in_split(t_split cmd, t_shell *shell);
 int		execute_pipe_command(t_split cmd, int input_fd, int output_fd, t_shell *shell, int **all_pipes, int pipe_count);
 void	execute_pipe_child(t_split cmd, int cmd_index, int **pipes, int cmd_count, t_shell *shell);
 void	execute_pipe_child_with_redirections(t_split cmd, int cmd_index, int **pipes, int cmd_count, t_shell *shell);
+int		has_parentheses_in_split(t_split split);
+int		check_pipe_error(t_split split, int i, int has_parentheses);
+int		check_redirection_error(t_split split, int i);
+char	*remove_quotes_for_redirection(char *str);
 
 /*
 ** ────────────────────────────────────────────────────────────────────────────
