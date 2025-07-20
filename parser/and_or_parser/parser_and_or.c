@@ -12,7 +12,6 @@
 
 #include "../../main/minishell.h"
 
-// Cuts out the outermost (). New string == empty? Remove it from 'split'
 void	cut_out_par(t_split *split)
 {
 	char	*start;
@@ -42,33 +41,30 @@ void	cut_out_par(t_split *split)
 
 void	parse_and_or(t_shell *shell, t_split split, char *c_i)
 {
-	int	i;
-	int	par;
-	int	st;
-	int	check;
+	int	vars[4];
 
-	i = -1;
-	par = 0;
-	st = 0;
-	check = -2;
-	while (++i <= split.size)
+	init_parse_vars(vars);
+	while (++vars[2] <= split.size)
 	{
-		if (i < split.size)
-			par += countchr_not_quote(split.start[i], '(');
-		if (par == 0 && (i == split.size || ft_strncmp("&&", split.start[i], \
-			3) == 0 || ft_strncmp("||", split.start[i], 3) == 0))
+		if (vars[2] < split.size)
+			vars[1] += countchr_not_quote(split.start[vars[2]], '(');
+		if (vars[1] == 0 && (vars[2] == split.size
+				|| ft_strncmp("&&", split.start[vars[2]], 3) == 0
+				|| ft_strncmp("||", split.start[vars[2]], 3) == 0))
 		{
-			if (i < split.size && split.start[i] != NULL)
-				free(split.start[i]);
-			if (i < split.size)
-				split.start[i] = NULL;
-			if (++check == -1 || (c_i[check] == '0' && shell->past_exit_status \
-			== 0) || (c_i[check] == '1' && shell->past_exit_status != 0))
-				parser_and_or(shell, create_split(&(split.start[st]), i - st));
-			st = i + 1;
+			if (vars[2] < split.size && split.start[vars[2]] != NULL)
+				free(split.start[vars[2]]);
+			if (vars[2] < split.size)
+				split.start[vars[2]] = NULL;
+			if (++vars[3] == -1 || (c_i[vars[3]] == '0'
+					&& shell->past_exit_status == 0) || (c_i[vars[3]] == '1'
+					&& shell->past_exit_status != 0))
+				parser_and_or(shell, create_split(&(split.start[vars[0]]),
+						vars[2] - vars[0]));
+			vars[0] = vars[2] + 1;
 		}
-		if (i < split.size)
-			par -= countchr_not_quote(split.start[i], ')');
+		if (vars[2] < split.size)
+			vars[1] -= countchr_not_quote(split.start[vars[2]], ')');
 	}
 }
 
@@ -78,19 +74,10 @@ void	parser_and_or(t_shell *shell, t_split split)
 
 	if (split.size <= 0 || split.start == NULL)
 		return ;
-	if (!check_operator_syntax_errors(split) || !check_parentheses_syntax_errors(split) || paranthesis_parity_check(split) == 0)
-	{
-		if (paranthesis_parity_check(split) == 0)
-			write(STDERR_FILENO, "bash: syntax error: unexpected end of file1\n", 44);
-		shell->past_exit_status = 2;
+	if (handle_syntax_validation(shell, split))
 		return ;
-	}
-	if (check_single_par(split) != 0)
-	{
-		cut_out_par(&split);
-		parser_and_or(shell, split);
+	if (handle_parentheses_processing(shell, &split))
 		return ;
-	}
 	if (count_str_split(split, "||", 1) + count_str_split(split, "&&", 1) > 0)
 	{
 		cut_indexs = get_cut_indexs(split);

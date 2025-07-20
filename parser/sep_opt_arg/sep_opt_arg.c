@@ -50,8 +50,9 @@ static int	get_sep_size(char *un_sep)
 		{
 			if (ft_strncmp(&(un_sep[i]), get_opt(j), 1 + (j < 4)) == 0)
 			{
-				extra += (i > 0 && un_sep[i - 1] != ' ') + \
-				(un_sep[i + 1 + (j < 4)] != '\0' && un_sep[i + 1 + (j < 4)] != ' ');
+				extra += (i > 0 && un_sep[i - 1] != ' ')
+					+ (un_sep[i + 1 + (j < 4)] != '\0'
+						&& un_sep[i + 1 + (j < 4)] != ' ');
 				break ;
 			}
 			j++;
@@ -63,30 +64,30 @@ static int	get_sep_size(char *un_sep)
 
 static void	set_sep(char *sep, char *un_sep, int sep_size)
 {
-	int	i;
-	int	offset;
-	int	j;
+	int	vars[3];
 
-	i = 0;
-	offset = 0;
-	while (un_sep[i] != '\0')
+	vars[0] = 0;
+	vars[1] = 0;
+	while (un_sep[vars[0]] != '\0')
 	{
-		j = -1;
-		while (get_inquote(un_sep, i) == 0 && ++j < 7)
+		vars[2] = -1;
+		while (get_inquote(un_sep, vars[0]) == 0 && ++vars[2] < 7)
 		{
-			if (ft_strncmp(&(un_sep[i]), get_opt(j), 1 + (j < 4)) == 0)
+			if (ft_strncmp(&(un_sep[vars[0]]), get_opt(vars[2]),
+					1 + (vars[2] < 4)) == 0)
 			{
-				if (i > 0 && un_sep[i - 1] != ' ')
-					sep[i + offset++] = ' ';
-				ft_strlcat(sep, get_opt(j), sep_size);
-				if (un_sep[i + 1 + (j < 4)] != '\0' && un_sep[i + 1 + (j < 4)] != ' ')
-					sep[i + 1 + (j < 4) + offset++] = ' ';
+				if (vars[0] > 0 && un_sep[vars[0] - 1] != ' ')
+					sep[vars[0] + vars[1]++] = ' ';
+				ft_strlcat(sep, get_opt(vars[2]), sep_size);
+				if (un_sep[vars[0] + 1 + (vars[2] < 4)] != '\0'
+					&& un_sep[vars[0] + 1 + (vars[2] < 4)] != ' ')
+					sep[vars[0] + 1 + (vars[2] < 4) + vars[1]++] = ' ';
 				break ;
 			}
 		}
-		if (j > 6 || get_inquote(un_sep, i) != 0)
-			sep[i + offset] = un_sep[i];
-		i += 1 + (j < 4 && get_inquote(un_sep, i) == 0);
+		if (vars[2] > 6 || get_inquote(un_sep, vars[0]) != 0)
+			sep[vars[0] + vars[1]] = un_sep[vars[0]];
+		vars[0] += 1 + (vars[2] < 4 && get_inquote(un_sep, vars[0]) == 0);
 	}
 }
 

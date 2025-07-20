@@ -74,7 +74,8 @@ static char	*wildcard_handle(char *wildcard, t_shell *shell)
 	apply_filter(cur_dir, check_list, wildcard, shell);
 	while (i < cur_dir.size)
 	{
-		if (check_list[i] == '1' && cur_dir.start[i] && cur_dir.start[i][0] != '\0')
+		if (check_list[i] == '1' && cur_dir.start[i]
+			&& cur_dir.start[i][0] != '\0')
 			ret = ft_strjoin_sq_f(&ret, cur_dir.start[i]);
 		i++;
 	}

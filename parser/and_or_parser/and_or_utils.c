@@ -12,7 +12,6 @@
 
 #include "../../main/minishell.h"
 
-// Look for exact match of 'find' in split array. If flag == 1, ignore ().
 int	check_symbol(t_split split, char *find, int flag)
 {
 	int	count;
@@ -34,8 +33,7 @@ int	check_symbol(t_split split, char *find, int flag)
 	return (-2);
 }
 
-// Counts the amount of char 'c' in string "str".
-int	countchr_str(char*str, char c)
+int	countchr_str(char *str, char c)
 {
 	int	j;
 	int	count;
@@ -53,7 +51,6 @@ int	countchr_str(char*str, char c)
 	return (count);
 }
 
-// Counts the char c in string str only if its in "..."
 int	countchr_quote(char *str, char c)
 {
 	int	j;
@@ -76,13 +73,11 @@ int	countchr_quote(char *str, char c)
 	return (count);
 }
 
-// Counts the char 'c' in "str" ONLY if it's NOT in quotes.
-int	countchr_not_quote(char*str, char c)
+int	countchr_not_quote(char *str, char c)
 {
 	return (countchr_str(str, c) - countchr_quote(str, c));
 }
 
-// Checks the outermost parantheses are for each other or not.
 int	check_single_par(t_split split)
 {
 	char	*start;
@@ -90,8 +85,9 @@ int	check_single_par(t_split split)
 
 	start = split.start[0];
 	end = split.start[split.size - 1];
-	if (start[0] == '(' && end[ft_strlen(end) - 1] == ')' && \
-	check_symbol(split, "||", 1) < 0 && check_symbol(split, "&&", 1) < 0)
+	if (start[0] == '(' && end[ft_strlen(end) - 1] == ')'
+		&& check_symbol(split, "||", 1) < 0
+		&& check_symbol(split, "&&", 1) < 0)
 		return (1);
 	return (0);
 }

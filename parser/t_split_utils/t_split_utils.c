@@ -39,7 +39,6 @@ t_split	create_split(char **start, int size)
 	return (ret);
 }
 
-// Creates a t_split struct from a string using ft_split_quotes and counts elements.
 t_split	create_split_str(char *str)
 {
 	t_split	ret;
@@ -75,7 +74,6 @@ void	free_split(t_split *split)
 	split->size = 0;
 }
 
-//returns a array of string from split with malloc. it isnt tested. I thought it would be useful
 void	rearrange_split(t_split *split)
 {
 	int	i;

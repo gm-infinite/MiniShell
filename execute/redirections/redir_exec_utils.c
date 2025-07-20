@@ -12,7 +12,7 @@
 
 #include "../../main/minishell.h"
 
-static int	save_and_redirect_builtin(int input_fd, int output_fd, 
+static int	save_and_redirect_builtin(int input_fd, int output_fd,
 								int stderr_fd, int *saved_fds)
 {
 	saved_fds[0] = -1;

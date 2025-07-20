@@ -12,7 +12,6 @@
 
 #include "../../main/minishell.h"
 
-// counts exact str in split's str array . if flag = 1 doesn't paranthesis
 int	count_str_split(t_split split, const char *str, int flag)
 {
 	int	i;

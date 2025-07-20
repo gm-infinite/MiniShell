@@ -6,7 +6,7 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 22:45:00 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/20 23:46:49 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/07/21 00:38:17 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,13 @@
 
 void	print_pipe_error(void)
 {
-	write(STDERR_FILENO, 
+	write(STDERR_FILENO,
 		"bash: syntax error near unexpected token `|'\n", 45);
 }
 
 void	print_newline_error(void)
 {
-	write(STDERR_FILENO, 
+	write(STDERR_FILENO,
 		"bash: syntax error near unexpected token `newline'\n", 52);
 }
 

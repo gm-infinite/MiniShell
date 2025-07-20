@@ -39,7 +39,7 @@ static void	copy_env_entries(t_shell *shell, char **new_envp, int remove_index,
 		{
 			free(shell->envp[k]);
 			k++;
-			continue;
+			continue ;
 		}
 		new_envp[j] = shell->envp[k];
 		j++;

@@ -47,7 +47,7 @@ void	compact_args(char **args)
 	int	write_pos;
 
 	if (!args)
-		return;
+		return ;
 	read_pos = 0;
 	write_pos = 0;
 	while (args[read_pos])

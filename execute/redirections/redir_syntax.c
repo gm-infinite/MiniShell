@@ -54,6 +54,31 @@ char	*remove_quotes_for_redirection(char *str)
 	return (result);
 }
 
+static int	handle_redirection_token(t_split split, int *i)
+{
+	int	err;
+
+	err = check_redirection_error(split, *i);
+	if (err)
+		return (err);
+	*i += 1;
+	return (0);
+}
+
+static int	handle_pipe_token(t_split split, int i, int has_parentheses)
+{
+	int	err;
+
+	if (ft_strncmp(split.start[i], "|", 2) == 0
+		&& ft_strlen(split.start[i]) == 1)
+	{
+		err = check_pipe_error(split, i, has_parentheses);
+		if (err)
+			return (err);
+	}
+	return (0);
+}
+
 int	validate_redirection_syntax(t_split split)
 {
 	int	i;
@@ -68,18 +93,13 @@ int	validate_redirection_syntax(t_split split)
 		redirect_type = is_redirection(split.start[i]);
 		if (redirect_type)
 		{
-			err = check_redirection_error(split, i);
-			if (err)
-				return (err);
-			i += 1;
-		}
-		if (ft_strncmp(split.start[i], "|", 2) == 0
-			&& ft_strlen(split.start[i]) == 1)
-		{
-			err = check_pipe_error(split, i, has_parentheses);
+			err = handle_redirection_token(split, &i);
 			if (err)
 				return (err);
 		}
+		err = handle_pipe_token(split, i, has_parentheses);
+		if (err)
+			return (err);
 	}
 	return (0);
 }

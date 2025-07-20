@@ -53,7 +53,7 @@ void	process_variable_expansion(char **args, t_shell *shell)
 	process_args_quotes(args, shell);
 }
 
-int	check_empty_command_after_expansion(char **args, int input_fd, 
+int	check_empty_command_after_expansion(char **args, int input_fd,
 										int output_fd, int stderr_fd)
 {
 	if (!args[0])

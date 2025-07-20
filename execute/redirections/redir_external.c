@@ -56,11 +56,28 @@ static int	wait_for_child_exit(pid_t pid)
 	return (exit_status);
 }
 
+static void	execute_child_process(t_redir_exec_context *ctx, char *executable)
+{
+	char	**filtered_args;
+
+	setup_child_signals();
+	setup_child_redirections(ctx->input_fd, ctx->output_fd, ctx->stderr_fd);
+	filtered_args = filter_empty_args(ctx->args);
+	if (!filtered_args)
+	{
+		perror("filter_empty_args");
+		exit(127);
+	}
+	execve(executable, filtered_args, ctx->shell->envp);
+	perror("execve");
+	free_args(filtered_args);
+	exit(127);
+}
+
 int	execute_external_with_redirect(t_redir_exec_context *ctx)
 {
 	char		*executable;
 	pid_t		pid;
-	char		**filtered_args;
 
 	executable = find_executable(ctx->args[0], ctx->shell);
 	if (!executable)
@@ -71,21 +88,7 @@ int	execute_external_with_redirect(t_redir_exec_context *ctx)
 	}
 	pid = fork();
 	if (pid == 0)
-	{
-		setup_child_signals();
-		setup_child_redirections(ctx->input_fd, ctx->output_fd,
-			ctx->stderr_fd);
-		filtered_args = filter_empty_args(ctx->args);
-		if (!filtered_args)
-		{
-			perror("filter_empty_args");
-			exit(127);
-		}
-		execve(executable, filtered_args, ctx->shell->envp);
-		perror("execve");
-		free_args(filtered_args);
-		exit(127);
-	}
+		execute_child_process(ctx, executable);
 	close_parent_fds(ctx->input_fd, ctx->output_fd, ctx->stderr_fd);
 	free(executable);
 	return (wait_for_child_exit(pid));
