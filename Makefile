@@ -6,7 +6,7 @@
 #    By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/13 12:36:09 by kuzyilma          #+#    #+#              #
-#    Updated: 2025/07/18 22:03:44 by emgenc           ###   ########.fr        #
+#    Updated: 2025/07/19 23:31:25 by emgenc           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,11 +14,11 @@
 MAIN_SRC = main.c main_utils.c environment.c
 BUILTIN_SRC = builtin_utils.c cd.c echo.c env.c exit.c export.c pwd.c unset.c
 EXECUTE_SRC = execute.c exec_utils.c signal.c
-PIPES_SRC = pipes.c count_pipes.c split_by_pipes.c
+PIPES_SRC = pipes.c count_pipes.c split_by_pipes.c execute_pipe_command.c execute_pipe_child.c
 REDIR_SRC = redirections.c heredoc.c redir_utils.c
 PARSER_SRC = quotes.c
 SPLIT_SRC = t_split_utils.c ft_split_quotes.c t_split_utils2.c
-AOPSR_SRC = parser_and_or.c and_or_utils.c parser_and_or2.c
+AOPSR_SRC = parser_and_or.c and_or_utils.c parser_and_or2.c syntax.c
 SOA_SRC = sep_opt_arg.c
 WILDCARD_SRC = wildcard_handle.c wildcard_filter.c wildcard_filter2.c wildcard_utils.c
 GLOBAL_SRC = global.c

@@ -6,7 +6,7 @@
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 00:00:00 by user              #+#    #+#             */
-/*   Updated: 2025/07/19 11:45:37 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/19 22:30:14 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,40 +73,23 @@
 */
 int	check_quotes(char *str)
 {
-	int		i;              // Character position iterator
-	int		single_open;    // Single quote state: 0=closed, 1=open
-	int		double_open;    // Double quote state: 0=closed, 1=open
+	int		i;
+	int		single_open;
+	int		double_open;
 
-	// NULL POINTER PROTECTION
-	// Treat NULL input as valid (no quotes to validate)
 	if (!str)
 		return (1);
-	
-	// INITIALIZE QUOTE STATE MACHINE
-	// Start with all quotes in closed state
 	i = 0;
 	single_open = 0;
 	double_open = 0;
-	
-	// QUOTE STATE TRACKING LOOP
-	// Process each character to maintain quote state
 	while (str[i])
 	{
-		// SINGLE QUOTE HANDLING
-		// Toggle single quote state only when not inside double quotes
 		if (str[i] == '\'' && !double_open)
 			single_open = !single_open;
-			
-		// DOUBLE QUOTE HANDLING  
-		// Toggle double quote state only when not inside single quotes
 		else if (str[i] == '"' && !single_open)
 			double_open = !double_open;
-			
 		i++;  // Advance to next character
 	}
-	
-	// VALIDATION RESULT
-	// Return true only if both quote types are properly closed
 	return (single_open == 0 && double_open == 0);
 }
 

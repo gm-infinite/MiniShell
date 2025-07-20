@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 10:53:30 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/07/19 17:15:40 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/19 23:31:07 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,8 @@ int		check_symbol(t_split split, char *find, int flag);
 void	sep_opt_arg(t_shell *shell);
 int		count_str_split(t_split split, const char *str, int flag);
 void	cut_out_par(t_split *split);
+int		check_operator_syntax_errors(t_split split);
+int		check_parentheses_syntax_errors(t_split split);
 
 /*
 ** ────────────────────────────────────────────────────────────────────────────
