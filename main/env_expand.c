@@ -6,56 +6,11 @@
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 14:00:00 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/20 16:52:01 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/20 18:41:56 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-typedef struct s_expand
-{
-	char	*result;
-	char	*var_start;
-	char	*var_end;
-	char	*var_name;
-	char	*var_value;
-	char	*expanded;
-	int		indx;
-	int		var_len;
-}	t_expand;
-
-static int	replace_var_with_value(t_expand *holder, t_shell *shell,
-							int flag, int should_free_value)
-{
-	char	*before;
-	char	*after;
-	char	*temp;
-
-	(void)shell;
-	before = ft_substr(holder->result, 0, holder->indx);
-	if (flag == 1)
-		after = ft_strdup(&holder->result[holder->indx + 2]);
-	else
-		after = ft_strdup(holder->var_end);
-	temp = ft_strjoin(before, holder->var_value);
-	holder->expanded = ft_strjoin(temp, after);
-	free(before);
-	free(after);
-	free(temp);
-	if (!holder->expanded)
-	{
-		if (should_free_value)
-			free(holder->var_value);
-		return (0);
-	}
-	holder->var_len = ft_strlen(holder->var_value);
-	free(holder->result);
-	if (should_free_value)
-		free(holder->var_value);
-	holder->result = holder->expanded;
-	holder->indx += holder->var_len;
-	return (1);
-}
 
 static int	handle_question_mark(t_expand *holder, t_shell *shell)
 {
@@ -67,27 +22,7 @@ static int	handle_question_mark(t_expand *holder, t_shell *shell)
 	return (1);
 }
 
-char	*expand_tilde(char *str, t_shell *shell)
-{
-	char	*home;
-
-	if (!str || str[0] != '~')
-		return (ft_strdup(str));
-	if (str[0] == '~' && (str[1] == '\0' || str[1] == '/'))
-	{
-		home = get_env_value("HOME", shell);
-		if (home)
-		{
-			if (str[1] == '\0')
-				return (ft_strdup(home));
-			else
-				return (ft_strjoin(home, &str[1]));
-		}
-	}
-	return (ft_strdup(str));
-}
-
-static int	process_variable_expansion(t_expand *holder, t_shell *shell)
+static int	process_var_expansion_internal(t_expand *holder, t_shell *shell)
 {
 	if (holder->var_end > holder->var_start)
 	{
@@ -109,10 +44,34 @@ static int	process_variable_expansion(t_expand *holder, t_shell *shell)
 	return (0);
 }
 
+static int	handle_dollar_expansion(t_expand *holder, t_shell *shell)
+{
+	holder->var_start = &holder->result[holder->indx + 1];
+	if (*holder->var_start == '?')
+	{
+		if (!handle_question_mark(holder, shell))
+			return (0);
+		return (1);
+	}
+	if (*holder->var_start && (ft_isalpha(*holder->var_start)
+			|| *holder->var_start == '_'))
+	{
+		holder->var_end = holder->var_start;
+		while (*(holder->var_end) && (ft_isalnum(*(holder->var_end))
+				|| *(holder->var_end) == '_'))
+			holder->var_end++;
+		if (!process_var_expansion_internal(holder, shell))
+			return (0);
+		return (1);
+	}
+	return (-1);
+}
+
 char	*expand_variables(char *str, t_shell *shell)
 {
 	t_expand	holder;
 	char		*tilde_expanded;
+	int			expansion_result;
 
 	if (!str)
 		return (NULL);
@@ -125,24 +84,11 @@ char	*expand_variables(char *str, t_shell *shell)
 	{
 		if (holder.result[holder.indx] == '$')
 		{
-			holder.var_start = &holder.result[holder.indx + 1];
-			if (*holder.var_start == '?')
-			{
-				if (!handle_question_mark(&holder, shell))
-					break ;
+			expansion_result = handle_dollar_expansion(&holder, shell);
+			if (expansion_result == 0)
+				break ;
+			if (expansion_result == 1)
 				continue ;
-			}
-			if (*holder.var_start && (ft_isalpha(*holder.var_start)
-					|| *holder.var_start == '_'))
-			{
-				holder.var_end = holder.var_start;
-				while (*(holder.var_end) && (ft_isalnum(*(holder.var_end))
-						|| *(holder.var_end) == '_'))
-					holder.var_end++;
-				if (!process_variable_expansion(&holder, shell))
-					break ;
-				continue ;
-			}
 		}
 		holder.indx++;
 	}

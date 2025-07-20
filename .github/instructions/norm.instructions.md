@@ -96,3 +96,17 @@ applyTo: '**'
 - In the case of a multibinary project, in addition to the above rules, you must have a rule for each binary (for example: $(NAME_1), $(NAME_2), etc.). The "all" rule will compile all the binaries, using each binary rule.
 - In the case of a project that calls a function from a non-system library (e.g.: libft) that exists along your source code, your makefile must compile this library automatically.
 - All source files needed to compile your project must be explicitly named in your Makefile. For example: no "*.c", no "*.o", etc.
+
+## Validating the code according to the norm and the usage of the norminette command
+- The Norm is validated by the norminette, which is available in the 42 School's repository.
+- The norminette is a tool that checks your code against the Norm rules. It will return errors and warnings if your code does not comply with the Norm.
+- You can run the norminette on your code by executing the command `norminette` in your terminal.
+- It is recommended to run the norminette frequently during development to catch issues early.
+- The norminette will provide detailed feedback on the issues found in your code, including the file name, line number, and a description of the issue.
+- You should fix all errors and warnings reported by the norminette before submitting your code.
+
+## Usage of the norminette command
+- Runs on the current folder and any subfolder: norminette
+- Runs on the given filename(s): norminette filename.[c/h]
+- Prevents stopping on various blocking errors: norminette -d
+- Outputs all the debug logging: norminette -dd

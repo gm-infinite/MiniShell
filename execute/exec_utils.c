@@ -6,7 +6,7 @@
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 13:40:47 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/20 16:52:01 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/20 18:41:56 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ char	**split_to_args(t_split split)
 	char	**args;
 	int		i;
 	int		j;
+	int		k;
 
 	args = malloc(sizeof(char *) * (split.size + 1));
 	if (!args)
@@ -34,16 +35,15 @@ char	**split_to_args(t_split split)
 	{
 		if (split.start[i] && split.start[i][0] != '\0')
 		{
-			// Skip arguments that are only whitespace
-			int k = 0;
-			while (split.start[i][k] && (split.start[i][k] == ' ' || split.start[i][k] == '\t'))
+			k = 0;
+			while (split.start[i][k] && (split.start[i][k] == ' ' || 
+				split.start[i][k] == '\t'))
 				k++;
 			if (split.start[i][k] == '\0')
 			{
 				i++;
 				continue;
 			}
-			
 			args[j] = ft_strdup(split.start[i]);
 			if (!args[j])
 			{
@@ -60,10 +60,10 @@ char	**split_to_args(t_split split)
 
 char	**filter_empty_args(char **args)
 {
+	char	**filtered;
 	int		count;
 	int		i;
 	int		j;
-	char	**filtered;
 
 	if (!args)
 		return (NULL);
@@ -113,107 +113,3 @@ void	free_args(char **args)
 	free(args);
 }
 
-char	*find_executable(char *cmd, t_shell *shell)
-{
-	char	*path_env;
-	char	**paths;
-	char	*full_path;
-	char	*temp;
-	int		i;
-
-	if (ft_strchr(cmd, '/'))
-	{
-		if (access(cmd, F_OK) == 0)
-			return (ft_strdup(cmd));
-		return (NULL);
-	}
-	if (access(cmd, F_OK) == 0)
-	{
-		struct stat file_stat;
-		if (stat(cmd, &file_stat) == 0 && S_ISDIR(file_stat.st_mode))
-		{
-			// For pure directory names like "..", ".", return NULL to trigger "command not found"
-			// This matches bash behavior where ".." gives "command not found"
-			if ((ft_strncmp(cmd, "..", 3) == 0 && ft_strlen(cmd) == 2) || 
-				(ft_strncmp(cmd, ".", 2) == 0 && ft_strlen(cmd) == 1))
-				return (NULL);
-		}
-	}
-	
-	// PHASE 2: PATH environment variable resolution
-	// Retrieve PATH environment variable for directory search
-	path_env = get_env_value("PATH", shell);
-	if (!path_env)
-	{
-		// When PATH is unset, check current directory (bash behavior)
-		// This allows commands like "ls" to work when cd'ed to /bin and PATH is unset
-		if (access(cmd, F_OK) == 0)
-			return (ft_strdup(cmd));
-		return (NULL);
-	}
-	paths = ft_split(path_env, ':');
-	if (!paths)
-		return (NULL);
-	i = 0;
-	while (paths[i])
-	{
-		temp = ft_strjoin(paths[i], "/");
-		full_path = ft_strjoin(temp, cmd);
-		free(temp);
-		if (full_path && access(full_path, F_OK) == 0)
-		{
-			free_args(paths);
-			return (full_path);
-		}
-		free(full_path);
-		i++;
-	}
-	free_args(paths);
-	return (NULL);
-}
-
-
-int	has_redirections(t_split split)
-{
-	int	i;
-
-	i = 0;
-	while (i < split.size)
-	{
-		if (is_redirection(split.start[i]))
-			return (1);
-		i++;
-	}
-	return (0);
-}
-
-void	compact_args(char **args)
-{
-	int	read_pos;
-	int	write_pos;
-
-	if (!args)
-		return;
-	read_pos = 0;
-	write_pos = 0;
-	// Compact the array by removing empty strings
-	while (args[read_pos])
-	{
-		if (args[read_pos][0] != '\0')
-		{
-			if (read_pos != write_pos)
-			{
-				args[write_pos] = args[read_pos];
-				args[read_pos] = NULL;
-			}
-			write_pos++;
-		}
-		else
-		{
-			free(args[read_pos]);
-			args[read_pos] = NULL;
-		}
-		read_pos++;
-	}
-	args[write_pos] = NULL;
-}

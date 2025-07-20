@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   quotes_new.c                                       :+:      :+:    :+:   */
+/*   quotes_fixed.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 00:00:00 by user              #+#    #+#             */
-/*   Updated: 2025/07/20 16:52:01 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/20 19:57:43 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,56 +32,6 @@ int	check_quotes(char *str)
 		i++;
 	}
 	return (single_open == 0 && double_open == 0);
-}
-
-static int	is_entirely_single_quoted(char *str)
-{
-	int	quote_count;
-	int	k;
-
-	if (str[0] != '\'' || str[ft_strlen(str) - 1] != '\'')
-		return (0);
-	quote_count = 0;
-	k = 0;
-	while (str[k])
-	{
-		if (str[k] == '\'')
-			quote_count++;
-		k++;
-	}
-	return (quote_count == 2);
-}
-
-static char	*remove_quotes_from_string(char *str)
-{
-	char	*result;
-	int		i;
-	int		j;
-	int		in_single;
-	int		in_double;
-
-	result = malloc(ft_strlen(str) * 2 + 1);
-	if (!result)
-		return (NULL);
-	i = 0;
-	j = 0;
-	in_single = 0;
-	in_double = 0;
-	while (str[i])
-	{
-		if (str[i] == '\'' && !in_double)
-			in_single = !in_single;
-		else if (str[i] == '"' && !in_single)
-			in_double = !in_double;
-		else
-		{
-			result[j] = str[i];
-			j++;
-		}
-		i++;
-	}
-	result[j] = '\0';
-	return (result);
 }
 
 char	*process_quotes(char *str, t_shell *shell)

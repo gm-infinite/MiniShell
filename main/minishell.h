@@ -6,7 +6,7 @@
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 10:53:30 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/07/20 16:52:01 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/20 22:15:01 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,26 @@ typedef struct s_shell
 	int		exit_code;
 }			t_shell;
 
+typedef struct s_pipe_context
+{
+	int		**all_pipes;
+	int		pipe_count;
+	int		input_fd;
+	int		output_fd;
+}			t_pipe_context;
+
+typedef struct s_expand
+{
+	char	*result;
+	char	*var_start;
+	char	*var_end;
+	char	*var_name;
+	char	*var_value;
+	char	*expanded;
+	int		indx;
+	int		var_len;
+}	t_expand;
+
 /*
 ** ────────────────────────────────────────────────────────────────────────────
 **                           CORE SHELL FUNCTIONS
@@ -88,6 +108,8 @@ int		check_single_par(t_split split);
 int		check_symbol(t_split split, char *find, int flag);
 void	sep_opt_arg(t_shell *shell);
 int		count_str_split(t_split split, const char *str, int flag);
+char	*get_cut_indexs(t_split split);
+int		paranthesis_parity_check(t_split split);
 void	cut_out_par(t_split *split);
 int		check_operator_syntax_errors(t_split split);
 int		check_parentheses_syntax_errors(t_split split);
@@ -105,6 +127,7 @@ void	init_environment(t_shell *shell, char **envp);
 void	free_environment(t_shell *shell);
 int		set_env_var(char *var_name, char *value, t_shell *shell);
 int		unset_env_var(char *var_name, t_shell *shell);
+int		replace_var_with_value(t_expand *holder, t_shell *shell, int flag, int should_free_value);
 
 /*
 ** ────────────────────────────────────────────────────────────────────────────
@@ -117,6 +140,8 @@ int		execute_builtin(char **args, t_shell *shell);
 int		is_valid_var_name(const char *name);
 int		builtin_echo(char **args);
 int		builtin_cd(char **args, t_shell *shell);
+int		handle_home_path(char **path, char **home, t_shell *shell);
+int		handle_oldpwd_path(char **path, t_shell *shell);
 int		builtin_pwd(void);
 int		builtin_export(char **args, t_shell *shell);
 int		builtin_unset(char **args, t_shell *shell);
@@ -126,6 +151,13 @@ int		set_env_var(char *var_name, char *value, t_shell *shell);
 int		append_env_var(char *var_name, char *value, t_shell *shell);
 int		print_sorted_env(t_shell *shell);
 int		process_export_args(char **args, t_shell *shell);
+int		create_new_env_var(char *var_name, char *value, t_shell *shell);
+int		append_existing_var(int index, char *var_name, char *value, t_shell *shell);
+int		unset_env_var(char *var_name, t_shell *shell);
+int		unset_check_and_remove(t_shell *shell, char *var_name, int len, int index);
+int		copy_env_without_var(t_shell *shell, int remove_index, int count);
+int		find_env_var_index(t_shell *shell, char *var_name, int len);
+int		count_env_vars(t_shell *shell);
 
 /*
 ** ────────────────────────────────────────────────────────────────────────────
@@ -140,13 +172,28 @@ int		execute_single_command(char **args, t_shell *shell);
 int		count_pipes(t_split split);
 t_split	*split_by_pipes(t_split split, int *cmd_count);
 t_split	process_parentheses_in_split(t_split cmd, t_shell *shell);
-int		execute_pipe_command(t_split cmd, int input_fd, int output_fd, t_shell *shell, int **all_pipes, int pipe_count);
+int		execute_pipe_command(t_split cmd, t_pipe_context *ctx, t_shell *shell);
 void	execute_pipe_child(t_split cmd, int cmd_index, int **pipes, int cmd_count, t_shell *shell);
 void	execute_pipe_child_with_redirections(t_split cmd, int cmd_index, int **pipes, int cmd_count, t_shell *shell);
 int		has_parentheses_in_split(t_split split);
 int		check_pipe_error(t_split split, int i, int has_parentheses);
 int		check_redirection_error(t_split split, int i);
 char	*remove_quotes_for_redirection(char *str);
+int		create_pipes_array(int ***pipes, int cmd_count);
+void	cleanup_pipes(int **pipes, int cmd_count);
+void	close_all_pipes(int **pipes, int cmd_count);
+void	setup_pipe_fds(int cmd_index, int cmd_count, int **pipes,
+			int *input_fd, int *output_fd);
+int		create_pipeline_pipes(int ***pipes, int cmd_count);
+void	cleanup_pipeline_pipes(int **pipes, int cmd_count);
+int		wait_for_pipeline_processes(pid_t *pids, int cmd_count);
+void	setup_child_redirection(t_pipe_context *ctx);
+int		setup_pipeline_resources(t_split **commands, int ***pipes, pid_t **pids,
+			int cmd_count);
+int		execute_pipeline_children(t_split *commands, int **pipes, pid_t *pids,
+			int cmd_count, t_shell *shell);
+void	cleanup_pipeline_resources(t_split *commands, int **pipes, pid_t *pids,
+			int cmd_count);
 
 /*
 ** ────────────────────────────────────────────────────────────────────────────
@@ -176,6 +223,8 @@ int		check_quotes(char *str);
 char	*process_quotes(char *str, t_shell *shell);
 void	process_args_quotes(char **args, t_shell *shell);
 char	*expand_variables_quoted(char *str, t_shell *shell);
+char	*remove_quotes_from_string(char *str);
+int		is_entirely_single_quoted(char *str);
 
 /*
 ** ────────────────────────────────────────────────────────────────────────────
@@ -192,5 +241,16 @@ void	compact_args(char **args);
 char	*wildcard_input_modify(char *current_input, t_shell *shell);
 int		paranthesis_parity_check(t_split split);
 int		check_single_par(t_split split);
+int		validate_and_process_args(char **args, t_shell *shell);
+int		validate_executable(char *cmd, char *executable);
+int		handle_executable_not_found(char **args);
+int		execute_builtin_with_redirect(char **args, int input_fd, int output_fd, 
+			int stderr_fd, t_shell *shell);
+int		execute_external_with_redirect(char **args, int input_fd, int output_fd, 
+			int stderr_fd, t_shell *shell);
+int		handle_empty_args(char **args, int input_fd, int output_fd, int stderr_fd);
+void	process_variable_expansion(char **args, t_shell *shell);
+int		check_empty_command_after_expansion(char **args, int input_fd, 
+			int output_fd, int stderr_fd);
 
 #endif

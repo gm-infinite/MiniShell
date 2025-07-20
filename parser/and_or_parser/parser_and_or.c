@@ -6,7 +6,7 @@
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:15:24 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/07/20 11:34:24 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/20 22:15:10 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,35 +38,6 @@ void	cut_out_par(t_split *split)
 	}
 	if (end[0] == '\0')
 		split->size--;
-}
-
-char	*get_cut_indexs(t_split split)
-{
-	int		i;
-	int		par;
-	char	*ret;
-	int		check;
-
-	i = -1;
-	par = 0;
-	check = 0;
-	ret = ft_calloc(count_str_split(split, "||", 1) + \
-	count_str_split(split, "&&", 1) + 1, sizeof(char));
-	if (ret == NULL)
-		return (NULL);
-	while (++i < split.size)
-	{
-		par += countchr_not_quote(split.start[i], '(');
-		if (par == 0)
-		{
-			if (ft_strncmp("||", split.start[i], 3) == 0)
-				ret[check++] = '1';
-			else if (ft_strncmp("&&", split.start[i], 3) == 0)
-				ret[check++] = '0';
-		}
-		par -= countchr_not_quote(split.start[i], ')');
-	}
-	return (ret);
 }
 
 void	parse_and_or(t_shell *shell, t_split split, char *c_i)
@@ -101,34 +72,6 @@ void	parse_and_or(t_shell *shell, t_split split, char *c_i)
 	}
 }
 
-int	paranthesis_parity_check(t_split split)
-{
-	int	i;
-	int j;
-	int	par;
-	int	quote_state;
-
-	i = -1;
-	par = 0;
-	while (++i < split.size)
-	{
-		j = -1;
-		quote_state = 0;
-		while (split.start[i][++j] != '\0')
-		{
-			if (split.start[i][j] == '\'' && !(quote_state & 2))
-				quote_state ^= 1;
-			else if (split.start[i][j] == '"' && !(quote_state & 1))
-				quote_state ^= 2;
-			else if (!quote_state)
-				par += (split.start[i][j] == '(') - (split.start[i][j] == ')');
-		}
-	}
-	if (par == 0)
-		return (1);
-	return (0);
-}
-
 void	parser_and_or(t_shell *shell, t_split split)
 {
 	char	*cut_indexs;
@@ -138,7 +81,7 @@ void	parser_and_or(t_shell *shell, t_split split)
 	if (!check_operator_syntax_errors(split) || !check_parentheses_syntax_errors(split) || paranthesis_parity_check(split) == 0)
 	{
         if (paranthesis_parity_check(split) == 0)
-            write(STDERR_FILENO, "bash: syntax error: unexpected end of file\n", 44);
+            write(STDERR_FILENO, "bash: syntax error: unexpected end of file1\n", 44);
         shell->past_exit_status = 2;
         return ;
     }

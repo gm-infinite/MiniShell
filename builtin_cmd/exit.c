@@ -6,13 +6,13 @@
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 13:31:37 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/20 16:15:03 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/20 21:24:37 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../main/minishell.h"
 
-static int	validate_numeric_arg(char *arg, t_shell *shell)
+static int	is_valid_number(char *arg)
 {
 	int	i;
 
@@ -20,26 +20,24 @@ static int	validate_numeric_arg(char *arg, t_shell *shell)
 	if (arg[i] == '+' || arg[i] == '-')
 		i++;
 	if (arg[i] == '\0')
-	{
-		write(STDERR_FILENO, "exit: ", 6);
-		write(STDERR_FILENO, arg, ft_strlen(arg));
-		write(STDERR_FILENO, ": numeric argument required\n", 28);
-		shell->should_exit = 1;
-		shell->exit_code = 2;
 		return (0);
-	}
 	while (arg[i])
 	{
 		if (!ft_isdigit(arg[i]))
-		{
-			write(STDERR_FILENO, "exit: ", 6);
-			write(STDERR_FILENO, arg, ft_strlen(arg));
-			write(STDERR_FILENO, ": numeric argument required\n", 28);
-			shell->should_exit = 1;
-			shell->exit_code = 2;
 			return (0);
-		}
 		i++;
+	}
+	return (1);
+}
+
+static int	validate_numeric_arg(char *arg, t_shell *shell)
+{
+	if (!is_valid_number(arg))
+	{
+		fprintf(stderr, "exit: %s: numeric argument required\n", arg);
+		shell->should_exit = 1;
+		shell->exit_code = 2;
+		return (0);
 	}
 	return (1);
 }

@@ -6,7 +6,7 @@
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 13:30:39 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/20 16:15:03 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/20 20:17:42 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,38 +21,37 @@ static int	path_error_checking(char **args, char **path, char **home,
 		return (1);
 	}
 	if (!args[1] || (args[1][0] == '~' && args[1][1] == '\0'))
-	{
-		*home = get_env_value("HOME", shell);
-		if (!(*home))
-		{
-			write(STDERR_FILENO, "cd: HOME not set\n", 17);
-			return (1);
-		}
-		*path = *home;
-	}
+		return (handle_home_path(path, home, shell));
 	else if (args[1][0] == '-' && args[1][1] == '\0')
-	{
-		*path = get_env_value("OLDPWD", shell);
-		if (!(*path))
-		{
-			write(STDERR_FILENO, "cd: OLDPWD not set\n", 19);
-			return (1);
-		}
-		printf("%s\n", *path);
-	}
+		return (handle_oldpwd_path(path, shell));
 	else if (ft_strncmp(args[1], "--", 2) == 0 && args[1][2] == '\0')
-	{
-		*home = get_env_value("HOME", shell);
-		if (!(*home))
-		{
-			write(STDERR_FILENO, "cd: HOME not set\n", 17);
-			return (1);
-		}
-		*path = *home;
-	}
+		return (handle_home_path(path, home, shell));
 	else
 		*path = args[1];
 	return (0);
+}
+
+static int	change_directory(char *path)
+{
+	if (chdir(path) == -1)
+	{
+		perror("cd");
+		return (1);
+	}
+	return (0);
+}
+
+static void	update_pwd_vars(char *old_pwd, t_shell *shell)
+{
+	char	cwd[PATH_MAX];
+
+	if (old_pwd)
+	{
+		set_env_var("OLDPWD", old_pwd, shell);
+		free(old_pwd);
+	}
+	if (getcwd(cwd, sizeof(cwd)) != NULL)
+		set_env_var("PWD", cwd, shell);
 }
 
 int	builtin_cd(char **args, t_shell *shell)
@@ -70,18 +69,11 @@ int	builtin_cd(char **args, t_shell *shell)
 		return (1);
 	}
 	old_pwd = ft_strdup(cwd);
-	if (chdir(path) == -1)
+	if (change_directory(path))
 	{
-		perror("cd");
 		free(old_pwd);
 		return (1);
 	}
-	if (old_pwd)
-	{
-		set_env_var("OLDPWD", old_pwd, shell);
-		free(old_pwd);
-	}
-	if (getcwd(cwd, sizeof(cwd)) != NULL)
-		set_env_var("PWD", cwd, shell);
+	update_pwd_vars(old_pwd, shell);
 	return (0);
 }

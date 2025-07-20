@@ -6,7 +6,7 @@
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 14:00:00 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/20 16:15:03 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/20 19:57:43 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,18 @@ static int	get_env_count(t_shell *shell)
 	return (count);
 }
 
+static void	print_env_array(char **sorted_env, int count)
+{
+	int	i;
+
+	i = 0;
+	while (i < count)
+	{
+		printf("declare -x %s\n", sorted_env[i]);
+		i++;
+	}
+}
+
 int	print_sorted_env(t_shell *shell)
 {
 	char	**sorted_env;
@@ -68,12 +80,7 @@ int	print_sorted_env(t_shell *shell)
 		i++;
 	}
 	sort_env_array(sorted_env, count);
-	i = 0;
-	while (i < count)
-	{
-		printf("declare -x %s\n", sorted_env[i]);
-		i++;
-	}
+	print_env_array(sorted_env, count);
 	free(sorted_env);
 	return (0);
 }

@@ -6,23 +6,11 @@
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 00:00:00 by user              #+#    #+#             */
-/*   Updated: 2025/07/20 16:15:03 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/20 19:57:43 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-typedef struct s_expand
-{
-	char	*result;
-	char	*var_start;
-	char	*var_end;
-	char	*var_name;
-	char	*var_value;
-	char	*expanded;
-	int		indx;
-	int		var_len;
-}	t_expand;
 
 void	init_environment(t_shell *shell, char **envp)
 {

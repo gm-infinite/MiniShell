@@ -6,7 +6,7 @@
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 12:53:07 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/20 13:10:43 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/20 22:00:13 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,40 +14,65 @@
 
 int	has_parentheses_in_split(t_split split)
 {
-    int i;
-    for (i = 0; i < split.size; i++)
-        if (ft_strchr(split.start[i], '(') || ft_strchr(split.start[i], ')'))
-            return 1;
-    return 0;
+	int	i;
+
+	i = 0;
+	while (i < split.size)
+	{
+		if (ft_strchr(split.start[i], '(') || ft_strchr(split.start[i], ')'))
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
+static void	print_pipe_error(void)
+{
+	write(STDERR_FILENO, 
+		"bash: syntax error near unexpected token `|'\n", 45);
+}
+
+static void	print_newline_error(void)
+{
+	write(STDERR_FILENO, 
+		"bash: syntax error near unexpected token `newline'\n", 52);
+}
+
+static void	print_token_error(char *token)
+{
+	write(STDERR_FILENO, "bash: syntax error near unexpected token `", 42);
+	write(STDERR_FILENO, token, ft_strlen(token));
+	write(STDERR_FILENO, "'\n", 2);
 }
 
 int	check_pipe_error(t_split split, int i, int has_parentheses)
 {
-    if (!has_parentheses && (i == 0 || i == split.size - 1))
-    {
-        write(STDERR_FILENO, "bash: syntax error near unexpected token `|'\n", 45);
-        return 2;
-    }
-    return 0;
+	if (!has_parentheses && (i == 0 || i == split.size - 1))
+	{
+		print_pipe_error();
+		return (2);
+	}
+	return (0);
 }
 
 int	check_redirection_error(t_split split, int i)
 {
-    int filename_index = i + 1;
-    if (filename_index >= split.size)
-    {
-        write(STDERR_FILENO, "bash: syntax error near unexpected token `newline'\n", 52);
-        return 2;
-    }
-    char *next_token = split.start[filename_index];
-    if (is_redirection(next_token) || ft_strncmp(next_token, "|", 2) == 0)
-    {
-        write(STDERR_FILENO, "bash: syntax error near unexpected token `", 42);
-        write(STDERR_FILENO, next_token, ft_strlen(next_token));
-        write(STDERR_FILENO, "'\n", 2);
-        return 2;
-    }
-    return 0;
+	int		filename_index;
+	char	*next_token;
+
+	filename_index = i + 1;
+	if (filename_index >= split.size)
+	{
+		print_newline_error();
+		return (2);
+	}
+	next_token = split.start[filename_index];
+	if (is_redirection(next_token) || ft_strncmp(next_token, "|", 2) == 0)
+	{
+		print_token_error(next_token);
+		return (2);
+	}
+	return (0);
 }
 
 char	*remove_quotes_for_redirection(char *str)
@@ -80,29 +105,30 @@ char	*remove_quotes_for_redirection(char *str)
 
 int	validate_redirection_syntax(t_split split)
 {
-    int i;
-    int has_parentheses;
-    int err;
-    int redirect_type;
+	int	i;
+	int	has_parentheses;
+	int	err;
+	int	redirect_type;
 
-    i = -1;
-    has_parentheses = has_parentheses_in_split(split);
-    while (++i < split.size)
-    {
-        redirect_type = is_redirection(split.start[i]);
-        if (redirect_type)
-        {
-            err = check_redirection_error(split, i);
-            if (err)
-                return err;
-            i += 1;
-        }
-        if (ft_strncmp(split.start[i], "|", 2) == 0 && ft_strlen(split.start[i]) == 1)
-        {
-            err = check_pipe_error(split, i, has_parentheses);
-            if (err)
-                return err;
-        }
-    }
-    return 0;
+	i = -1;
+	has_parentheses = has_parentheses_in_split(split);
+	while (++i < split.size)
+	{
+		redirect_type = is_redirection(split.start[i]);
+		if (redirect_type)
+		{
+			err = check_redirection_error(split, i);
+			if (err)
+				return (err);
+			i += 1;
+		}
+		if (ft_strncmp(split.start[i], "|", 2) == 0
+			&& ft_strlen(split.start[i]) == 1)
+		{
+			err = check_pipe_error(split, i, has_parentheses);
+			if (err)
+				return (err);
+		}
+	}
+	return (0);
 }

@@ -1,0 +1,78 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   pipe_management.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/20 20:00:00 by emgenc            #+#    #+#             */
+/*   Updated: 2025/07/20 18:41:56 by emgenc           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../main/minishell.h"
+
+int	create_pipes_array(int ***pipes, int cmd_count)
+{
+	int	i;
+
+	*pipes = malloc(sizeof(int *) * (cmd_count - 1));
+	if (!*pipes)
+		return (0);
+	i = 0;
+	while (i < cmd_count - 1)
+	{
+		(*pipes)[i] = malloc(sizeof(int) * 2);
+		if (pipe((*pipes)[i]) == -1)
+		{
+			perror("pipe");
+			while (--i >= 0)
+			{
+				close((*pipes)[i][0]);
+				close((*pipes)[i][1]);
+				free((*pipes)[i]);
+			}
+			free(*pipes);
+			return (0);
+		}
+		i++;
+	}
+	return (1);
+}
+
+void	cleanup_pipes(int **pipes, int cmd_count)
+{
+	int	i;
+
+	i = 0;
+	while (i < cmd_count - 1)
+	{
+		close(pipes[i][0]);
+		close(pipes[i][1]);
+		free(pipes[i]);
+		i++;
+	}
+	free(pipes);
+}
+
+void	close_all_pipes(int **pipes, int cmd_count)
+{
+	int	i;
+
+	i = 0;
+	while (i < cmd_count - 1)
+	{
+		close(pipes[i][0]);
+		close(pipes[i][1]);
+		i++;
+	}
+}
+
+void	setup_pipe_fds(int cmd_index, int cmd_count, int **pipes,
+			int *input_fd, int *output_fd)
+{
+	if (cmd_index > 0)
+		*input_fd = pipes[cmd_index - 1][0];
+	if (cmd_index < cmd_count - 1)
+		*output_fd = pipes[cmd_index][1];
+}

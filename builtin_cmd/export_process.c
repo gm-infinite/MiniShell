@@ -6,11 +6,26 @@
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 14:00:00 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/20 16:15:03 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/20 22:15:07 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../main/minishell.h"
+
+static void	print_export_error(char *arg)
+{
+	write(STDERR_FILENO, "export: `", 9);
+	write(STDERR_FILENO, arg, ft_strlen(arg));
+	write(STDERR_FILENO, "': not a valid identifier\n", 26);
+}
+
+static void	print_option_error(char *arg, t_shell *shell)
+{
+	write(STDERR_FILENO, "bash: export: ", 14);
+	write(STDERR_FILENO, arg, ft_strlen(arg));
+	write(STDERR_FILENO, ": invalid option\n", 17);
+	shell->past_exit_status = 2;
+}
 
 static int	process_assign_export(char *arg, char *eq_pos, t_shell *shell)
 {
@@ -23,9 +38,7 @@ static int	process_assign_export(char *arg, char *eq_pos, t_shell *shell)
 		return (1);
 	if (!is_valid_var_name(var_name))
 	{
-		write(STDERR_FILENO, "export: `", 9);
-		write(STDERR_FILENO, arg, ft_strlen(arg));
-		write(STDERR_FILENO, "': not a valid identifier\n", 26);
+		print_export_error(arg);
 		free(var_name);
 		return (1);
 	}
@@ -52,9 +65,7 @@ static int	process_append_export(char *arg, char *eq_pos, t_shell *shell)
 		return (1);
 	if (!is_valid_var_name(var_name))
 	{
-		write(STDERR_FILENO, "export: `", 9);
-		write(STDERR_FILENO, arg, ft_strlen(arg));
-		write(STDERR_FILENO, "': not a valid identifier\n", 26);
+		print_export_error(arg);
 		free(var_name);
 		return (1);
 	}
@@ -74,9 +85,7 @@ static int	process_single_export(char *arg, t_shell *shell)
 {
 	if (!is_valid_var_name(arg))
 	{
-		write(STDERR_FILENO, "export: `", 9);
-		write(STDERR_FILENO, arg, ft_strlen(arg));
-		write(STDERR_FILENO, "': not a valid identifier\n", 26);
+		print_export_error(arg);
 		return (1);
 	}
 	return (set_env_var(arg, "", shell));
@@ -94,10 +103,7 @@ int	process_export_args(char **args, t_shell *shell)
 	{
 		if (args[i][0] == '-')
 		{
-			write(STDERR_FILENO, "bash: export: ", 14);
-			write(STDERR_FILENO, args[i], ft_strlen(args[i]));
-			write(STDERR_FILENO, ": invalid option\n", 17);
-			shell->past_exit_status = 2;
+			print_option_error(args[i], shell);
 			return (2);
 		}
 		eq_pos = ft_strchr(args[i], '=');

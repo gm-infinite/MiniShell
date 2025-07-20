@@ -6,7 +6,7 @@
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 16:22:00 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/20 16:52:01 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/20 21:23:24 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,19 @@ static int	execute_args_array(t_split split, t_shell *shell)
 	exit_status = execute_single_command(args, shell);
 	free_args(args);
 	return (exit_status);
+}
+
+static int	dispatch_execution(t_split split, t_shell *shell,
+							int has_pipes, int has_redir)
+{
+	if (has_pipes > 0 && has_redir)
+		return (execute_pipeline_with_redirections(split, shell));
+	else if (has_pipes > 0)
+		return (execute_pipeline(split, shell));
+	else if (has_redir)
+		return (execute_with_redirections(split, shell));
+	else
+		return (execute_args_array(split, shell));
 }
 
 int	execute_command(t_split split, t_shell *shell)
@@ -42,14 +55,7 @@ int	execute_command(t_split split, t_shell *shell)
 	}
 	has_pipes = count_pipes(split);
 	has_redir = has_redirections(split);
-	if (has_pipes > 0 && has_redir)
-		exit_status = execute_pipeline_with_redirections(split, shell);
-	else if (has_pipes > 0)
-		exit_status = execute_pipeline(split, shell);
-	else if (has_redir)
-		exit_status = execute_with_redirections(split, shell);
-	else
-		exit_status = execute_args_array(split, shell);
+	exit_status = dispatch_execution(split, shell, has_pipes, has_redir);
 	shell->past_exit_status = exit_status;
 	return (exit_status);
 }

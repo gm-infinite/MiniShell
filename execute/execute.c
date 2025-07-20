@@ -6,80 +6,11 @@
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 13:50:25 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/20 16:52:01 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/20 21:30:11 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../main/minishell.h"
-
-static int	create_pipes_array(int ***pipes, int cmd_count)
-{
-	int	i;
-
-	*pipes = malloc(sizeof(int *) * (cmd_count - 1));
-	if (!*pipes)
-		return (0);
-	i = 0;
-	while (i < cmd_count - 1)
-	{
-		(*pipes)[i] = malloc(sizeof(int) * 2);
-		if (pipe((*pipes)[i]) == -1)
-		{
-			perror("pipe");
-			while (--i >= 0)
-			{
-				close((*pipes)[i][0]);
-				close((*pipes)[i][1]);
-				free((*pipes)[i]);
-			}
-			free(*pipes);
-			return (0);
-		}
-		i++;
-	}
-	return (1);
-}
-
-static void	cleanup_pipes(int **pipes, int cmd_count)
-{
-	int	i;
-
-	i = 0;
-	while (i < cmd_count - 1)
-	{
-		close(pipes[i][0]);
-		close(pipes[i][1]);
-		free(pipes[i]);
-		i++;
-	}
-	free(pipes);
-}
-
-static int	wait_for_children(pid_t *pids, int cmd_count)
-{
-	int	i;
-	int	status;
-	int	exit_status;
-
-	exit_status = 0;
-	i = 0;
-	while (i < cmd_count)
-	{
-		if (pids[i] > 0)
-		{
-			waitpid(pids[i], &status, 0);
-			if (i == cmd_count - 1)
-			{
-				if (WIFEXITED(status))
-					exit_status = WEXITSTATUS(status);
-				else if (WIFSIGNALED(status))
-					exit_status = 128 + WTERMSIG(status);
-			}
-		}
-		i++;
-	}
-	return (exit_status);
-}
 
 int	execute_pipeline_with_redirections(t_split split, t_shell *shell)
 {
@@ -87,7 +18,6 @@ int	execute_pipeline_with_redirections(t_split split, t_shell *shell)
 	int		cmd_count;
 	int		**pipes;
 	pid_t	*pids;
-	int		i;
 	int		exit_status;
 
 	split = process_parentheses_in_split(split, shell);
@@ -100,53 +30,15 @@ int	execute_pipeline_with_redirections(t_split split, t_shell *shell)
 		free(commands);
 		return (exit_status);
 	}
-	if (!create_pipes_array(&pipes, cmd_count))
-	{
-		free(commands);
+	if (!setup_pipeline_resources(&commands, &pipes, &pids, cmd_count))
 		return (1);
-	}
-	pids = malloc(sizeof(pid_t) * cmd_count);
-	if (!pids)
-	{
-		cleanup_pipes(pipes, cmd_count);
-		free(commands);
-		return (1);
-	}
-	i = 0;
-	while (i < cmd_count)
-	{
-		pids[i] = fork();
-		if (pids[i] == -1)
-		{
-			perror("fork");
-			exit_status = 1;
-			break ;
-		}
-		else if (pids[i] == 0)
-		{
-			execute_pipe_child_with_redirections(commands[i], i, pipes,
-				cmd_count, shell);
-			exit(127);
-		}
-		i++;
-	}
-	cleanup_pipes(pipes, cmd_count);
 	signal(SIGINT, SIG_IGN);
 	signal(SIGQUIT, SIG_IGN);
-	exit_status = wait_for_children(pids, cmd_count);
+	exit_status = execute_pipeline_children(commands, pipes, pids, cmd_count,
+			shell);
 	setup_signals();
-	free(pids);
-	free(commands);
+	cleanup_pipeline_resources(commands, pipes, pids, cmd_count);
 	return (exit_status);
-}
-
-static void	setup_pipe_fds(int cmd_index, int cmd_count, int **pipes,
-			int *input_fd, int *output_fd)
-{
-	if (cmd_index > 0)
-		*input_fd = pipes[cmd_index - 1][0];
-	if (cmd_index < cmd_count - 1)
-		*output_fd = pipes[cmd_index][1];
 }
 
 static void	redirect_fds(int input_fd, int output_fd, int stderr_fd)
@@ -168,19 +60,6 @@ static void	redirect_fds(int input_fd, int output_fd, int stderr_fd)
 	}
 }
 
-static void	close_all_pipes(int **pipes, int cmd_count)
-{
-	int	i;
-
-	i = 0;
-	while (i < cmd_count - 1)
-	{
-		close(pipes[i][0]);
-		close(pipes[i][1]);
-		i++;
-	}
-}
-
 static void	execute_child_command(char **args, t_shell *shell)
 {
 	char	*executable;
@@ -190,8 +69,7 @@ static void	execute_child_command(char **args, t_shell *shell)
 	executable = find_executable(args[0], shell);
 	if (!executable)
 	{
-		write(STDERR_FILENO, args[0], ft_strlen(args[0]));
-		write(STDERR_FILENO, ": command not found\n", 20);
+		fprintf(stderr, "%s: command not found\n", args[0]);
 		exit(127);
 	}
 	args = filter_empty_args(args);

@@ -1,40 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   heredoc.c                                          :+:      :+:    :+:   */
+/*   cd_utils.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/15 13:53:10 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/20 21:53:36 by emgenc           ###   ########.fr       */
+/*   Created: 2025/07/20 19:15:00 by emgenc            #+#    #+#             */
+/*   Updated: 2025/07/20 20:17:42 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../main/minishell.h"
+#include "../main/minishell.h"
 
-int	handle_here_doc(char *delimiter, int *pipe_fd)
+int	handle_home_path(char **path, char **home, t_shell *shell)
 {
-	char	*line;
-
-	if (pipe(pipe_fd) == -1)
+	*home = get_env_value("HOME", shell);
+	if (!(*home))
 	{
-		perror("pipe");
+		write(STDERR_FILENO, "cd: HOME not set\n", 17);
 		return (1);
 	}
-	while (1)
+	*path = *home;
+	return (0);
+}
+
+int	handle_oldpwd_path(char **path, t_shell *shell)
+{
+	*path = get_env_value("OLDPWD", shell);
+	if (!(*path))
 	{
-		line = readline("> ");
-		if (!line)
-			break ;
-		if (ft_strncmp(line, delimiter, ft_strlen(delimiter) + 1) == 0)
-		{
-			free(line);
-			break ;
-		}
-		write(pipe_fd[1], line, ft_strlen(line));
-		write(pipe_fd[1], "\n", 1);
-		free(line);
+		write(STDERR_FILENO, "cd: OLDPWD not set\n", 19);
+		return (1);
 	}
-	close(pipe_fd[1]);
+	printf("%s\n", *path);
 	return (0);
 }

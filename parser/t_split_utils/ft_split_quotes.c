@@ -6,7 +6,7 @@
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/06 16:30:24 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/13 16:32:57 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/20 21:52:33 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,12 +26,12 @@ static int	count_tokens(const char *s, int *i, int *cnt)
 		quote_state = 0;
 		while (s[*i])
 		{
-			if (s[*i] == '\'' && !(quote_state & 2))  // bit 1 (double quote) not set
-				quote_state ^= 1;  // XOR toggle bit 0 (single quote)
-			else if (s[*i] == '"' && !(quote_state & 1))  // bit 0 (single quote) not set
-				quote_state ^= 2;  // XOR toggle bit 1 (double quote)
+			if (s[*i] == '\'' && !(quote_state & 2))
+				quote_state ^= 1;
+			else if (s[*i] == '"' && !(quote_state & 1))
+				quote_state ^= 2;
 			else if ((s[*i] == ' ' || s[*i] == '\t') && !quote_state)
-				break;  // End of token when no quotes active
+				break ;
 			(*i)++;
 		}
 	}
@@ -45,16 +45,14 @@ static void	extract_token(int *i, const char *s, char ***tab, int *j)
 
 	start = *i;
 	quote_state = 0;
-	
-	// Process the entire token (including quoted sections)
 	while (s[*i])
 	{
-		if (s[*i] == '\'' && !(quote_state & 2))  // bit 1 (double quote) not set
-			quote_state ^= 1;  // XOR toggle bit 0 (single quote)
-		else if (s[*i] == '"' && !(quote_state & 1))  // bit 0 (single quote) not set
-			quote_state ^= 2;  // XOR toggle bit 1 (double quote)
+		if (s[*i] == '\'' && !(quote_state & 2))
+			quote_state ^= 1;
+		else if (s[*i] == '"' && !(quote_state & 1))
+			quote_state ^= 2;
 		else if ((s[*i] == ' ' || s[*i] == '\t') && !quote_state)
-			break;  // End of token when no quotes active
+			break ;
 		(*i)++;
 	}
 	(*tab)[(*j)++] = ft_substr(s, start, (*i) - start);
@@ -76,7 +74,6 @@ char	**ft_split_quotes(const char *s)
 	i = 0;
 	while (s[i])
 	{
-		// Skip whitespace when not inside quotes
 		while (s[i] && (s[i] == ' ' || s[i] == '\t'))
 			i++;
 		if (!s[i])
