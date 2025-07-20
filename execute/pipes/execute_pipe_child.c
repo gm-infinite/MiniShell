@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_pipe_child.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 22:25:13 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/19 22:25:22 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/20 15:07:01 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,18 @@ void	execute_pipe_child(t_split cmd, int cmd_index, int **pipes, int cmd_count, 
 	// Child processes should handle signals differently than the interactive shell
 	setup_child_signals();
 	
-	// PHASE 4: COMMAND TOKENIZATION
+	// PHASE 4: PARENTHESES SUBSHELL HANDLING
+	// Check if the command contains parentheses - if so, create a subshell
+	// and delegate to the AND/OR parser for complex expression handling
+	if (has_parentheses_in_split(cmd))
+	{
+		// Command contains parentheses - process with AND/OR parser in subshell
+		// This creates a recursive execution environment for complex expressions
+		parser_and_or(shell, cmd);
+		exit(shell->past_exit_status);  // Exit child with subshell's exit status
+	}
+
+	// PHASE 5: COMMAND TOKENIZATION
 	// Convert command segment into executable argument array
 	args = split_to_args(cmd);
 	if (!args || !args[0])
@@ -118,7 +129,7 @@ void	execute_pipe_child(t_split cmd, int cmd_index, int **pipes, int cmd_count, 
 		// No cleanup needed as process exit handles memory
 		exit(1);
 	
-	// PHASE 5: ENVIRONMENT VARIABLE EXPANSION
+	// PHASE 6: ENVIRONMENT VARIABLE EXPANSION
 	// Process all arguments to resolve $VAR references to actual values
 	// This must be done with quote awareness to preserve shell semantics
 	i = 0;
@@ -136,7 +147,7 @@ void	execute_pipe_child(t_split cmd, int cmd_index, int **pipes, int cmd_count, 
 	compact_args(args);
 	process_args_quotes(args, shell);
 	
-	// PHASE 6.5: EMPTY COMMAND VALIDATION
+	// PHASE 7.5: EMPTY COMMAND VALIDATION
 	// Check if command became empty after variable expansion and compaction
 	if (!args[0])
 		exit(0);
