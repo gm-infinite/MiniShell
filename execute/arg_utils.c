@@ -26,6 +26,21 @@ int	has_redirections(t_split split)
 	return (0);
 }
 
+static void	move_arg(char **args, int read_pos, int write_pos)
+{
+	if (read_pos != write_pos)
+	{
+		args[write_pos] = args[read_pos];
+		args[read_pos] = NULL;
+	}
+}
+
+static void	free_empty_arg(char **args, int read_pos)
+{
+	free(args[read_pos]);
+	args[read_pos] = NULL;
+}
+
 void	compact_args(char **args)
 {
 	int	read_pos;
@@ -39,18 +54,11 @@ void	compact_args(char **args)
 	{
 		if (args[read_pos][0] != '\0')
 		{
-			if (read_pos != write_pos)
-			{
-				args[write_pos] = args[read_pos];
-				args[read_pos] = NULL;
-			}
+			move_arg(args, read_pos, write_pos);
 			write_pos++;
 		}
 		else
-		{
-			free(args[read_pos]);
-			args[read_pos] = NULL;
-		}
+			free_empty_arg(args, read_pos);
 		read_pos++;
 	}
 	args[write_pos] = NULL;

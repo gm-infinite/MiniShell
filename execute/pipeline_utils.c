@@ -54,30 +54,33 @@ int	setup_pipeline_resources(t_split **commands, int ***pipes, pid_t **pids,
 	return (1);
 }
 
-int	execute_pipeline_children(t_split *commands, int **pipes, pid_t *pids,
-							int cmd_count, t_shell *shell)
+int	execute_pipeline_children(t_pipeline_context *pipeline_ctx)
 {
-	int	i;
+	int						i;
+	t_pipe_child_context	ctx;
 
 	i = 0;
-	while (i < cmd_count)
+	while (i < pipeline_ctx->cmd_count)
 	{
-		pids[i] = fork();
-		if (pids[i] == -1)
+		pipeline_ctx->pids[i] = fork();
+		if (pipeline_ctx->pids[i] == -1)
 		{
 			perror("fork");
 			return (1);
 		}
-		else if (pids[i] == 0)
+		else if (pipeline_ctx->pids[i] == 0)
 		{
-			execute_pipe_child_with_redirections(commands[i], i, pipes,
-				cmd_count, shell);
+			ctx.pipes = pipeline_ctx->pipes;
+			ctx.cmd_index = i;
+			ctx.cmd_count = pipeline_ctx->cmd_count;
+			execute_pipe_child_with_redirections(pipeline_ctx->commands[i],
+				&ctx, pipeline_ctx->shell);
 			exit(127);
 		}
 		i++;
 	}
-	close_all_pipes(pipes, cmd_count);
-	return (wait_for_children(pids, cmd_count));
+	close_all_pipes(pipeline_ctx->pipes, pipeline_ctx->cmd_count);
+	return (wait_for_children(pipeline_ctx->pids, pipeline_ctx->cmd_count));
 }
 
 void	cleanup_pipeline_resources(t_split *commands, int **pipes, pid_t *pids,

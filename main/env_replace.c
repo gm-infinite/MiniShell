@@ -38,32 +38,32 @@ static char	*build_expanded_string(t_expand *holder, char *before, char *after)
 	return (result);
 }
 
-static void	cleanup_replacement(char *before, char *after, int should_free_value, t_expand *holder)
+static void	cleanup_replacement(char *before, char *after, int flags,
+	t_expand *holder)
 {
 	free(before);
 	free(after);
-	if (should_free_value)
+	if (flags & 1)
 		free(holder->var_value);
 }
 
-int	replace_var_with_value(t_expand *holder, t_shell *shell,
-						int flag, int should_free_value)
+int	replace_var_with_value(t_expand *holder, t_shell *shell, int flags)
 {
 	char	*before;
 	char	*after;
 
 	(void)shell;
 	before = create_before_part(holder);
-	after = create_after_part(holder, flag);
+	after = create_after_part(holder, flags & 2);
 	holder->expanded = build_expanded_string(holder, before, after);
 	if (!holder->expanded)
 	{
-		cleanup_replacement(before, after, should_free_value, holder);
+		cleanup_replacement(before, after, flags & 1, holder);
 		return (0);
 	}
 	holder->var_len = ft_strlen(holder->var_value);
 	free(holder->result);
-	cleanup_replacement(before, after, should_free_value, holder);
+	cleanup_replacement(before, after, flags & 1, holder);
 	holder->result = holder->expanded;
 	holder->indx += holder->var_len;
 	return (1);

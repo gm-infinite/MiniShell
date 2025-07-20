@@ -76,13 +76,13 @@ static void	execute_external_command(char **args, t_shell *shell)
 	exit(127);
 }
 
-void	execute_pipe_child(t_split cmd, int cmd_index, int **pipes,
-						int cmd_count, t_shell *shell)
+void	execute_pipe_child(t_split cmd, t_pipe_child_context *ctx,
+		t_shell *shell)
 {
 	char	**args;
 
-	setup_pipe_redirection(cmd_index, cmd_count, pipes);
-	cleanup_pipe_descriptors(pipes, cmd_count);
+	setup_pipe_redirection(ctx->cmd_index, ctx->cmd_count, ctx->pipes);
+	cleanup_pipe_descriptors(ctx->pipes, ctx->cmd_count);
 	setup_child_signals();
 	if (has_parentheses_in_split(cmd))
 	{

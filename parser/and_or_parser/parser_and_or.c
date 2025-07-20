@@ -80,11 +80,11 @@ void	parser_and_or(t_shell *shell, t_split split)
 		return ;
 	if (!check_operator_syntax_errors(split) || !check_parentheses_syntax_errors(split) || paranthesis_parity_check(split) == 0)
 	{
-        if (paranthesis_parity_check(split) == 0)
-            write(STDERR_FILENO, "bash: syntax error: unexpected end of file1\n", 44);
-        shell->past_exit_status = 2;
-        return ;
-    }
+		if (paranthesis_parity_check(split) == 0)
+			write(STDERR_FILENO, "bash: syntax error: unexpected end of file1\n", 44);
+		shell->past_exit_status = 2;
+		return ;
+	}
 	if (check_single_par(split) != 0)
 	{
 		cut_out_par(&split);

@@ -56,17 +56,16 @@ static int	wait_for_child_exit(pid_t pid)
 	return (exit_status);
 }
 
-int	execute_external_with_redirect(char **args, int input_fd, int output_fd, 
-								int stderr_fd, t_shell *shell)
+int	execute_external_with_redirect(t_redir_exec_context *ctx)
 {
 	char		*executable;
 	pid_t		pid;
 	char		**filtered_args;
 
-	executable = find_executable(args[0], shell);
+	executable = find_executable(ctx->args[0], ctx->shell);
 	if (!executable)
 	{
-		write(STDERR_FILENO, args[0], ft_strlen(args[0]));
+		write(STDERR_FILENO, ctx->args[0], ft_strlen(ctx->args[0]));
 		write(STDERR_FILENO, ": command not found\n", 20);
 		return (127);
 	}
@@ -74,19 +73,20 @@ int	execute_external_with_redirect(char **args, int input_fd, int output_fd,
 	if (pid == 0)
 	{
 		setup_child_signals();
-		setup_child_redirections(input_fd, output_fd, stderr_fd);
-		filtered_args = filter_empty_args(args);
+		setup_child_redirections(ctx->input_fd, ctx->output_fd,
+			ctx->stderr_fd);
+		filtered_args = filter_empty_args(ctx->args);
 		if (!filtered_args)
 		{
 			perror("filter_empty_args");
 			exit(127);
 		}
-		execve(executable, filtered_args, shell->envp);
+		execve(executable, filtered_args, ctx->shell->envp);
 		perror("execve");
 		free_args(filtered_args);
 		exit(127);
 	}
-	close_parent_fds(input_fd, output_fd, stderr_fd);
+	close_parent_fds(ctx->input_fd, ctx->output_fd, ctx->stderr_fd);
 	free(executable);
 	return (wait_for_child_exit(pid));
 }

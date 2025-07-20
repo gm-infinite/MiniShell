@@ -26,7 +26,7 @@ int	unset_check_and_remove(t_shell *shell, char *var_name, int len, int index)
 }
 
 static void	copy_env_entries(t_shell *shell, char **new_envp, int remove_index,
-					int count)
+	int count)
 {
 	int	j;
 	int	k;

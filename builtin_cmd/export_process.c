@@ -6,90 +6,11 @@
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 14:00:00 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/20 22:15:07 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/20 22:30:00 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../main/minishell.h"
-
-static void	print_export_error(char *arg)
-{
-	write(STDERR_FILENO, "export: `", 9);
-	write(STDERR_FILENO, arg, ft_strlen(arg));
-	write(STDERR_FILENO, "': not a valid identifier\n", 26);
-}
-
-static void	print_option_error(char *arg, t_shell *shell)
-{
-	write(STDERR_FILENO, "bash: export: ", 14);
-	write(STDERR_FILENO, arg, ft_strlen(arg));
-	write(STDERR_FILENO, ": invalid option\n", 17);
-	shell->past_exit_status = 2;
-}
-
-static int	process_assign_export(char *arg, char *eq_pos, t_shell *shell)
-{
-	char	*var_name;
-	char	*var_value;
-	int		result;
-
-	var_name = ft_substr(arg, 0, eq_pos - arg);
-	if (!var_name)
-		return (1);
-	if (!is_valid_var_name(var_name))
-	{
-		print_export_error(arg);
-		free(var_name);
-		return (1);
-	}
-	var_value = ft_strdup(eq_pos + 1);
-	if (!var_value)
-	{
-		free(var_name);
-		return (1);
-	}
-	result = set_env_var(var_name, var_value, shell);
-	free(var_name);
-	free(var_value);
-	return (result);
-}
-
-static int	process_append_export(char *arg, char *eq_pos, t_shell *shell)
-{
-	char	*var_name;
-	char	*var_value;
-	int		result;
-
-	var_name = ft_substr(arg, 0, eq_pos - arg - 1);
-	if (!var_name)
-		return (1);
-	if (!is_valid_var_name(var_name))
-	{
-		print_export_error(arg);
-		free(var_name);
-		return (1);
-	}
-	var_value = ft_strdup(eq_pos + 1);
-	if (!var_value)
-	{
-		free(var_name);
-		return (1);
-	}
-	result = append_env_var(var_name, var_value, shell);
-	free(var_name);
-	free(var_value);
-	return (result);
-}
-
-static int	process_single_export(char *arg, t_shell *shell)
-{
-	if (!is_valid_var_name(arg))
-	{
-		print_export_error(arg);
-		return (1);
-	}
-	return (set_env_var(arg, "", shell));
-}
 
 int	process_export_args(char **args, t_shell *shell)
 {

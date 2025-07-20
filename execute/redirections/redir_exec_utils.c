@@ -58,14 +58,14 @@ static void	restore_builtin_fds(int *saved_fds)
 	}
 }
 
-int	execute_builtin_with_redirect(char **args, int input_fd, int output_fd, 
-								int stderr_fd, t_shell *shell)
+int	execute_builtin_with_redirect(t_redir_exec_context *ctx)
 {
 	int	saved_fds[3];
 	int	exit_status;
 
-	save_and_redirect_builtin(input_fd, output_fd, stderr_fd, saved_fds);
-	exit_status = execute_builtin(args, shell);
+	save_and_redirect_builtin(ctx->input_fd, ctx->output_fd,
+		ctx->stderr_fd, saved_fds);
+	exit_status = execute_builtin(ctx->args, ctx->shell);
 	restore_builtin_fds(saved_fds);
 	return (exit_status);
 }

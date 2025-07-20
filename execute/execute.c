@@ -12,12 +12,32 @@
 
 #include "../main/minishell.h"
 
+static int	setup_and_execute_pipeline(t_split *commands, int cmd_count,
+		t_shell *shell)
+{
+	int					**pipes;
+	pid_t				*pids;
+	t_pipeline_context	pipeline_ctx;
+
+	if (!setup_pipeline_resources(&commands, &pipes, &pids, cmd_count))
+		return (1);
+	signal(SIGINT, SIG_IGN);
+	signal(SIGQUIT, SIG_IGN);
+	pipeline_ctx.commands = commands;
+	pipeline_ctx.pipes = pipes;
+	pipeline_ctx.pids = pids;
+	pipeline_ctx.cmd_count = cmd_count;
+	pipeline_ctx.shell = shell;
+	cmd_count = execute_pipeline_children(&pipeline_ctx);
+	setup_signals();
+	cleanup_pipeline_resources(commands, pipes, pids, pipeline_ctx.cmd_count);
+	return (cmd_count);
+}
+
 int	execute_pipeline_with_redirections(t_split split, t_shell *shell)
 {
 	t_split	*commands;
 	int		cmd_count;
-	int		**pipes;
-	pid_t	*pids;
 	int		exit_status;
 
 	split = process_parentheses_in_split(split, shell);
@@ -30,15 +50,7 @@ int	execute_pipeline_with_redirections(t_split split, t_shell *shell)
 		free(commands);
 		return (exit_status);
 	}
-	if (!setup_pipeline_resources(&commands, &pipes, &pids, cmd_count))
-		return (1);
-	signal(SIGINT, SIG_IGN);
-	signal(SIGQUIT, SIG_IGN);
-	exit_status = execute_pipeline_children(commands, pipes, pids, cmd_count,
-			shell);
-	setup_signals();
-	cleanup_pipeline_resources(commands, pipes, pids, cmd_count);
-	return (exit_status);
+	return (setup_and_execute_pipeline(commands, cmd_count, shell));
 }
 
 static void	redirect_fds(int input_fd, int output_fd, int stderr_fd)
@@ -84,48 +96,32 @@ static void	execute_child_command(char **args, t_shell *shell)
 	exit(127);
 }
 
-void	execute_pipe_child_with_redirections(t_split cmd, int cmd_index,
-		int **pipes, int cmd_count, t_shell *shell)
+void	execute_pipe_child_with_redirections(t_split cmd,
+		t_pipe_child_context *ctx, t_shell *shell)
 {
-	char	**args;
-	int		input_fd;
-	int		output_fd;
-	int		stderr_fd;
-	int		i;
+	char					**args;
+	t_redir_fds				fds;
+	t_pipe_setup_context	pipe_ctx;
+	int						fd_values[3];
 
-	input_fd = STDIN_FILENO;
-	output_fd = STDOUT_FILENO;
-	stderr_fd = STDERR_FILENO;
-	setup_pipe_fds(cmd_index, cmd_count, pipes, &input_fd, &output_fd);
-	args = parse_redirections(cmd, &input_fd, &output_fd, &stderr_fd, shell);
+	fd_values[0] = STDIN_FILENO;
+	fd_values[1] = STDOUT_FILENO;
+	fd_values[2] = STDERR_FILENO;
+	fds.input_fd = &fd_values[0];
+	fds.output_fd = &fd_values[1];
+	fds.stderr_fd = &fd_values[2];
+	pipe_ctx.cmd_index = ctx->cmd_index;
+	pipe_ctx.cmd_count = ctx->cmd_count;
+	pipe_ctx.pipes = ctx->pipes;
+	pipe_ctx.input_fd = &fd_values[0];
+	pipe_ctx.output_fd = &fd_values[1];
+	setup_pipe_fds(&pipe_ctx);
+	args = parse_redirections(cmd, &fds, shell);
 	if (!args)
 		exit(1);
-	redirect_fds(input_fd, output_fd, stderr_fd);
-	close_all_pipes(pipes, cmd_count);
+	redirect_fds(fd_values[0], fd_values[1], fd_values[2]);
+	close_all_pipes(ctx->pipes, ctx->cmd_count);
 	setup_child_signals();
-	if (!args[0])
-	{
-		free_args(args);
-		exit(0);
-	}
-	i = 0;
-	while (args[i])
-	{
-		args[i] = expand_variables_quoted(args[i], shell);
-		i++;
-	}
-	compact_args(args);
-	process_args_quotes(args, shell);
-	if (!args[0])
-	{
-		free_args(args);
-		exit(0);
-	}
-	if (args[0][0] == '\0')
-	{
-		write(STDERR_FILENO, ": command not found\n", 20);
-		free_args(args);
-		exit(127);
-	}
+	process_and_check_args(args, shell);
 	execute_child_command(args, shell);
 }

@@ -76,4 +76,3 @@ char	*get_env_value(char *var_name, t_shell *shell)
 	}
 	return (NULL);
 }
-

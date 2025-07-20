@@ -35,12 +35,13 @@ int	handle_empty_args(char **args, int input_fd, int output_fd, int stderr_fd)
 
 void	process_variable_expansion(char **args, t_shell *shell)
 {
-	int	i;
+	int		i;
+	char	*expanded;
 
 	i = 0;
 	while (args[i])
 	{
-		char *expanded = expand_variables(args[i], shell);
+		expanded = expand_variables(args[i], shell);
 		if (expanded)
 		{
 			free(args[i]);

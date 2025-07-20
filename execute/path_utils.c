@@ -14,8 +14,8 @@
 
 static int	is_special_directory(char *cmd)
 {
-	if ((ft_strncmp(cmd, "..", 3) == 0 && ft_strlen(cmd) == 2) ||
-		(ft_strncmp(cmd, ".", 2) == 0 && ft_strlen(cmd) == 1))
+	if ((ft_strncmp(cmd, "..", 3) == 0 && ft_strlen(cmd) == 2)
+		|| (ft_strncmp(cmd, ".", 2) == 0 && ft_strlen(cmd) == 1))
 		return (1);
 	return (0);
 }
