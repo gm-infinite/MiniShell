@@ -6,7 +6,7 @@
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 12:53:07 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/20 12:58:25 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/20 13:10:43 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,31 +56,53 @@ char	*remove_quotes_for_redirection(char *str)
 	int				i;
 	int				j;
 	unsigned char	quote_state;
-	int				len;
 
 	if (!str)
 		return (NULL);
-	len = ft_strlen(str);
-	result = malloc(len + 1);
+	result = malloc(ft_strlen(str) + 1);
 	if (!result)
 		return (NULL);
-	i = 0;
-	j = 0;
+	i = -1;
+	j = -1;
 	quote_state = 0;
-	while (str[i])
+	while (str[++i])
 	{
 		if (str[i] == '\'' && !(quote_state & 2))
 			quote_state ^= 1;
 		else if (str[i] == '"' && !(quote_state & 1))
 			quote_state ^= 2;
 		else
-		{
-			result[j] = str[i];
-			j++;
-		}
-		i++;
+			result[++j] = str[i];
 	}
-	result[j] = '\0';
+	result[++j] = '\0';
 	return (result);
 }
 
+int	validate_redirection_syntax(t_split split)
+{
+    int i;
+    int has_parentheses;
+    int err;
+    int redirect_type;
+
+    i = -1;
+    has_parentheses = has_parentheses_in_split(split);
+    while (++i < split.size)
+    {
+        redirect_type = is_redirection(split.start[i]);
+        if (redirect_type)
+        {
+            err = check_redirection_error(split, i);
+            if (err)
+                return err;
+            i += 1;
+        }
+        if (ft_strncmp(split.start[i], "|", 2) == 0 && ft_strlen(split.start[i]) == 1)
+        {
+            err = check_pipe_error(split, i, has_parentheses);
+            if (err)
+                return err;
+        }
+    }
+    return 0;
+}
