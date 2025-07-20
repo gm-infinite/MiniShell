@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   wildcard_filter.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 13:57:14 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/07/14 18:38:26 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/21 01:01:55 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,8 @@ void	apply_filter_start(t_split filter, t_split cur_dir, char *check_list)
 	{
 		while (i < cur_dir.size)
 		{
-			if (ft_strncmp(filter.start[0], cur_dir.start[i], \
-				ft_strlen(filter.start[0])))
+			if (ft_strncmp(filter.start[0], cur_dir.start[i],
+					ft_strlen(filter.start[0])))
 				check_list[i] = '0';
 			i++;
 		}
@@ -60,7 +60,7 @@ void	apply_filter_end(t_split filter, t_split cur_dir, char *check_list)
 	}
 }
 
-void	apply_filter_minlen(t_split filter, t_split cur_dir, \
+void	apply_filter_minlen(t_split filter, t_split cur_dir,
 							char *check_list, char *wildcard)
 {
 	int		i;
@@ -76,7 +76,7 @@ void	apply_filter_minlen(t_split filter, t_split cur_dir, \
 	}
 }
 
-static void	apply_filter_midsin(t_split filter, char *cur_dir_i, \
+static void	apply_filter_midsin(t_split filter, char *cur_dir_i,
 								char *check_list_i)
 {
 	int		filter_i;
@@ -86,8 +86,8 @@ static void	apply_filter_midsin(t_split filter, char *cur_dir_i, \
 	index = &(cur_dir_i[ft_strlen(filter.start[0])]);
 	while (filter_i < filter.size - 1)
 	{
-		index = (ft_strnstr(index, filter.start[filter_i], ft_strlen(index) \
-		- ft_strlen(filter.start[filter.size - 1])));
+		index = (ft_strnstr(index, filter.start[filter_i], ft_strlen(index)
+					- ft_strlen(filter.start[filter.size - 1])));
 		if (index == NULL)
 		{
 			*check_list_i = '0';

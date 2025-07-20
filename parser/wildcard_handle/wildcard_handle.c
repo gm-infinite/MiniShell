@@ -39,8 +39,8 @@ static t_split	get_cur_dir_entries(const char *direc)
 	struct dirent	*entry;
 
 	cur_dir_ent.size = count_dir_entries(direc);
-	cur_dir_ent.start = (char **)ft_calloc(cur_dir_ent.size + 1, \
-						sizeof(char *));
+	cur_dir_ent.start = (char **)ft_calloc(cur_dir_ent.size + 1,
+			sizeof(char *));
 	if (cur_dir_ent.start == NULL)
 		return (create_split(NULL, 0));
 	dir = opendir(direc);

@@ -6,7 +6,7 @@
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:15:24 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/07/20 22:15:10 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/21 01:00:18 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,8 @@ void	cut_out_par(t_split *split)
 
 	start = split->start[0];
 	end = split->start[split->size - 1];
-	if (start == end && (size_t)(countchr_str(start, '(') + \
-		countchr_str(start, ')')) == ft_strlen(start))
+	if (start == end && (size_t)(countchr_str(start, '(')
+		+ countchr_str(start, ')')) == ft_strlen(start))
 	{
 		split->size--;
 		return ;

@@ -6,7 +6,7 @@
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/27 00:00:00 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/20 21:04:48 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/21 00:59:35 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 static char	*allocate_cut_indexes(t_split split)
 {
-	return (ft_calloc(count_str_split(split, "||", 1) + \
-		count_str_split(split, "&&", 1) + 1, sizeof(char)));
+	return (ft_calloc(count_str_split(split, "||", 1)
+			+ count_str_split(split, "&&", 1) + 1, sizeof(char)));
 }
 
 static int	process_cut_index(t_split split, int i, int par)
