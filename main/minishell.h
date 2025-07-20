@@ -6,7 +6,7 @@
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 10:53:30 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/07/19 23:31:07 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/20 12:36:22 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,7 +148,6 @@ void	execute_pipe_child_with_redirections(t_split cmd, int cmd_index, int **pipe
 */
 int		is_redirection(char *token);
 int		has_redirections(t_split split);
-int		is_numbered_redirection(char *num_token, char *redir_token);
 int		validate_redirection_syntax(t_split split);
 char	*remove_quotes_for_redirection(char *str);
 int		handle_here_doc(char *delimiter, int *pipe_fd);

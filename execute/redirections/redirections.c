@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirections.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 14:15:09 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/19 17:15:40 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/20 12:36:19 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@
  * - Scans all arguments to identify redirection patterns
  * - Counts clean arguments (non-redirection tokens)
  * - Determines memory allocation requirements for clean argument array
- * - Handles both simple (>) and numbered (2 >) redirection patterns
  * 
  * Pass 2 - Processing Phase:
  * - Processes each redirection operator and sets up file descriptors
@@ -69,7 +68,6 @@
  * The function removes redirection syntax from command arguments:
  * - Redirection operators (<, >, >>, 2>, <<) are removed
  * - Target filenames are removed
- * - Numbered redirection patterns ("2 >") are handled specially
  * - Clean arguments are duplicated to new array for command execution
  * 
  * FILE PERMISSION MANAGEMENT:
@@ -142,20 +140,13 @@ char	**parse_redirections(t_split split, int *input_fd, int *output_fd, int *std
 	{
 		// REDIRECTION DETECTION: Check current token for redirection operators
 		redirect_type = is_redirection(args[i]);
-		int numbered_redirect = 0;  // Flag for numbered redirection patterns
-		
-		// NUMBERED REDIRECTION CHECK: Look for patterns like "2 >"
-		// Only check if current token isn't already a redirection operator
-		if (!redirect_type && args[i + 1])
-			numbered_redirect = is_numbered_redirection(args[i], args[i + 1]);
 		
 		// SKIP LOGIC: Handle redirection tokens and their targets
-		if (redirect_type || numbered_redirect)
+		if (redirect_type)
 		{
 			// Skip redirection operator(s) and filename
-			// Numbered redirections span 3 tokens: number + operator + filename
 			// Regular redirections span 2 tokens: operator + filename
-			int skip_count = (numbered_redirect) ? 3 : 2;
+			int skip_count = 2;
 			
 			// Bounds check: ensure we don't go beyond array bounds
 			// If there aren't enough tokens, we'll handle the error in the second pass
@@ -191,23 +182,13 @@ char	**parse_redirections(t_split split, int *input_fd, int *output_fd, int *std
 	{
 		// REDIRECTION DETECTION: Re-examine tokens for redirection patterns
 		redirect_type = is_redirection(args[i]);
-		int numbered_redirect = 0;
-		
-		// NUMBERED REDIRECTION CHECK: Look for multi-token patterns
-		if (!redirect_type && args[i + 1])
-			numbered_redirect = is_numbered_redirection(args[i], args[i + 1]);
 		
 		// REDIRECTION PROCESSING: Handle redirection setup and file operations
-		if (redirect_type || numbered_redirect)
+		if (redirect_type)
 		{
-			// PATTERN UNIFICATION: Use numbered redirect type if detected
-			if (numbered_redirect)
-				redirect_type = numbered_redirect;
-			
 			// FILENAME EXTRACTION: Get target filename for redirection
-			// Numbered redirections: filename is at position i+2 (num + op + filename)
 			// Regular redirections: filename is at position i+1 (op + filename)
-			int filename_index = (numbered_redirect) ? i + 2 : i + 1;
+			int filename_index = i + 1;
 			
 			// SYNTAX VALIDATION: Ensure filename exists
 			if (!args[filename_index])
@@ -308,7 +289,7 @@ char	**parse_redirections(t_split split, int *input_fd, int *output_fd, int *std
 				free(processed_filename);
 			
 			// SKIP PROCESSED TOKENS: Move past redirection syntax
-			int skip_count = (numbered_redirect) ? 3 : 2;
+			int skip_count = 2;
 			
 			// Bounds check: ensure we don't go beyond array bounds
 			while (skip_count > 0 && args[i])

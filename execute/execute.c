@@ -3,20 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 13:50:25 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/19 17:15:40 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/20 12:29:02 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../main/minishell.h"
-
-/*
-** ============================================================================
-** PARENTHESES PREPROCESSING FOR PIPE SEGMENTS
-** ============================================================================
-*/
 
 /**
  * @brief Recursively processes parentheses in a command split
@@ -112,12 +106,6 @@ t_split	process_parentheses_in_split(t_split cmd, t_shell *shell)
 	// No parentheses to process, return original command
 	return (cmd);
 }
-
-/*
-** ============================================================================
-** SINGLE COMMAND EXECUTION ENGINE
-** ============================================================================
-*/
 
 /**
  * @brief Executes a single command without pipes or complex redirections
@@ -454,18 +442,13 @@ int	execute_single_command(char **args, t_shell *shell)
  */
 int	execute_command(t_split split, t_shell *shell)
 {
-	int		exit_status;    // Command execution result
-	int		has_pipes;      // Number of pipe operators found
-	int		has_redir;      // Boolean: redirections present
-	int		syntax_error;   // Syntax validation result
+	int		exit_status;
+	int		has_pipes;
+	int		has_redir;
+	int		syntax_error;
 
-	// PHASE 1: Empty command optimization
-	// Handle empty commands efficiently without overhead
 	if (split.size == 0)
-		return (0);         // Empty command is successful no-op
-	
-	// PHASE 1.5: Syntax validation
-	// Check for syntax errors before processing
+		return (0);
 	syntax_error = validate_redirection_syntax(split);
 	if (syntax_error != 0)
 	{
@@ -517,12 +500,6 @@ int	execute_command(t_split split, t_shell *shell)
 	
 	return (exit_status);
 }
-
-/*
-** ============================================================================
-** COMPLEX PIPELINE EXECUTION WITH REDIRECTION SUPPORT
-** ============================================================================
-*/
 
 /**
  * @brief Executes pipelines where individual commands may have redirections
