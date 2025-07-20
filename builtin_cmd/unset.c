@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 13:35:56 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/19 15:37:43 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/20 14:41:26 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,32 +74,18 @@ int	builtin_unset(char **args, t_shell *shell)
 
 	if (!args[1])
 		return (0);
-	
-	i = 1;
-	while (args[i])
+	i = 0;
+	while (args[++i])
 	{
-		// Check for invalid options (starting with -)
 		if (args[i][0] == '-')
-		{
-			// Handle bash-style error message for invalid options
-			write(STDERR_FILENO, "bash: unset: ", 13);
-			write(STDERR_FILENO, args[i], ft_strlen(args[i]));
-			write(STDERR_FILENO, ": invalid option\n", 17);
-			write(STDERR_FILENO, "unset: usage: unset [-f] [-v] [-n] [name ...]\n", 47);
-			shell->past_exit_status = 2;
-			return (2);
-		}
-		
-		// Only attempt to unset if it's a valid variable name
-		// Invalid names are silently ignored (bash behavior)
+        {
+            fprintf(stderr, "minishell: unset: %s: invalid option\n", args[i]);
+            fprintf(stderr, "unset: usage: unset [-f] [-v] [-n] [name ...]\n");
+            shell->past_exit_status = 2;
+            return (2);
+        }
 		if (is_valid_var_name(args[i]))
-		{
 			unset_env_var(args[i], shell);
-		}
-		// Note: bash silently ignores invalid variable names, no error message
-		
-		i++;
 	}
-	
 	return (0);
 }

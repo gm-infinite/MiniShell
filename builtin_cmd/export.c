@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 13:36:19 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/19 15:20:02 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/20 14:36:36 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,12 +177,8 @@ int	builtin_export(char **args, t_shell *shell)
 		// Check for invalid flags (starting with -)
 		if (args[i][0] == '-')
 		{
-			// Handle bash-style error message for invalid options
-			write(STDERR_FILENO, "bash: export: ", 14);
-			write(STDERR_FILENO, args[i], ft_strlen(args[i]));
-			write(STDERR_FILENO, ": invalid option\n", 17);
-			write(STDERR_FILENO, "export: usage: export [-fn] [name[=value] ...] or export -p\n", 61);
-			shell->past_exit_status = 2;
+			fprintf(stderr, "export: %s: invalid option\n", args[i]);
+			fprintf(stderr, "export: usage: export [-fn] [name[=value] ...] or export -p\n");
 			return (2);
 		}
 		

@@ -6,7 +6,7 @@
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 13:50:25 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/20 12:29:02 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/20 14:33:40 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,55 +190,33 @@ t_split	process_parentheses_in_split(t_split cmd, t_shell *shell)
  */
 int	execute_single_command(char **args, t_shell *shell)
 {
-	pid_t	pid;            // Process ID for forked child
-	int		status;         // Child process exit status
-	char	*executable;    // Resolved path to executable
-	int		i;              // Iterator for argument processing
+	pid_t	pid;
+	int		status;
+	char	*executable;
+	int		i;
+	char	*expanded;
 
-	// PHASE 1: Input validation
-	// Ensure we have a valid command to execute
 	if (!args || !args[0])
-		return (1);         // No command specified
-	
-	// PHASE 2: Environment variable expansion
-	// Expand all environment variables in arguments with quote awareness
-	// This must happen before quote processing to handle variables properly
-	i = 0;
-	while (args[i])
+		return (1);
+	i = -1;
+	while (args[++i])
 	{
-		char *expanded = expand_variables_quoted(args[i], shell);
+		expanded = expand_variables_quoted(args[i], shell);
 		if (expanded)
 		{
-			free(args[i]);                     // Free original argument
-			args[i] = expanded;                // Replace with expanded version
+			free(args[i]);
+			args[i] = expanded;
 		}
-		i++;
 	}
-	
 	compact_args(args);
-	// PHASE 3: Quote processing
-	// Remove quotes and process escape sequences
-	// This happens after variable expansion to preserve expansion context
 	process_args_quotes(args, shell);
-	
-	// PHASE 3.5: Argument compaction
-	// Remove empty strings from arguments array (from undefined variable expansion)
-	// This shifts remaining arguments to fill gaps (e.g., "$EMPTY echo hi" -> "echo hi")
-	
-	// PHASE 3.6: Empty command validation after compaction
-	// Check if we have any arguments left after compaction
 	if (!args[0])
-		return (0);         // Empty command is a successful no-op (matches bash behavior)
-	
-	// PHASE 3.7: Empty command name validation
-	// Check if the command name is an empty string (like "")
-	// This should be treated as "command not found" not "is a directory"
+		return (0);
 	if (args[0][0] == '\0')
 	{
 		write(STDERR_FILENO, ": command not found\n", 20);
-		return (127);       // Empty command name is command not found
+		return (127);
 	}
-	
 	if (is_builtin(args[0]))
 		return (execute_builtin(args, shell));
 	executable = find_executable(args[0], shell);
@@ -251,10 +229,6 @@ int	execute_single_command(char **args, t_shell *shell)
 			write(STDERR_FILENO, ": command not found\n", 20);
 		return (127);
 	}
-	
-	// PHASE 5.5: Pre-execution validation
-	// Check if the found executable can actually be executed
-	// This distinguishes between "command not found" (127) and "cannot execute" (126)
 	struct stat file_stat;
 	if (stat(executable, &file_stat) == 0)
 	{
@@ -264,16 +238,14 @@ int	execute_single_command(char **args, t_shell *shell)
 			write(STDERR_FILENO, args[0], ft_strlen(args[0]));
 			write(STDERR_FILENO, ": Is a directory\n", 17);
 			free(executable);
-			return (126);   // "Cannot execute" exit code for directories
+			return (126);
 		}
-		
-		// Check if file has execute permissions
 		if (access(executable, X_OK) != 0)
 		{
 			write(STDERR_FILENO, args[0], ft_strlen(args[0]));
 			write(STDERR_FILENO, ": Permission denied\n", 20);
 			free(executable);
-			return (126);   // "Cannot execute" exit code for permission denied
+			return (126);
 		}
 	}
 	
@@ -368,6 +340,20 @@ int	execute_single_command(char **args, t_shell *shell)
 }
 
 
+static int	execute_simple_command_path(t_split split, t_shell *shell)
+{
+    char	**args;
+    int		exit_status;
+
+	args = split_to_args(split);
+    if (!args)
+        return (1);
+    exit_status = execute_single_command(args, shell);
+    free_args(args);
+    return exit_status;
+}
+
+
 /**
  * @brief Main command execution dispatcher and orchestrator
  * 
@@ -455,49 +441,17 @@ int	execute_command(t_split split, t_shell *shell)
 		shell->past_exit_status = syntax_error;
 		return (syntax_error);
 	}
-	
-	// PHASE 2: Command feature detection
-	// Analyze command structure to determine execution requirements
-	has_redir = has_redirections(split);    // Scan for redirection operators
-	has_pipes = count_pipes(split);         // Count pipeline segments
-	
-	// PHASE 3: Execution path dispatch
-	// Route to appropriate handler based on command complexity
+	has_redir = has_redirections(split);
+	has_pipes = count_pipes(split);
 	if (has_redir && has_pipes)
-	{
-		// COMPLEX EXECUTION PATH: Pipelines with per-command redirections
-		// This is the most sophisticated execution mode, handling commands like:
-		// "cat < input.txt | grep pattern > output.txt | sort >> final.txt"
 		exit_status = execute_pipeline_with_redirections(split, shell);
-	}
 	else if (has_redir)
-	{
-		// REDIRECTION EXECUTION PATH: Single command with I/O redirection
-		// Handles commands like: "ls -la > output.txt" or "cat < input.txt"
 		exit_status = execute_with_redirections(split, shell);
-	}
 	else if (has_pipes > 0)
-	{
-		// PIPELINE EXECUTION PATH: Multiple commands connected by pipes
-		// Handles commands like: "ls -la | grep .txt | wc -l"
 		exit_status = execute_pipeline(split, shell);
-	}
 	else
-	{
-		// SIMPLE EXECUTION PATH: Single command without special features
-		// Optimal path for basic commands like: "ls", "echo hello", "pwd"
-		char **args = split_to_args(split);
-		if (!args)
-			return (1);     // Memory allocation failure
-		
-		exit_status = execute_single_command(args, shell);
-		free_args(args);    // Clean up converted arguments
-	}
-	
-	// PHASE 4: Shell state update
-	// Store exit status for $? variable expansion in future commands
+		exit_status = execute_simple_command_path(split, shell);
 	shell->past_exit_status = exit_status;
-	
 	return (exit_status);
 }
 

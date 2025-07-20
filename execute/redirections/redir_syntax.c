@@ -6,7 +6,7 @@
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 12:53:07 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/20 13:10:43 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/20 14:41:51 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,8 +25,8 @@ int	check_pipe_error(t_split split, int i, int has_parentheses)
 {
     if (!has_parentheses && (i == 0 || i == split.size - 1))
     {
-        write(STDERR_FILENO, "bash: syntax error near unexpected token `|'\n", 45);
-        return 2;
+        write(STDERR_FILENO, "minishell: syntax error near unexpected token `|'\n", 45);
+        return (2);
     }
     return 0;
 }
@@ -36,13 +36,13 @@ int	check_redirection_error(t_split split, int i)
     int filename_index = i + 1;
     if (filename_index >= split.size)
     {
-        write(STDERR_FILENO, "bash: syntax error near unexpected token `newline'\n", 52);
+        write(STDERR_FILENO, "minishell: syntax error near unexpected token `newline'\n", 52);
         return 2;
     }
     char *next_token = split.start[filename_index];
     if (is_redirection(next_token) || ft_strncmp(next_token, "|", 2) == 0)
     {
-        write(STDERR_FILENO, "bash: syntax error near unexpected token `", 42);
+        write(STDERR_FILENO, "minishell: syntax error near unexpected token `", 42);
         write(STDERR_FILENO, next_token, ft_strlen(next_token));
         write(STDERR_FILENO, "'\n", 2);
         return 2;

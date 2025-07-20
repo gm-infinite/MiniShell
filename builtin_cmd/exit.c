@@ -6,7 +6,7 @@
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 13:31:37 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/19 08:07:33 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/20 14:35:19 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,21 +33,16 @@ int	builtin_exit(char **args, t_shell *shell)
 		// Check if remaining characters are all digits
 		if (args[1][i] == '\0')  // Just + or - alone
 		{
-			write(STDERR_FILENO, "exit: ", 6);
-			write(STDERR_FILENO, args[1], ft_strlen(args[1]));
-			write(STDERR_FILENO, ": numeric argument required\n", 28);
+			fprintf(stderr, "exit: %s: numeric argument required\n", args[1]);
 			shell->should_exit = 1;
 			shell->exit_code = 2;
 			return (2);
 		}
-		
 		while (args[1][i])
 		{
 			if (!ft_isdigit(args[1][i]))
 			{
-				write(STDERR_FILENO, "exit: ", 6);
-				write(STDERR_FILENO, args[1], ft_strlen(args[1]));
-				write(STDERR_FILENO, ": numeric argument required\n", 28);
+				fprintf(stderr, "exit: %s: numeric argument required\n", args[1]);
 				shell->should_exit = 1;
 				shell->exit_code = 2;
 				return (2);

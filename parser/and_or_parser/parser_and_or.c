@@ -6,7 +6,7 @@
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:15:24 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/07/20 11:34:24 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/20 14:41:26 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,7 +138,7 @@ void	parser_and_or(t_shell *shell, t_split split)
 	if (!check_operator_syntax_errors(split) || !check_parentheses_syntax_errors(split) || paranthesis_parity_check(split) == 0)
 	{
         if (paranthesis_parity_check(split) == 0)
-            write(STDERR_FILENO, "bash: syntax error: unexpected end of file\n", 44);
+            write(STDERR_FILENO, "minishell: syntax error: unexpected end of file\n", 44);
         shell->past_exit_status = 2;
         return ;
     }
