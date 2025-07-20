@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 13:29:14 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/07/15 19:27:29 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/20 16:15:03 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 int	is_empty(char *str)
 {
 	int	i;
+
 	if (str == NULL)
 		return (1);
 	i = 0;
@@ -37,6 +38,7 @@ void	safe_exit(t_shell *shell)
 	rl_clear_history();
 	exit(shell->past_exit_status);
 }
+
 void	shell_init(t_shell *shell)
 {
 	shell->current_input = NULL;

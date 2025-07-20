@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 13:29:46 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/18 11:50:07 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/20 16:15:03 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,30 +51,6 @@ int	is_builtin(char *cmd)
 	return (0);
 }
 
-void	free_environment(t_shell *shell)
-{
-	int	i;
-
-	if (!shell->envp)
-		return ;
-	
-	i = 0;
-	while (shell->envp[i])
-	{
-		free(shell->envp[i]);
-		i++;
-	}
-	free(shell->envp);
-	shell->envp = NULL;
-}
-
-/**
-** Shell state update if necessary
-** Called directly by executor for identified built-ins
-** Must not fork - operates within shell process
-** Updates shell state directly
-** Returns exit status for command chaining
-*/
 int	execute_builtin(char **args, t_shell *shell)
 {
 	if (!args || !args[0])

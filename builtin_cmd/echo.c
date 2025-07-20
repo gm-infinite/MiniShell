@@ -3,14 +3,28 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 13:31:05 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/18 11:49:39 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/20 16:15:03 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../main/minishell.h"
+
+static int	check_n_flag(char *arg)
+{
+	int	j;
+
+	if (arg[0] != '-' || arg[1] != 'n')
+		return (0);
+	j = 1;
+	while (arg[j] == 'n')
+		j++;
+	if (arg[j] == '\0')
+		return (1);
+	return (0);
+}
 
 int	builtin_echo(char **args)
 {
@@ -19,21 +33,10 @@ int	builtin_echo(char **args)
 
 	newline = 1;
 	i = 1;
-	while (args[i] && args[i][0] == '-')
+	while (args[i] && check_n_flag(args[i]))
 	{
-		if (args[i][1] == 'n')
-		{
-			int j = 1;
-			while (args[i][j] == 'n')
-				j++;
-			if (args[i][j] == '\0')
-			{
-				newline = 0;
-				i++;
-				continue;
-			}
-		}
-		break;
+		newline = 0;
+		i++;
 	}
 	while (args[i])
 	{

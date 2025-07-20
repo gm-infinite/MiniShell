@@ -6,13 +6,13 @@
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 10:55:46 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/07/18 22:08:10 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/20 16:15:03 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static void begin_command_parsing_and_execution(t_shell *shell)
+static void	begin_command_parsing_and_execution(t_shell *shell)
 {
 	char	*expanded_input;
 
@@ -70,4 +70,5 @@ int	main(int argc, char **argv, char **envp)
 	shell_init(&shell);
 	init_environment(&shell, envp);
 	start_shell(&shell);
+	return (0);
 }

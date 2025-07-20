@@ -6,7 +6,7 @@
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 10:53:30 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/07/20 13:02:00 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/20 16:52:01 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@
 #  define PATH_MAX 4096
 # endif
 
-extern volatile sig_atomic_t g_signal;
+extern volatile sig_atomic_t	g_signal;
 
 /*
 ** ============================================================================
@@ -122,6 +122,10 @@ int		builtin_export(char **args, t_shell *shell);
 int		builtin_unset(char **args, t_shell *shell);
 int		builtin_env(t_shell *shell);
 int		builtin_exit(char **args, t_shell *shell);
+int		set_env_var(char *var_name, char *value, t_shell *shell);
+int		append_env_var(char *var_name, char *value, t_shell *shell);
+int		print_sorted_env(t_shell *shell);
+int		process_export_args(char **args, t_shell *shell);
 
 /*
 ** ────────────────────────────────────────────────────────────────────────────
@@ -157,6 +161,10 @@ char	*remove_quotes_for_redirection(char *str);
 int		handle_here_doc(char *delimiter, int *pipe_fd);
 char	**parse_redirections(t_split split, int *input_fd, int *output_fd, int *stderr_fd, t_shell *shell);
 int		execute_with_redirections(t_split split, t_shell *shell);
+int		process_single_redirection(char **args, int i, int *input_fd,
+			int *output_fd, int *stderr_fd, t_shell *shell);
+char	**build_clean_args(char **args, int clean_count);
+int		count_clean_args(char **args);
 
 /*
 ** ────────────────────────────────────────────────────────────────────────────
