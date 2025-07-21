@@ -1,0 +1,49 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   redir_type_utils.c                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/07/20 23:00:00 by emgenc            #+#    #+#             */
+/*   Updated: 2025/07/20 23:46:49 by kuzyilma         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#include "../../main/minishell.h"
+
+int	handle_here_document(char *processed_filename, t_redir_fds *fds)
+{
+	int	here_doc_pipe[2];
+
+	if (handle_here_doc(processed_filename, here_doc_pipe) == 0)
+		*fds->input_fd = here_doc_pipe[0];
+	return (0);
+}
+
+int	handle_output_redirect(char *processed_filename, t_redir_fds *fds,
+		int redirect_type)
+{
+	if (redirect_type == 2)
+	{
+		*fds->output_fd = open(processed_filename, O_WRONLY | O_CREAT
+				| O_APPEND, 0644);
+		if (*fds->output_fd == -1)
+			return (-1);
+	}
+	else if (redirect_type == 4)
+	{
+		*fds->output_fd = open(processed_filename, O_WRONLY | O_CREAT
+				| O_TRUNC, 0644);
+		if (*fds->output_fd == -1)
+			return (-1);
+	}
+	else if (redirect_type == 5)
+	{
+		*fds->stderr_fd = open(processed_filename, O_WRONLY | O_CREAT
+				| O_TRUNC, 0644);
+		if (*fds->stderr_fd == -1)
+			return (-1);
+	}
+	return (0);
+}
