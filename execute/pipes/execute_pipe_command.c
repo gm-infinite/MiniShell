@@ -12,6 +12,12 @@
 
 #include "../../main/minishell.h"
 
+static void	write_error_message(char *cmd, char *message)
+{
+	write(STDERR_FILENO, cmd, ft_strlen(cmd));
+	write(STDERR_FILENO, message, ft_strlen(message));
+}
+
 static void	expand_command_args(char **args, t_shell *shell)
 {
 	char	*expanded;
@@ -75,8 +81,8 @@ static int	handle_external_command(char **args, t_pipe_context *ctx,
 	executable = find_executable(args[0], shell);
 	if (!executable)
 	{
-		fprintf(stderr, "%s: command not found\n", args[0]);
-		return (-1);
+		write_error_message(args[0], ": command not found\n");
+		exit(127);
 	}
 	pid = fork();
 	if (pid == -1)

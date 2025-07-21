@@ -85,6 +85,12 @@ static char	*search_in_path(char *cmd, char **paths)
 	return (NULL);
 }
 
+static void	write_error_message(char *cmd, char *message)
+{
+	write(STDERR_FILENO, cmd, ft_strlen(cmd));
+	write(STDERR_FILENO, message, ft_strlen(message));
+}
+
 char	*find_executable(char *cmd, t_shell *shell)
 {
 	char	*path_env;
@@ -97,19 +103,19 @@ char	*find_executable(char *cmd, t_shell *shell)
 	if (result && ft_strncmp(result, "__IS_DIRECTORY__", 16) == 0)
 	{
 		free(result);
-		fprintf(stderr, "%s: Is a directory\n", cmd);
+		write_error_message(cmd, ": Is a directory\n");
 		return (NULL);
 	}
 	if (result && ft_strncmp(result, "__NOT_EXECUTABLE__", 18) == 0)
 	{
 		free(result);
-		fprintf(stderr, "%s: Permission denied\n", cmd);
+		write_error_message(cmd, ": Permission denied\n");
 		return (NULL);
 	}
 	if (result && ft_strncmp(result, "__NOT_FOUND__", 13) == 0)
 	{
 		free(result);
-		fprintf(stderr, "%s: No such file or directory\n", cmd);
+		write_error_message(cmd, ": No such file or directory\n");
 		return (NULL);
 	}
 	

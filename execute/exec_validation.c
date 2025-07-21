@@ -42,6 +42,12 @@ int	validate_and_process_args(char **args, t_shell *shell)
 	return (-1);
 }
 
+static void	write_error_message(char *cmd, char *message)
+{
+	write(STDERR_FILENO, cmd, ft_strlen(cmd));
+	write(STDERR_FILENO, message, ft_strlen(message));
+}
+
 int	validate_executable(char *cmd, char *executable)
 {
 	struct stat	file_stat;
@@ -53,15 +59,15 @@ int	validate_executable(char *cmd, char *executable)
 			if ((ft_strncmp(cmd, ".", 2) == 0 && ft_strlen(cmd) == 1) ||
 				(ft_strncmp(cmd, "..", 3) == 0 && ft_strlen(cmd) == 2))
 			{
-				fprintf(stderr, "%s: command not found\n", cmd);
+				write_error_message(cmd, ": command not found\n");
 				return (127);
 			}
-			fprintf(stderr, "%s: Is a directory\n", cmd);
+			write_error_message(cmd, ": Is a directory\n");
 			return (126);
 		}
 		if (access(executable, X_OK) != 0)
 		{
-			fprintf(stderr, "%s: Permission denied\n", cmd);
+			write_error_message(cmd, ": Permission denied\n");
 			return (126);
 		}
 	}
@@ -73,7 +79,7 @@ int	handle_executable_not_found(char **args)
 	if ((ft_strncmp(args[0], ".", 2) == 0 && ft_strlen(args[0]) == 1) ||
 		(ft_strncmp(args[0], "..", 3) == 0 && ft_strlen(args[0]) == 2))
 	{
-		fprintf(stderr, "%s: command not found\n", args[0]);
+		write_error_message(args[0], ": command not found\n");
 		return (127);
 	}
 	if (ft_strchr(args[0], '/'))
@@ -86,7 +92,7 @@ int	handle_executable_not_found(char **args)
 	}
 	else
 	{
-		fprintf(stderr, "%s: command not found\n", args[0]);
+		write_error_message(args[0], ": command not found\n");
 		return (127);
 	}
 }

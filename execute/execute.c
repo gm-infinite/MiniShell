@@ -72,6 +72,12 @@ static void	redirect_fds(int input_fd, int output_fd, int stderr_fd)
 	}
 }
 
+static void	write_error_message(char *cmd, char *message)
+{
+	write(STDERR_FILENO, cmd, ft_strlen(cmd));
+	write(STDERR_FILENO, message, ft_strlen(message));
+}
+
 static void	execute_child_command(char **args, t_shell *shell)
 {
 	char	*executable;
@@ -81,7 +87,7 @@ static void	execute_child_command(char **args, t_shell *shell)
 	executable = find_executable(args[0], shell);
 	if (!executable)
 	{
-		fprintf(stderr, "%s: command not found\n", args[0]);
+		write_error_message(args[0], ": command not found\n");
 		exit(127);
 	}
 	args = filter_empty_args(args);

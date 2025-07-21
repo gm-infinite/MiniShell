@@ -28,6 +28,14 @@ int	unset_env_var(char *var_name, t_shell *shell)
 	return (0);
 }
 
+static void	write_error_unset_option(char *arg)
+{
+	write(STDERR_FILENO, "bash: unset: ", 13);
+	write(STDERR_FILENO, arg, ft_strlen(arg));
+	write(STDERR_FILENO, ": invalid option\n", 17);
+	write(STDERR_FILENO, "unset: usage: unset [-f] [-v] [-n] [name ...]\n", 47);
+}
+
 int	builtin_unset(char **args, t_shell *shell)
 {
 	int	i;
@@ -39,9 +47,7 @@ int	builtin_unset(char **args, t_shell *shell)
 	{
 		if (args[i][0] == '-')
 		{
-			fprintf(stderr, "bash: unset: %s: invalid option\n", args[i]);
-			fprintf(stderr, "unset: usage: unset [-f] [-v] [-n] [name ...]\n");
-			shell->past_exit_status = 2;
+			write_error_unset_option(args[i]);
 			return (2);
 		}
 		if (is_valid_var_name(args[i]))

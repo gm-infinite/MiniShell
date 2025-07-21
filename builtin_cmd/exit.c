@@ -30,14 +30,20 @@ static int	is_valid_number(char *arg)
 	return (1);
 }
 
+static void	write_exit_error(char *arg)
+{
+	write(STDERR_FILENO, "exit: ", 6);
+	write(STDERR_FILENO, arg, ft_strlen(arg));
+	write(STDERR_FILENO, ": numeric argument required\n", 28);
+}
+
 static int	validate_numeric_arg(char *arg, t_shell *shell)
 {
 	if (!is_valid_number(arg))
 	{
-		fprintf(stderr, "exit: %s: numeric argument required\n", arg);
+		write_exit_error(arg);
 		shell->should_exit = 1;
-		shell->exit_code = 2;
-		return (0);
+		return (2);
 	}
 	return (1);
 }

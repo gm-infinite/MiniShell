@@ -53,6 +53,12 @@ static void	process_argument_expansion(char **args, t_shell *shell)
 	process_args_quotes(args, shell);
 }
 
+static void	write_error_message(char *cmd, char *message)
+{
+	write(STDERR_FILENO, cmd, ft_strlen(cmd));
+	write(STDERR_FILENO, message, ft_strlen(message));
+}
+
 static void	execute_external_command(char **args, t_shell *shell)
 {
 	char	*executable;
@@ -61,7 +67,7 @@ static void	execute_external_command(char **args, t_shell *shell)
 	executable = find_executable(args[0], shell);
 	if (!executable)
 	{
-		fprintf(stderr, "%s: command not found\n", args[0]);
+		write_error_message(args[0], ": command not found\n");
 		exit(127);
 	}
 	filtered_args = filter_empty_args(args);
