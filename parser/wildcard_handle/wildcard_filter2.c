@@ -85,8 +85,8 @@ void	apply_filter(t_split cur_dir, char *check_list, char *wildcard,
 	t_split	filter;
 	char	*processed_wildcard;
 
-	filter = create_filter(wildcard, shell);
 	processed_wildcard = process_quotes(wildcard, shell);
+	filter = create_filter(wildcard, shell);
 	apply_filter_minlen(filter, cur_dir, check_list, processed_wildcard);
 	apply_filter_start(filter, cur_dir, check_list);
 	apply_filter_end(filter, cur_dir, check_list);

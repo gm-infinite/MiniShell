@@ -41,17 +41,19 @@ char	*process_quotes(char *str, t_shell *shell)
 
 	if (!str)
 		return (NULL);
-	result = remove_quotes_from_string(str);
-	if (!result)
+	
+	// Use the new quote-aware expansion function
+	expanded = expand_with_quotes(str, shell);
+	if (!expanded)
 		return (NULL);
-	if (is_entirely_single_quoted(str))
-		return (result);
-	expanded = expand_variables(result, shell);
-	if (expanded)
-	{
-		free(result);
-		return (expanded);
-	}
+	
+	// Then remove the quotes
+	result = remove_quotes_from_string(expanded);
+	if (!result)
+		result = expanded;
+	else if (expanded != str)
+		free(expanded);
+	
 	return (result);
 }
 

@@ -65,3 +65,23 @@ int	is_entirely_single_quoted(char *str)
 	}
 	return (quote_count == 2);
 }
+
+int	is_in_single_quotes(char *str, int pos)
+{
+	int	i;
+	int	in_single;
+	int	in_double;
+
+	i = 0;
+	in_single = 0;
+	in_double = 0;
+	while (i < pos && str[i])
+	{
+		if (str[i] == '"' && !in_single)
+			in_double = !in_double;
+		else if (str[i] == '\'' && !in_double)
+			in_single = !in_single;
+		i++;
+	}
+	return (in_single);
+}

@@ -49,6 +49,23 @@ static int	handle_dollar_expansion(t_expand *holder, t_shell *shell)
 	if (holder->indx + 1 >= (int)ft_strlen(holder->result))
 		return (-1);
 	holder->var_start = &holder->result[holder->indx + 1];
+	
+	// Handle $"string" locale translation syntax - just skip the $
+	if (*holder->var_start == '"')
+	{
+		// Remove the $ by shifting the rest of the string left
+		ft_memmove(&holder->result[holder->indx], 
+				&holder->result[holder->indx + 1], 
+				ft_strlen(&holder->result[holder->indx + 1]) + 1);
+		// Now find the closing quote and skip to after it
+		holder->indx++; // Skip the opening quote
+		while (holder->result[holder->indx] && holder->result[holder->indx] != '"')
+			holder->indx++;
+		if (holder->result[holder->indx] == '"')
+			holder->indx++; // Skip the closing quote
+		return (1);
+	}
+	
 	if (*holder->var_start == '?')
 	{
 		if (!handle_question_mark(holder, shell))
@@ -66,7 +83,11 @@ static int	handle_dollar_expansion(t_expand *holder, t_shell *shell)
 			return (0);
 		return (1);
 	}
-	return (-1);
+	// Lone $ not followed by valid variable name - remove it
+	ft_memmove(&holder->result[holder->indx], 
+			&holder->result[holder->indx + 1], 
+			ft_strlen(&holder->result[holder->indx + 1]) + 1);
+	return (1);
 }
 
 char	*expand_variables(char *str, t_shell *shell)
@@ -116,10 +137,57 @@ char	*expand_variables_quoted(char *str, t_shell *shell)
 	tilde_expanded = expand_tilde(str, shell);
 	if (!tilde_expanded)
 		return (NULL);
-	result = expand_variables(tilde_expanded, shell);
+	result = expand_with_quotes(tilde_expanded, shell);
 	// Always return result, freeing tilde_expanded only if it's different
-	// expand_variables either returns the same pointer or a new allocation
+	// expand_with_quotes either returns the same pointer or a new allocation
 	if (result != tilde_expanded && tilde_expanded)
 		free(tilde_expanded);
 	return (result);
+}
+
+char	*expand_with_quotes(char *str, t_shell *shell)
+{
+	t_expand	holder;
+	char		*tilde_expanded;
+	int			expansion_result;
+	int			in_single_quotes;
+	int			in_double_quotes;
+
+	if (!str)
+		return (NULL);
+	tilde_expanded = expand_tilde(str, shell);
+	if (!tilde_expanded)
+		return (NULL);
+	
+	// Initialize all fields of holder
+	holder.result = tilde_expanded;
+	holder.var_start = NULL;
+	holder.var_end = NULL;
+	holder.var_name = NULL;
+	holder.var_value = NULL;
+	holder.expanded = NULL;
+	holder.indx = 0;
+	holder.var_len = 0;
+	in_single_quotes = 0;
+	in_double_quotes = 0;
+	
+	while (holder.result[holder.indx])
+	{
+		// Track quote state but don't skip the quote characters
+		if (holder.result[holder.indx] == '\'' && !in_double_quotes)
+			in_single_quotes = !in_single_quotes;
+		else if (holder.result[holder.indx] == '"' && !in_single_quotes)
+			in_double_quotes = !in_double_quotes;
+		// Only expand $ if not in single quotes
+		else if (holder.result[holder.indx] == '$' && !in_single_quotes)
+		{
+			expansion_result = handle_dollar_expansion(&holder, shell);
+			if (expansion_result == 0)
+				break ;
+			if (expansion_result == 1)
+				continue ;
+		}
+		holder.indx++;
+	}
+	return (holder.result);
 }

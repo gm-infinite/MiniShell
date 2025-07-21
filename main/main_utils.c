@@ -47,4 +47,6 @@ void	shell_init(t_shell *shell)
 	shell->should_exit = 0;
 	shell->exit_code = 0;
 	shell->envp = NULL;
+	shell->prompt = NULL;
+	shell->terminal_prompt = "minishell > ";
 }

@@ -17,8 +17,10 @@ static int	is_valid_number(char *arg)
 	int	i;
 
 	i = 0;
+	// Only one + or - allowed at the beginning
 	if (arg[i] == '+' || arg[i] == '-')
 		i++;
+	// Must have at least one digit after optional sign
 	if (arg[i] == '\0')
 		return (0);
 	while (arg[i])
@@ -52,7 +54,7 @@ int	builtin_exit(char **args, t_shell *shell)
 {
 	int	exit_code;
 
-	printf("exit\n");
+	// printf("exit\n");
 	if (args[1] && args[2])
 	{
 		write(STDERR_FILENO, "exit: too many arguments\n", 25);

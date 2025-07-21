@@ -24,28 +24,29 @@ char	**split_to_args(t_split split)
 {
 	char	**args;
 	int		i;
-	int		j;
 
 	args = malloc(sizeof(char *) * (split.size + 1));
 	if (!args)
 		return (NULL);
-	i = -1;
-	j = 0;
-	while (++i < split.size)
+	i = 0;
+	while (i < split.size)
 	{
-		if (split.start[i] && split.start[i][0] != '\0'
-			&& !is_empty_or_whitespace(split.start[i]))
+		if (split.start[i])
 		{
-			args[j] = ft_strdup(split.start[i]);
-			if (!args[j])
+			args[i] = ft_strdup(split.start[i]);
+			if (!args[i])
 			{
-				free_args(args);
+				while (--i >= 0)
+					free(args[i]);
+				free(args);
 				return (NULL);
 			}
-			j++;
 		}
+		else
+			args[i] = NULL;
+		i++;
 	}
-	args[j] = NULL;
+	args[i] = NULL;
 	return (args);
 }
 

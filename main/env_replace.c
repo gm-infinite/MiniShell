@@ -24,7 +24,7 @@ static char	*create_after_part(t_expand *holder, int flag)
 	if (!holder || !holder->result)
 		return (ft_strdup(""));
 	
-	if (flag == 1)
+	if (flag & 2)
 	{
 		// For $? expansion - skip $ and ?
 		if (holder->indx + 2 >= (int)ft_strlen(holder->result))
@@ -69,6 +69,7 @@ int	replace_var_with_value(t_expand *holder, t_shell *shell, int flags)
 {
 	char	*before;
 	char	*after;
+	int		before_len;
 
 	(void)shell;
 	before = create_before_part(holder);
@@ -80,9 +81,11 @@ int	replace_var_with_value(t_expand *holder, t_shell *shell, int flags)
 		return (0);
 	}
 	holder->var_len = ft_strlen(holder->var_value);
+	before_len = ft_strlen(before);
 	free(holder->result);
 	cleanup_replacement(before, after, flags & 1, holder);
 	holder->result = holder->expanded;
-	holder->indx += holder->var_len;
+	// Set index to the position after the replaced value
+	holder->indx = before_len + holder->var_len;
 	return (1);
 }

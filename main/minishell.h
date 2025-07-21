@@ -51,6 +51,8 @@ typedef struct s_shell
 	char	**envp;
 	int		should_exit;
 	int		exit_code;
+	char	*prompt;
+	char	*terminal_prompt;
 }			t_shell;
 
 typedef struct s_pipe_context
@@ -189,6 +191,7 @@ void	free_environment(t_shell *shell);
 int		set_env_var(char *var_name, char *value, t_shell *shell);
 int		unset_env_var(char *var_name, t_shell *shell);
 int		replace_var_with_value(t_expand *holder, t_shell *shell, int flags);
+char	*expand_with_quotes(char *str, t_shell *shell);
 
 /*
 ** ────────────────────────────────────────────────────────────────────────────
