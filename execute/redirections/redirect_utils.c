@@ -69,6 +69,46 @@ static char	*process_filename(char *filename, t_shell *shell)
 	return (processed_filename);
 }
 
+static char	*process_heredoc_delimiter(char *filename, t_shell *shell)
+{
+	char	*result;
+	int		has_double_quotes;
+	int		i;
+
+	// Check if the original filename has double quotes
+	has_double_quotes = 0;
+	i = 0;
+	while (filename[i])
+	{
+		if (filename[i] == '"')
+		{
+			has_double_quotes = 1;
+			break;
+		}
+		i++;
+	}
+
+	// Remove quotes first
+	result = remove_quotes_for_redirection(filename);
+	if (!result)
+	{
+		result = ft_strdup(filename);
+		if (!result)
+			return (NULL);
+	}
+
+	// Only expand variables if original had double quotes
+	if (has_double_quotes)
+	{
+		char *expanded = expand_variables(result, shell);
+		free(result);
+		return (expanded);
+	}
+
+	// For unquoted or single-quoted, return as-is (no expansion)
+	return (result);
+}
+
 int	process_single_redirection(char **args, int i, t_redir_fds *fds,
 		t_shell *shell)
 {
@@ -81,7 +121,13 @@ int	process_single_redirection(char **args, int i, t_redir_fds *fds,
 		write(STDERR_FILENO, "syntax error: missing filename\n", 32);
 		return (-1);
 	}
-	processed_filename = process_filename(args[i + 1], shell);
+	
+	// Use special heredoc delimiter processing for heredoc (redirect_type == 1)
+	if (redirect_type == 1)
+		processed_filename = process_heredoc_delimiter(args[i + 1], shell);
+	else
+		processed_filename = process_filename(args[i + 1], shell);
+	
 	if (!processed_filename)
 		return (-1);
 	if (handle_redirection_type(redirect_type, processed_filename, fds) == -1)

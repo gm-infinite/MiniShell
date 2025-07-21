@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "../../main/minishell.h"
+#include "../../main/get_next_line.h"
 
 int	handle_here_doc(char *delimiter, int *pipe_fd)
 {
@@ -23,7 +24,18 @@ int	handle_here_doc(char *delimiter, int *pipe_fd)
 	}
 	while (1)
 	{
-		line = readline("> ");
+		if (isatty(fileno(stdin)))
+			line = readline("> ");
+		else
+		{
+			line = get_next_line(fileno(stdin));
+			if (line)
+			{
+				char *trimmed = ft_strtrim(line, "\n");
+				free(line);
+				line = trimmed;
+			}
+		}
 		if (!line)
 			break ;
 		if (ft_strncmp(line, delimiter, ft_strlen(delimiter)) == 0
