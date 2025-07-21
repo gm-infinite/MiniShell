@@ -11,8 +11,7 @@
 /* ************************************************************************** */
 
 #include "../main/minishell.h"
-
-extern char	*wildcard_handle(char *wildcard, t_shell *shell);
+#include "../parser/wildcard_handle/wildcard_handler.h"
 
 int	is_empty_or_whitespace(char *str)
 {
@@ -97,58 +96,76 @@ void	handle_empty_pipe_args(char **args)
 		exit(0);
 }
 
-// Apply wildcard expansion to arguments after variable expansion
-// This ensures wildcards in variables are expanded at the right time
 void	expand_wildcards_in_args(char **args, t_shell *shell)
 {
-	t_split		input;
-	char		*expanded;
-	int			i;
-	
-	if (!args)
+	char	*temp_input;
+	char	*wildcard_expanded;
+	t_split	expanded_split;
+	int		i;
+
+	if (!args || !args[0])
 		return ;
-	
-	// Create a temporary split from the args
+
+	// Convert args back to a string for wildcard processing
+	temp_input = NULL;
 	i = 0;
 	while (args[i])
-		i++;
-	input.size = i;
-	input.start = args;
-	
-	// Convert to string, apply wildcard expansion, then split back
-	expanded = revert_split_str(input);
-	if (expanded)
 	{
-		char *wildcard_expanded = wildcard_input_modify(expanded, shell);
-		if (wildcard_expanded && wildcard_expanded != expanded)
+		if (temp_input == NULL)
+			temp_input = ft_strdup(args[i]);
+		else
 		{
-			// Parse the expanded result back into args
-			t_split new_split = create_split_str(wildcard_expanded);
-			if (new_split.size > 0 && new_split.size <= input.size)
-			{
-				// Copy expanded args back
-				i = 0;
-				while (i < new_split.size && args[i])
-				{
-					free(args[i]);
-					args[i] = ft_strdup(new_split.start[i]);
-					i++;
-				}
-				// Clear remaining args if any
-				while (args[i])
-				{
-					free(args[i]);
-					args[i] = NULL;
-					i++;
-				}
-			}
-			free_split(&new_split);
-			free(wildcard_expanded);
+			char *temp = ft_strjoin(temp_input, " ");
+			free(temp_input);
+			temp_input = temp;
+			temp = ft_strjoin(temp_input, args[i]);
+			free(temp_input);
+			temp_input = temp;
 		}
-		else if (wildcard_expanded == expanded)
-		{
-			// No change needed
-		}
-		free(expanded);
+		i++;
 	}
+
+	if (!temp_input)
+		return ;
+
+	// Apply wildcard expansion
+	wildcard_expanded = wildcard_input_modify(temp_input, shell);
+	free(temp_input);
+
+	if (!wildcard_expanded || wildcard_expanded == temp_input)
+	{
+		if (wildcard_expanded && wildcard_expanded != temp_input)
+			free(wildcard_expanded);
+		return ;
+	}
+
+	// The wildcard result has quoted filenames, we need to split and unquote them
+	expanded_split = create_split_str(wildcard_expanded);
+	free(wildcard_expanded);
+
+	if (expanded_split.size == 0)
+	{
+		free_split(&expanded_split);
+		return ;
+	}
+
+	// Process the expanded results - remove quotes and replace args
+	i = 0;
+	while (i < expanded_split.size && args[i])
+	{
+		char *unquoted = remove_quotes_from_string(expanded_split.start[i]);
+		free(args[i]);
+		args[i] = unquoted ? unquoted : ft_strdup(expanded_split.start[i]);
+		i++;
+	}
+
+	// Null out remaining args
+	while (args[i])
+	{
+		free(args[i]);
+		args[i] = NULL;
+		i++;
+	}
+
+	free_split(&expanded_split);
 }
