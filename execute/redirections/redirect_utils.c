@@ -72,23 +72,11 @@ static char	*process_filename(char *filename, t_shell *shell)
 static char	*process_heredoc_delimiter(char *filename, t_shell *shell)
 {
 	char	*result;
-	int		has_double_quotes;
-	int		i;
 
-	// Check if the original filename has double quotes
-	has_double_quotes = 0;
-	i = 0;
-	while (filename[i])
-	{
-		if (filename[i] == '"')
-		{
-			has_double_quotes = 1;
-			break;
-		}
-		i++;
-	}
+	(void)shell; // Unused parameter - heredoc delimiters are never expanded
 
-	// Remove quotes first
+	// Remove quotes but NEVER expand variables
+	// Heredoc delimiters are always treated literally in bash
 	result = remove_quotes_for_redirection(filename);
 	if (!result)
 	{
@@ -97,15 +85,6 @@ static char	*process_heredoc_delimiter(char *filename, t_shell *shell)
 			return (NULL);
 	}
 
-	// Only expand variables if original had double quotes
-	if (has_double_quotes)
-	{
-		char *expanded = expand_variables(result, shell);
-		free(result);
-		return (expanded);
-	}
-
-	// For unquoted or single-quoted, return as-is (no expansion)
 	return (result);
 }
 
