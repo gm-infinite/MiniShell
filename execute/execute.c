@@ -40,7 +40,6 @@ int	execute_pipeline_with_redirections(t_split split, t_shell *shell)
 	int		cmd_count;
 	int		exit_status;
 
-	split = process_parentheses_in_split(split, shell);
 	commands = split_by_pipes(split, &cmd_count);
 	if (!commands)
 		return (1);
@@ -90,15 +89,8 @@ static void	execute_child_command(char **args, t_shell *shell)
 		write_error_message(args[0], ": command not found\n");
 		exit(127);
 	}
-	args = filter_empty_args(args);
-	if (!args)
-	{
-		perror("filter_empty_args");
-		exit(127);
-	}
 	execve(executable, args, shell->envp);
 	perror("execve");
-	free_args(args);
 	exit(127);
 }
 

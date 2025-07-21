@@ -30,7 +30,6 @@ int	validate_and_process_args(char **args, t_shell *shell)
 		}
 		i++;
 	}
-	compact_args(args);
 	process_args_quotes(args, shell);
 	if (!args[0])
 		return (0);

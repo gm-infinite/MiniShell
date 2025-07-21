@@ -49,7 +49,6 @@ static void	process_argument_expansion(char **args, t_shell *shell)
 		}
 		i++;
 	}
-	compact_args(args);
 	process_args_quotes(args, shell);
 }
 
@@ -62,7 +61,6 @@ static void	write_error_message(char *cmd, char *message)
 static void	execute_external_command(char **args, t_shell *shell)
 {
 	char	*executable;
-	char	**filtered_args;
 
 	executable = find_executable(args[0], shell);
 	if (!executable)
@@ -70,15 +68,8 @@ static void	execute_external_command(char **args, t_shell *shell)
 		write_error_message(args[0], ": command not found\n");
 		exit(127);
 	}
-	filtered_args = filter_empty_args(args);
-	if (!filtered_args)
-	{
-		perror("filter_empty_args");
-		exit(127);
-	}
-	execve(executable, filtered_args, shell->envp);
+	execve(executable, args, shell->envp);
 	perror("execve");
-	free_args(filtered_args);
 	exit(127);
 }
 

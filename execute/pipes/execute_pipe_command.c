@@ -34,23 +34,13 @@ static void	expand_command_args(char **args, t_shell *shell)
 		}
 		i++;
 	}
-	compact_args(args);
 }
 
 static void	execute_child_process(char **args, char *executable, t_shell *shell)
 {
-	char	**filtered_args;
-
-	filtered_args = filter_empty_args(args);
-	if (!filtered_args)
-	{
-		perror("filter_empty_args");
-		exit(127);
-	}
-	if (execve(executable, filtered_args, shell->envp) == -1)
+	if (execve(executable, args, shell->envp) == -1)
 	{
 		perror("execve");
-		free_args(filtered_args);
 		exit(127);
 	}
 }

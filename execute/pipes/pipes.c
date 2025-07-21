@@ -38,8 +38,6 @@ static int	create_pipeline_processes(t_process_pipeline_context *proc_ctx)
 	i = 0;
 	while (i < proc_ctx->cmd_count)
 	{
-		proc_ctx->commands[i] = process_parentheses_in_split(
-				proc_ctx->commands[i], proc_ctx->shell);
 		proc_ctx->pids[i] = fork();
 		if (proc_ctx->pids[i] == -1)
 		{
@@ -100,7 +98,6 @@ int	execute_pipeline(t_split split, t_shell *shell)
 	t_split	*commands;
 	int		cmd_count;
 
-	split = process_parentheses_in_split(split, shell);
 	commands = split_by_pipes(split, &cmd_count);
 	if (!commands)
 		return (1);

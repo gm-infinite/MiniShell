@@ -12,6 +12,8 @@
 
 #include "../main/minishell.h"
 
+extern char	*wildcard_handle(char *wildcard, t_shell *shell);
+
 int	is_empty_or_whitespace(char *str)
 {
 	int	k;
@@ -79,9 +81,8 @@ void	process_and_check_args(char **args, t_shell *shell)
 			args[i] = expanded;
 		}
 	}
-	compact_args(args);
 	process_args_quotes(args, shell);
-	if (!args[0] || args[0][0] == '\0')
+	if (!args[0])
 		handle_empty_pipe_args(args);
 }
 
@@ -94,4 +95,60 @@ void	handle_empty_pipe_args(char **args)
 		exit(127);
 	else
 		exit(0);
+}
+
+// Apply wildcard expansion to arguments after variable expansion
+// This ensures wildcards in variables are expanded at the right time
+void	expand_wildcards_in_args(char **args, t_shell *shell)
+{
+	t_split		input;
+	char		*expanded;
+	int			i;
+	
+	if (!args)
+		return ;
+	
+	// Create a temporary split from the args
+	i = 0;
+	while (args[i])
+		i++;
+	input.size = i;
+	input.start = args;
+	
+	// Convert to string, apply wildcard expansion, then split back
+	expanded = revert_split_str(input);
+	if (expanded)
+	{
+		char *wildcard_expanded = wildcard_input_modify(expanded, shell);
+		if (wildcard_expanded && wildcard_expanded != expanded)
+		{
+			// Parse the expanded result back into args
+			t_split new_split = create_split_str(wildcard_expanded);
+			if (new_split.size > 0 && new_split.size <= input.size)
+			{
+				// Copy expanded args back
+				i = 0;
+				while (i < new_split.size && args[i])
+				{
+					free(args[i]);
+					args[i] = ft_strdup(new_split.start[i]);
+					i++;
+				}
+				// Clear remaining args if any
+				while (args[i])
+				{
+					free(args[i]);
+					args[i] = NULL;
+					i++;
+				}
+			}
+			free_split(&new_split);
+			free(wildcard_expanded);
+		}
+		else if (wildcard_expanded == expanded)
+		{
+			// No change needed
+		}
+		free(expanded);
+	}
 }

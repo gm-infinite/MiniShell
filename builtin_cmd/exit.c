@@ -11,6 +11,8 @@
 /* ************************************************************************** */
 
 #include "../main/minishell.h"
+#include <errno.h>
+#include <limits.h>
 
 static int	is_valid_number(char *arg)
 {
@@ -41,11 +43,24 @@ static void	write_exit_error(char *arg)
 
 static int	validate_numeric_arg(char *arg, t_shell *shell)
 {
+	char		*endptr;
+
 	if (!is_valid_number(arg))
 	{
 		write_exit_error(arg);
 		shell->should_exit = 1;
-		return (2);
+		shell->exit_code = 2;
+		return (0);
+	}
+	// Check for overflow using strtoll
+	errno = 0;
+	strtoll(arg, &endptr, 10);
+	if (errno == ERANGE || *endptr != '\0')
+	{
+		write_exit_error(arg);
+		shell->should_exit = 1;
+		shell->exit_code = 2;
+		return (0);
 	}
 	return (1);
 }
@@ -63,8 +78,8 @@ int	builtin_exit(char **args, t_shell *shell)
 	if (args[1])
 	{
 		if (!validate_numeric_arg(args[1], shell))
-			return (2);
-		exit_code = ft_atoi(args[1]);
+			return (shell->exit_code);
+		exit_code = ft_atoi(args[1]) & 255;
 	}
 	else
 		exit_code = shell->past_exit_status;

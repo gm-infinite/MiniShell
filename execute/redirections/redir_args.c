@@ -49,7 +49,6 @@ void	process_variable_expansion(char **args, t_shell *shell)
 		}
 		i++;
 	}
-	compact_args(args);
 	process_args_quotes(args, shell);
 }
 

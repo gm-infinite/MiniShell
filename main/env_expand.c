@@ -47,22 +47,93 @@ static int	process_var_expansion_internal(t_expand *holder, t_shell *shell)
 static int	handle_dollar_expansion(t_expand *holder, t_shell *shell)
 {
 	if (holder->indx + 1 >= (int)ft_strlen(holder->result))
-		return (-1);
+	{
+		// Lone $ at end of string - keep it
+		holder->indx++;
+		return (1);
+	}
 	holder->var_start = &holder->result[holder->indx + 1];
 	
-	// Handle $"string" locale translation syntax - just skip the $
+	// Handle $"string" locale translation syntax
 	if (*holder->var_start == '"')
 	{
-		// Remove the $ by shifting the rest of the string left
-		ft_memmove(&holder->result[holder->indx], 
-				&holder->result[holder->indx + 1], 
-				ft_strlen(&holder->result[holder->indx + 1]) + 1);
-		// Now find the closing quote and skip to after it
-		holder->indx++; // Skip the opening quote
-		while (holder->result[holder->indx] && holder->result[holder->indx] != '"')
-			holder->indx++;
-		if (holder->result[holder->indx] == '"')
-			holder->indx++; // Skip the closing quote
+		// For $"...", we need to find the closing quote and treat content as literal
+		int		i;
+		char	*content;
+		char	*new_str;
+		
+		i = holder->indx + 2;
+		while (holder->result[i] && holder->result[i] != '"')
+			i++;
+		if (holder->result[i] == '"')
+		{
+			// Extract content between quotes
+			content = ft_substr(holder->result, holder->indx + 2, i - holder->indx - 2);
+			if (content)
+			{
+				// Create new string without $"..."
+				new_str = ft_calloc(ft_strlen(holder->result) + 1, 1);
+				if (new_str)
+				{
+					ft_strlcpy(new_str, holder->result, holder->indx + 1);
+					ft_strlcat(new_str, content, ft_strlen(holder->result) + 1);
+					ft_strlcat(new_str, &holder->result[i + 1], ft_strlen(holder->result) + 1);
+					free(holder->result);
+					holder->result = new_str;
+					holder->indx += ft_strlen(content);
+				}
+				free(content);
+				return (1);
+			}
+		}
+		// If no closing quote or error, keep the $
+		holder->indx++;
+		return (1);
+	}
+	
+	// Handle $'string' ANSI-C quoting
+	if (*holder->var_start == '\'')
+	{
+		// For $'...', we need to find the closing quote and treat content as literal
+		int		i;
+		char	*content;
+		char	*new_str;
+		
+		i = holder->indx + 2;
+		while (holder->result[i] && holder->result[i] != '\'')
+			i++;
+		if (holder->result[i] == '\'')
+		{
+			// Extract content between quotes
+			content = ft_substr(holder->result, holder->indx + 2, i - holder->indx - 2);
+			if (content)
+			{
+				// Create new string without $'...'
+				new_str = ft_calloc(ft_strlen(holder->result) + 1, 1);
+				if (new_str)
+				{
+					ft_strlcpy(new_str, holder->result, holder->indx + 1);
+					ft_strlcat(new_str, content, ft_strlen(holder->result) + 1);
+					ft_strlcat(new_str, &holder->result[i + 1], ft_strlen(holder->result) + 1);
+					free(holder->result);
+					holder->result = new_str;
+					holder->indx += ft_strlen(content);
+				}
+				free(content);
+				return (1);
+			}
+		}
+		// If no closing quote or error, keep the $
+		holder->indx++;
+		return (1);
+	}
+	
+	// Check if next char is space or special character that means $ should be kept
+	if (*holder->var_start == ' ' || *holder->var_start == '/' 
+		|| *holder->var_start == '\t' || *holder->var_start == '\n')
+	{
+		// Keep the $ literal
+		holder->indx++;
 		return (1);
 	}
 	

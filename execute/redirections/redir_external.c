@@ -58,19 +58,10 @@ static int	wait_for_child_exit(pid_t pid)
 
 static void	execute_child_process(t_redir_exec_context *ctx, char *executable)
 {
-	char	**filtered_args;
-
 	setup_child_signals();
 	setup_child_redirections(ctx->input_fd, ctx->output_fd, ctx->stderr_fd);
-	filtered_args = filter_empty_args(ctx->args);
-	if (!filtered_args)
-	{
-		perror("filter_empty_args");
-		exit(127);
-	}
-	execve(executable, filtered_args, ctx->shell->envp);
+	execve(executable, ctx->args, ctx->shell->envp);
 	perror("execve");
-	free_args(filtered_args);
 	exit(127);
 }
 

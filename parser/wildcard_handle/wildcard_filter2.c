@@ -59,14 +59,59 @@ static int	calculate_filter_size(char *processed_wildcard)
 	return (size);
 }
 
+static char	*process_wildcard_pattern(const char *wildcard)
+{
+	char	*result;
+	int		i;
+	int		j;
+	int		in_single_quotes;
+	int		in_double_quotes;
+
+	result = malloc(ft_strlen(wildcard) + 1);
+	if (!result)
+		return (NULL);
+	i = 0;
+	j = 0;
+	in_single_quotes = 0;
+	in_double_quotes = 0;
+	while (wildcard[i])
+	{
+		if (wildcard[i] == '\'' && !in_double_quotes)
+		{
+			in_single_quotes = !in_single_quotes;
+			i++;
+			continue;
+		}
+		if (wildcard[i] == '"' && !in_single_quotes)
+		{
+			in_double_quotes = !in_double_quotes;
+			i++;
+			continue;
+		}
+		// Replace * with a special char if inside quotes
+		if (wildcard[i] == '*' && (in_single_quotes || in_double_quotes))
+			result[j++] = '\001'; // Use SOH as placeholder for literal *
+		else
+			result[j++] = wildcard[i];
+		i++;
+	}
+	result[j] = '\0';
+	return (result);
+}
+
 static t_split	create_filter(const char *wildcard, t_shell *shell)
 {
 	t_split		filter;
 	char		*processed_wildcard;
+	char		*temp;
+	int			i;
+	int			j;
 
-	processed_wildcard = process_quotes((char *)wildcard, shell);
-	if (!processed_wildcard)
+	(void)shell;
+	temp = process_wildcard_pattern(wildcard);
+	if (!temp)
 		return (create_split(NULL, 0));
+	processed_wildcard = temp;
 	filter.size = calculate_filter_size(processed_wildcard);
 	filter.start = (char **)ft_calloc(filter.size + 1, sizeof(char *));
 	if (filter.start == NULL)
@@ -75,6 +120,19 @@ static t_split	create_filter(const char *wildcard, t_shell *shell)
 		return (create_split(NULL, 0));
 	}
 	extract_wildcard_parts(processed_wildcard, &filter);
+	// Convert SOH back to * in filter parts
+	i = 0;
+	while (i < filter.size && filter.start[i])
+	{
+		j = 0;
+		while (filter.start[i][j])
+		{
+			if (filter.start[i][j] == '\001')
+				filter.start[i][j] = '*';
+			j++;
+		}
+		i++;
+	}
 	free(processed_wildcard);
 	return (filter);
 }
@@ -85,7 +143,9 @@ void	apply_filter(t_split cur_dir, char *check_list, char *wildcard,
 	t_split	filter;
 	char	*processed_wildcard;
 
-	processed_wildcard = process_quotes(wildcard, shell);
+	processed_wildcard = process_wildcard_pattern(wildcard);
+	if (!processed_wildcard)
+		return;
 	filter = create_filter(wildcard, shell);
 	apply_filter_minlen(filter, cur_dir, check_list, processed_wildcard);
 	apply_filter_start(filter, cur_dir, check_list);

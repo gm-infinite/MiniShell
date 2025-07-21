@@ -26,7 +26,8 @@ int	handle_here_doc(char *delimiter, int *pipe_fd)
 		line = readline("> ");
 		if (!line)
 			break ;
-		if (ft_strncmp(line, delimiter, ft_strlen(delimiter) + 1) == 0)
+		if (ft_strncmp(line, delimiter, ft_strlen(delimiter)) == 0
+			&& ft_strlen(line) == ft_strlen(delimiter))
 		{
 			free(line);
 			break ;

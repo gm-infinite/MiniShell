@@ -330,6 +330,7 @@ void	handle_empty_pipe_args(char **args);
 char	*find_executable(char *cmd, t_shell *shell);
 void	compact_args(char **args);
 char	*wildcard_input_modify(char *current_input, t_shell *shell);
+void	expand_wildcards_in_args(char **args, t_shell *shell);
 int		paranthesis_parity_check(t_split split);
 int		check_single_par(t_split split);
 int		validate_and_process_args(char **args, t_shell *shell);
