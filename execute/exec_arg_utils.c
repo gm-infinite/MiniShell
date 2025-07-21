@@ -61,7 +61,8 @@ int	copy_non_empty_args(char **args, char **filtered)
 
 void	process_and_check_args(char **args, t_shell *shell)
 {
-	int	i;
+	int		i;
+	char	*expanded;
 
 	if (!args[0])
 	{
@@ -70,7 +71,14 @@ void	process_and_check_args(char **args, t_shell *shell)
 	}
 	i = -1;
 	while (args[++i])
-		args[i] = expand_variables_quoted(args[i], shell);
+	{
+		expanded = expand_variables_quoted(args[i], shell);
+		if (expanded != args[i])
+		{
+			free(args[i]);
+			args[i] = expanded;
+		}
+	}
 	compact_args(args);
 	process_args_quotes(args, shell);
 	if (!args[0] || args[0][0] == '\0')

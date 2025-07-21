@@ -16,6 +16,7 @@ void	cut_out_par(t_split *split)
 {
 	char	*start;
 	char	*end;
+	int		start_len;
 
 	start = split->start[0];
 	end = split->start[split->size - 1];
@@ -28,7 +29,9 @@ void	cut_out_par(t_split *split)
 	if (start[0] == '(' && end[ft_strlen(end) - 1] == ')')
 	{
 		end[ft_strlen(end) - 1] = '\0';
-		ft_memmove(&(start[0]), &(start[1]), ft_strlen(start));
+		start_len = ft_strlen(start);
+		ft_memmove(&(start[0]), &(start[1]), start_len - 1);
+		start[start_len - 1] = '\0';  // Null terminate after move
 	}
 	if (split->size > 1 && start[0] == '\0')
 	{

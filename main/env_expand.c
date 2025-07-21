@@ -46,6 +46,8 @@ static int	process_var_expansion_internal(t_expand *holder, t_shell *shell)
 
 static int	handle_dollar_expansion(t_expand *holder, t_shell *shell)
 {
+	if (holder->indx + 1 >= (int)ft_strlen(holder->result))
+		return (-1);
 	holder->var_start = &holder->result[holder->indx + 1];
 	if (*holder->var_start == '?')
 	{
@@ -78,8 +80,17 @@ char	*expand_variables(char *str, t_shell *shell)
 	tilde_expanded = expand_tilde(str, shell);
 	if (!tilde_expanded)
 		return (NULL);
+	
+	// Initialize all fields of holder to prevent uninitialized access
 	holder.result = tilde_expanded;
+	holder.var_start = NULL;
+	holder.var_end = NULL;
+	holder.var_name = NULL;
+	holder.var_value = NULL;
+	holder.expanded = NULL;
 	holder.indx = 0;
+	holder.var_len = 0;
+	
 	while (holder.result[holder.indx])
 	{
 		if (holder.result[holder.indx] == '$')
@@ -106,7 +117,9 @@ char	*expand_variables_quoted(char *str, t_shell *shell)
 	if (!tilde_expanded)
 		return (NULL);
 	result = expand_variables(tilde_expanded, shell);
-	if (result != tilde_expanded)
+	// Always return result, freeing tilde_expanded only if it's different
+	// expand_variables either returns the same pointer or a new allocation
+	if (result != tilde_expanded && tilde_expanded)
 		free(tilde_expanded);
 	return (result);
 }

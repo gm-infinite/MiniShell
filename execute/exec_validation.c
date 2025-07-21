@@ -14,14 +14,20 @@
 
 int	validate_and_process_args(char **args, t_shell *shell)
 {
-	int	i;
+	int		i;
+	char	*expanded;
 
 	if (!args || !args[0])
 		return (1);
 	i = 0;
 	while (args[i])
 	{
-		args[i] = expand_variables_quoted(args[i], shell);
+		expanded = expand_variables_quoted(args[i], shell);
+		if (expanded && expanded != args[i])
+		{
+			free(args[i]);
+			args[i] = expanded;
+		}
 		i++;
 	}
 	compact_args(args);
@@ -44,6 +50,12 @@ int	validate_executable(char *cmd, char *executable)
 	{
 		if (S_ISDIR(file_stat.st_mode))
 		{
+			if ((ft_strncmp(cmd, ".", 2) == 0 && ft_strlen(cmd) == 1) ||
+				(ft_strncmp(cmd, "..", 3) == 0 && ft_strlen(cmd) == 2))
+			{
+				fprintf(stderr, "%s: command not found\n", cmd);
+				return (127);
+			}
 			fprintf(stderr, "%s: Is a directory\n", cmd);
 			return (126);
 		}
@@ -58,9 +70,23 @@ int	validate_executable(char *cmd, char *executable)
 
 int	handle_executable_not_found(char **args)
 {
-	if (ft_strchr(args[0], '/'))
-		fprintf(stderr, "%s: No such file or directory\n", args[0]);
-	else
+	if ((ft_strncmp(args[0], ".", 2) == 0 && ft_strlen(args[0]) == 1) ||
+		(ft_strncmp(args[0], "..", 3) == 0 && ft_strlen(args[0]) == 2))
+	{
 		fprintf(stderr, "%s: command not found\n", args[0]);
-	return (127);
+		return (127);
+	}
+	if (ft_strchr(args[0], '/'))
+	{
+		struct stat	file_stat;
+		if (access(args[0], F_OK) == 0 && stat(args[0], &file_stat) == 0 
+			&& S_ISDIR(file_stat.st_mode))
+			return (126);
+		return (127);
+	}
+	else
+	{
+		fprintf(stderr, "%s: command not found\n", args[0]);
+		return (127);
+	}
 }

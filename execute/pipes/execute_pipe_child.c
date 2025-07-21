@@ -42,7 +42,7 @@ static void	process_argument_expansion(char **args, t_shell *shell)
 	while (args[i])
 	{
 		expanded = expand_variables_quoted(args[i], shell);
-		if (expanded)
+		if (expanded && expanded != args[i])
 		{
 			free(args[i]);
 			args[i] = expanded;

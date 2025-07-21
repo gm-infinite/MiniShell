@@ -28,10 +28,13 @@ static t_split	remove_single_paren_token(t_split cmd, int index)
 
 t_split	remove_opening_paren(t_split cmd, int first_idx)
 {
+	int	len;
+
 	if (ft_strlen(cmd.start[first_idx]) > 1)
 	{
-		ft_memmove(cmd.start[first_idx], cmd.start[first_idx] + 1,
-			ft_strlen(cmd.start[first_idx]));
+		len = ft_strlen(cmd.start[first_idx]);
+		ft_memmove(cmd.start[first_idx], cmd.start[first_idx] + 1, len - 1);
+		cmd.start[first_idx][len - 1] = '\0';
 	}
 	else
 	{

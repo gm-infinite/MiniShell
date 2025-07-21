@@ -14,15 +14,30 @@
 
 static char	*create_before_part(t_expand *holder)
 {
+	if (!holder || !holder->result || holder->indx < 0)
+		return (ft_strdup(""));
 	return (ft_substr(holder->result, 0, holder->indx));
 }
 
 static char	*create_after_part(t_expand *holder, int flag)
 {
+	if (!holder || !holder->result)
+		return (ft_strdup(""));
+	
 	if (flag == 1)
+	{
+		// For $? expansion - skip $ and ?
+		if (holder->indx + 2 >= (int)ft_strlen(holder->result))
+			return (ft_strdup(""));
 		return (ft_strdup(&holder->result[holder->indx + 2]));
+	}
 	else
+	{
+		// For regular variable expansion
+		if (!holder->var_end)
+			return (ft_strdup(""));
 		return (ft_strdup(holder->var_end));
+	}
 }
 
 static char	*build_expanded_string(t_expand *holder, char *before, char *after)
@@ -30,6 +45,9 @@ static char	*build_expanded_string(t_expand *holder, char *before, char *after)
 	char	*temp;
 	char	*result;
 
+	if (!before || !after || !holder->var_value)
+		return (NULL);
+	
 	temp = ft_strjoin(before, holder->var_value);
 	if (!temp)
 		return (NULL);

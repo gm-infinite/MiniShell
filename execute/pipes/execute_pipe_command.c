@@ -21,7 +21,7 @@ static void	expand_command_args(char **args, t_shell *shell)
 	while (args[i])
 	{
 		expanded = expand_variables(args[i], shell);
-		if (expanded)
+		if (expanded && expanded != args[i])
 		{
 			free(args[i]);
 			args[i] = expanded;
