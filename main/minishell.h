@@ -280,6 +280,16 @@ int		setup_pipeline_resources(t_split **commands, int ***pipes, pid_t **pids,
 int		execute_pipeline_children(t_pipeline_context *pipeline_ctx);
 void	cleanup_pipeline_resources(t_split *commands, int **pipes, pid_t *pids,
 			int cmd_count);
+char	*create_heredoc_filename(int cmd_index);
+int		read_heredoc_line(char **line);
+void	write_heredoc_warning(char *processed_delimiter);
+int		process_heredoc_content(int temp_fd, char *processed_delimiter);
+int		handle_heredoc_redirection(char **args, int j,
+			t_pipeline_context *pipeline_ctx, int i);
+int		process_command_redirections(char **args,
+			t_pipeline_context *pipeline_ctx, int i);
+int		preprocess_heredocs_in_pipeline(t_pipeline_context *pipeline_ctx);
+int		fork_pipeline_child(t_pipeline_context *pipeline_ctx, int i);
 
 /*
 ** ────────────────────────────────────────────────────────────────────────────
