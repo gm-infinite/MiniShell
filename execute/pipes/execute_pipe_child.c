@@ -74,7 +74,7 @@ static char	**process_argument_expansion(char **args, t_shell *shell)
 		process_args_quotes(args, shell);
 		return (args);
 	}
-	wildcard_expanded = wildcard_input_modify(reconstructed, shell);
+	wildcard_expanded = wildcard_input_modify(reconstructed);
 	if (wildcard_expanded && wildcard_expanded != reconstructed)
 	{
 		free(reconstructed);

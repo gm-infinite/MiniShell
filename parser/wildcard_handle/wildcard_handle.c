@@ -59,7 +59,7 @@ static t_split	get_cur_dir_entries(const char *direc)
 	return (cur_dir_ent);
 }
 
-static char	*wildcard_handle(char *wildcard, t_shell *shell)
+static char	*wildcard_handle(char *wildcard)
 {
 	t_split	cur_dir;
 	char	*check_list;
@@ -71,7 +71,7 @@ static char	*wildcard_handle(char *wildcard, t_shell *shell)
 	cur_dir = get_cur_dir_entries(".");
 	check_list = (char *)ft_calloc(cur_dir.size + 1, sizeof(char));
 	ft_memset(check_list, '1', cur_dir.size);
-	apply_filter(cur_dir, check_list, wildcard, shell);
+	apply_filter(cur_dir, check_list, wildcard);
 	while (i < cur_dir.size)
 	{
 		if (check_list[i] == '1' && cur_dir.start[i]
@@ -84,7 +84,7 @@ static char	*wildcard_handle(char *wildcard, t_shell *shell)
 	return (ret);
 }
 
-char	*wildcard_input_modify(char *current_input, t_shell *shell)
+char	*wildcard_input_modify(char *current_input)
 {
 	t_split	modified_input;
 	int		i;
@@ -96,7 +96,7 @@ char	*wildcard_input_modify(char *current_input, t_shell *shell)
 	{
 		if (countchr_not_quote(modified_input.start[i], '*') > 0)
 		{
-			temp = wildcard_handle(modified_input.start[i], shell);
+			temp = wildcard_handle(modified_input.start[i]);
 			if (temp != NULL && temp[0] != '\0')
 			{
 				free(modified_input.start[i]);

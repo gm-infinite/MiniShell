@@ -62,7 +62,7 @@ static int	execute_args_array(t_split split, t_shell *shell)
 		return (1);
 
 	// Apply wildcard expansion
-	wildcard_expanded = wildcard_input_modify(reconstructed, shell);
+	wildcard_expanded = wildcard_input_modify(reconstructed);
 	if (wildcard_expanded && wildcard_expanded != reconstructed)
 	{
 		free(reconstructed);

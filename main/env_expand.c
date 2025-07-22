@@ -17,7 +17,7 @@ static int	handle_question_mark(t_expand *holder, t_shell *shell)
 	holder->var_value = ft_itoa(shell->past_exit_status);
 	if (!holder->var_value)
 		return (0);
-	if (!replace_var_with_value(holder, shell, 3))
+	if (!replace_var_with_value(holder, 3))
 		return (0);
 	return (1);
 }
@@ -33,7 +33,7 @@ static int	process_var_expansion_internal(t_expand *holder, t_shell *shell)
 		holder->var_value = get_env_value(holder->var_name, shell);
 		if (!holder->var_value)
 			holder->var_value = "";
-		if (!replace_var_with_value(holder, shell, 0))
+		if (!replace_var_with_value(holder, 0))
 		{
 			free(holder->var_name);
 			return (0);

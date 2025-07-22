@@ -22,7 +22,7 @@ static void	begin_command_parsing_and_execution(t_shell *shell)
 	else
 	{
 		sep_opt_arg(shell);
-		expanded_input = wildcard_input_modify(shell->current_input, shell);
+		expanded_input = wildcard_input_modify(shell->current_input);
 		if (expanded_input && expanded_input != shell->current_input)
 		{
 			free(shell->current_input);

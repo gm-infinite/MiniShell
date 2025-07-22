@@ -173,7 +173,7 @@ int	process_single_redirection(char **args, int i, t_redir_fds *fds,
 		return (-1);
 	}
 	if (redirect_type == 1)
-		processed_filename = process_heredoc_delimiter(args[i + 1], shell);
+		processed_filename = process_heredoc_delimiter(args[i + 1]);
 	else
 		processed_filename = process_filename(args[i + 1], shell);
 	

@@ -96,7 +96,7 @@ void	handle_empty_pipe_args(char **args)
 		exit(0);
 }
 
-void	expand_wildcards_in_args(char **args, t_shell *shell)
+void	expand_wildcards_in_args(char **args)
 {
 	char	*temp_input;
 	char	*wildcard_expanded;
@@ -105,8 +105,6 @@ void	expand_wildcards_in_args(char **args, t_shell *shell)
 
 	if (!args || !args[0])
 		return ;
-
-	// Convert args back to a string for wildcard processing
 	temp_input = NULL;
 	i = 0;
 	while (args[i])
@@ -127,9 +125,7 @@ void	expand_wildcards_in_args(char **args, t_shell *shell)
 
 	if (!temp_input)
 		return ;
-
-	// Apply wildcard expansion
-	wildcard_expanded = wildcard_input_modify(temp_input, shell);
+	wildcard_expanded = wildcard_input_modify(temp_input);
 	free(temp_input);
 
 	if (!wildcard_expanded || wildcard_expanded == temp_input)
@@ -138,18 +134,13 @@ void	expand_wildcards_in_args(char **args, t_shell *shell)
 			free(wildcard_expanded);
 		return ;
 	}
-
-	// The wildcard result has quoted filenames, we need to split and unquote them
 	expanded_split = create_split_str(wildcard_expanded);
 	free(wildcard_expanded);
-
 	if (expanded_split.size == 0)
 	{
 		free_split(&expanded_split);
 		return ;
 	}
-
-	// Process the expanded results - remove quotes and replace args
 	i = 0;
 	while (i < expanded_split.size && args[i])
 	{
@@ -158,14 +149,11 @@ void	expand_wildcards_in_args(char **args, t_shell *shell)
 		args[i] = unquoted ? unquoted : ft_strdup(expanded_split.start[i]);
 		i++;
 	}
-
-	// Null out remaining args
 	while (args[i])
 	{
 		free(args[i]);
 		args[i] = NULL;
 		i++;
 	}
-
 	free_split(&expanded_split);
 }

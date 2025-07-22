@@ -190,7 +190,7 @@ void	init_environment(t_shell *shell, char **envp);
 void	free_environment(t_shell *shell);
 int		set_env_var(char *var_name, char *value, t_shell *shell);
 int		unset_env_var(char *var_name, t_shell *shell);
-int		replace_var_with_value(t_expand *holder, t_shell *shell, int flags);
+int		replace_var_with_value(t_expand *holder, int flags);
 char	*expand_with_quotes(char *str, t_shell *shell);
 
 /*
@@ -291,7 +291,7 @@ void	redirection_fail_procedure(t_redir_fds *fds);
 int		handle_here_document(char *processed_filename, t_redir_fds *fds);
 int		handle_output_redirect(char *processed_filename, t_redir_fds *fds,
 			int redirect_type);
-char	*process_heredoc_delimiter(char *filename, t_shell *shell);
+char	*process_heredoc_delimiter(char *filename);
 char	**build_clean_args(char **args, int clean_count);
 int		count_clean_args(char **args);
 void	print_pipe_error(void);
@@ -330,8 +330,8 @@ void	process_and_check_args(char **args, t_shell *shell);
 void	handle_empty_pipe_args(char **args);
 char	*find_executable(char *cmd, t_shell *shell);
 void	compact_args(char **args);
-char	*wildcard_input_modify(char *current_input, t_shell *shell);
-void	expand_wildcards_in_args(char **args, t_shell *shell);
+char	*wildcard_input_modify(char *current_input);
+void	expand_wildcards_in_args(char **args);
 int		paranthesis_parity_check(t_split split);
 int		check_single_par(t_split split);
 int		validate_and_process_args(char **args, t_shell *shell);

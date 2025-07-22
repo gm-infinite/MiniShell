@@ -68,7 +68,7 @@ static int	preprocess_heredocs_in_pipeline(t_pipeline_context *pipeline_ctx)
 				}
 				
 				// Process heredoc delimiter
-				char *processed_delimiter = process_heredoc_delimiter(args[j + 1], pipeline_ctx->shell);
+				char *processed_delimiter = process_heredoc_delimiter(args[j + 1]);
 				if (!processed_delimiter)
 				{
 					free_args(args);

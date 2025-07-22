@@ -130,8 +130,7 @@ static t_split	create_filter(const char *wildcard)
 	return (filter);
 }
 
-void	apply_filter(t_split cur_dir, char *check_list, char *wildcard,
-		t_shell *shell)
+void	apply_filter(t_split cur_dir, char *check_list, char *wildcard)
 {
 	t_split	filter;
 	char	*processed_wildcard;
@@ -139,7 +138,7 @@ void	apply_filter(t_split cur_dir, char *check_list, char *wildcard,
 	processed_wildcard = process_wildcard_pattern(wildcard);
 	if (!processed_wildcard)
 		return ;
-	filter = create_filter(wildcard, shell);
+	filter = create_filter(wildcard);
 	apply_filter_minlen(filter, cur_dir, check_list, processed_wildcard);
 	apply_filter_start(filter, cur_dir, check_list);
 	apply_filter_end(filter, cur_dir, check_list);
