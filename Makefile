@@ -13,7 +13,7 @@
 # Source files organized by functionality
 MAIN_SRC = main.c main_utils.c environment.c env_expand.c env_expand_utils.c env_quote_utils.c env_expansion_utils.c env_replace.c env_tilde.c get_next_line.c
 BUILTIN_SRC = builtin_utils.c cd.c cd_utils.c echo.c env.c exit.c export.c export_utils.c export_sort.c export_process.c export_env.c export_append.c export_process_utils.c pwd.c unset.c unset_utils.c
-EXECUTE_SRC = execute.c exec_utils.c signal.c exec_single.c exec_parentheses.c exec_dispatch.c pipe_management.c arg_utils.c path_utils.c exec_validation.c pipeline_utils.c heredoc_utils.c pipeline_process_utils.c pipeline_child_utils.c exec_arg_utils.c exec_paren_utils.c
+EXECUTE_SRC = execute.c exec_utils.c signal.c exec_single.c exec_parentheses.c exec_dispatch.c exec_arg_process_utils.c pipe_management.c arg_utils.c path_utils.c exec_validation.c pipeline_utils.c heredoc_utils.c pipeline_process_utils.c pipeline_child_utils.c exec_arg_utils.c exec_paren_utils.c
 PIPES_SRC = pipes.c count_pipes.c split_by_pipes.c execute_pipe_command.c execute_pipe_child.c pipes_utils.c pipe_child_utils.c
 REDIR_SRC = redirections.c heredoc.c redir_utils.c redir_syntax.c redirect_utils.c redir_quote_utils.c redir_process_utils.c redir_segment_utils.c redir_char_utils.c redir_exec_utils.c redir_external.c redir_args.c redir_syntax_utils.c redir_type_utils.c
 PARSER_SRC = quotes.c quotes_utils.c

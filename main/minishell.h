@@ -246,6 +246,10 @@ int		count_env_vars(t_shell *shell);
 ** Comprehensive command execution with pipeline and redirection support
 */
 int		execute_command(t_split split, t_shell *shell);
+char	**expand_args_variables(char **args, t_shell *shell);
+char	*reconstruct_args_string(char **args);
+char	*apply_wildcard_expansion(char *reconstructed);
+int		execute_expanded_args(char *reconstructed, t_shell *shell);
 int		execute_pipeline(t_split split, t_shell *shell);
 int		execute_pipeline_with_redirections(t_split split, t_shell *shell);
 int		execute_single_command(char **args, t_shell *shell);
