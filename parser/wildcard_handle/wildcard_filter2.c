@@ -80,17 +80,16 @@ static char	*process_wildcard_pattern(const char *wildcard)
 		{
 			in_single_quotes = !in_single_quotes;
 			i++;
-			continue;
+			continue ;
 		}
 		if (wildcard[i] == '"' && !in_single_quotes)
 		{
 			in_double_quotes = !in_double_quotes;
 			i++;
-			continue;
+			continue ;
 		}
-		// Replace * with a special char if inside quotes
 		if (wildcard[i] == '*' && (in_single_quotes || in_double_quotes))
-			result[j++] = '\001'; // Use SOH as placeholder for literal *
+			result[j++] = '\001';
 		else
 			result[j++] = wildcard[i];
 		i++;
@@ -99,7 +98,7 @@ static char	*process_wildcard_pattern(const char *wildcard)
 	return (result);
 }
 
-static t_split	create_filter(const char *wildcard, t_shell *shell)
+static t_split	create_filter(const char *wildcard)
 {
 	t_split		filter;
 	char		*processed_wildcard;
@@ -107,7 +106,6 @@ static t_split	create_filter(const char *wildcard, t_shell *shell)
 	int			i;
 	int			j;
 
-	(void)shell;
 	temp = process_wildcard_pattern(wildcard);
 	if (!temp)
 		return (create_split(NULL, 0));
@@ -120,18 +118,13 @@ static t_split	create_filter(const char *wildcard, t_shell *shell)
 		return (create_split(NULL, 0));
 	}
 	extract_wildcard_parts(processed_wildcard, &filter);
-	// Convert SOH back to * in filter parts
-	i = 0;
-	while (i < filter.size && filter.start[i])
+	i = -1;
+	while (++i < filter.size && filter.start[i])
 	{
-		j = 0;
-		while (filter.start[i][j])
-		{
+		j = -1;
+		while (filter.start[i][++j])
 			if (filter.start[i][j] == '\001')
 				filter.start[i][j] = '*';
-			j++;
-		}
-		i++;
 	}
 	free(processed_wildcard);
 	return (filter);
@@ -145,7 +138,7 @@ void	apply_filter(t_split cur_dir, char *check_list, char *wildcard,
 
 	processed_wildcard = process_wildcard_pattern(wildcard);
 	if (!processed_wildcard)
-		return;
+		return ;
 	filter = create_filter(wildcard, shell);
 	apply_filter_minlen(filter, cur_dir, check_list, processed_wildcard);
 	apply_filter_start(filter, cur_dir, check_list);

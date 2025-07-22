@@ -41,7 +41,6 @@ static char	**process_argument_expansion(char **args, t_shell *shell)
 	t_split	new_split;
 	int		i;
 
-	// First pass: expand variables in each argument
 	i = 0;
 	while (args[i])
 	{
@@ -53,8 +52,6 @@ static char	**process_argument_expansion(char **args, t_shell *shell)
 		}
 		i++;
 	}
-
-	// Reconstruct the command string for wildcard expansion
 	reconstructed = NULL;
 	i = 0;
 	while (args[i])
@@ -72,40 +69,30 @@ static char	**process_argument_expansion(char **args, t_shell *shell)
 		}
 		i++;
 	}
-
 	if (!reconstructed)
 	{
 		process_args_quotes(args, shell);
 		return (args);
 	}
-
-	// Apply wildcard expansion
 	wildcard_expanded = wildcard_input_modify(reconstructed, shell);
 	if (wildcard_expanded && wildcard_expanded != reconstructed)
 	{
 		free(reconstructed);
 		reconstructed = wildcard_expanded;
 	}
-
-	// Split again with wildcard expansion applied
 	new_split = create_split_str(reconstructed);
 	free(reconstructed);
-
 	if (new_split.size == 0)
 	{
 		free_split(&new_split);
 		process_args_quotes(args, shell);
 		return (args);
 	}
-
-	// Free old args and create new expanded args
 	free_args(args);
 	args = split_to_args(new_split);
 	free_split(&new_split);
-
 	if (args)
 		process_args_quotes(args, shell);
-
 	return (args);
 }
 

@@ -33,13 +33,12 @@ char	*remove_quotes_from_string(char *str)
 	init_quote_removal(&i, &j, states);
 	while (str[i])
 	{
-		// Handle escaped single quotes from locale translation
 		if (str[i] == '\001' && str[i + 1] == '\'')
 		{
 			result[j] = '\'';
 			j++;
 			i += 2;
-			continue;
+			continue ;
 		}
 		if (str[i] == '\'' && !states[1])
 			states[0] = !states[0];

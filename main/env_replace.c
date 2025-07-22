@@ -23,17 +23,14 @@ static char	*create_after_part(t_expand *holder, int flag)
 {
 	if (!holder || !holder->result)
 		return (ft_strdup(""));
-	
 	if (flag & 2)
 	{
-		// For $? expansion - skip $ and ?
 		if (holder->indx + 2 >= (int)ft_strlen(holder->result))
 			return (ft_strdup(""));
 		return (ft_strdup(&holder->result[holder->indx + 2]));
 	}
 	else
 	{
-		// For regular variable expansion
 		if (!holder->var_end)
 			return (ft_strdup(""));
 		return (ft_strdup(holder->var_end));
@@ -47,7 +44,6 @@ static char	*build_expanded_string(t_expand *holder, char *before, char *after)
 
 	if (!before || !after || !holder->var_value)
 		return (NULL);
-	
 	temp = ft_strjoin(before, holder->var_value);
 	if (!temp)
 		return (NULL);
@@ -65,13 +61,12 @@ static void	cleanup_replacement(char *before, char *after, int flags,
 		free(holder->var_value);
 }
 
-int	replace_var_with_value(t_expand *holder, t_shell *shell, int flags)
+int	replace_var_with_value(t_expand *holder, int flags)
 {
 	char	*before;
 	char	*after;
 	int		before_len;
 
-	(void)shell;
 	before = create_before_part(holder);
 	after = create_after_part(holder, flags & 2);
 	holder->expanded = build_expanded_string(holder, before, after);
@@ -85,7 +80,6 @@ int	replace_var_with_value(t_expand *holder, t_shell *shell, int flags)
 	free(holder->result);
 	cleanup_replacement(before, after, flags & 1, holder);
 	holder->result = holder->expanded;
-	// Set index to the position after the replaced value
 	holder->indx = before_len + holder->var_len;
 	return (1);
 }

@@ -18,10 +18,7 @@ static void	begin_command_parsing_and_execution(t_shell *shell)
 	char	*expanded_input;
 
 	if (!check_quotes(shell->current_input))
-	{
-		// write(STDERR_FILENO, "Error: unclosed quotes\n", 23);
 		shell->past_exit_status = 2;
-	}
 	else
 	{
 		sep_opt_arg(shell);
@@ -49,7 +46,7 @@ static void	start_shell(t_shell *shell)
 		else
 		{
 			char	*line;
-			
+
 			line = get_next_line(fileno(stdin));
 			if (line)
 			{

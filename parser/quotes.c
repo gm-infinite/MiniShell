@@ -20,16 +20,15 @@ int	check_quotes(char *str)
 
 	if (!str)
 		return (1);
-	i = 0;
+	i = -1;
 	single_open = 0;
 	double_open = 0;
-	while (str[i])
+	while (str[++i])
 	{
 		if (str[i] == '\'' && !double_open)
 			single_open = !single_open;
 		else if (str[i] == '"' && !single_open)
 			double_open = !double_open;
-		i++;
 	}
 	return (single_open == 0 && double_open == 0);
 }
@@ -41,19 +40,14 @@ char	*process_quotes(char *str, t_shell *shell)
 
 	if (!str)
 		return (NULL);
-	
-	// Use the new quote-aware expansion function
 	expanded = expand_with_quotes(str, shell);
 	if (!expanded)
 		return (NULL);
-	
-	// Then remove the quotes
 	result = remove_quotes_from_string(expanded);
 	if (!result)
 		result = expanded;
 	else if (expanded != str)
 		free(expanded);
-	
 	return (result);
 }
 

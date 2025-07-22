@@ -39,24 +39,18 @@ int	count_clean_args(char **args)
 static int	handle_redirection_type(int redirect_type, char *processed_filename,
 		t_redir_fds *fds)
 {
-	if (redirect_type == 1) // heredoc redirection
+	if (redirect_type == 1)
 	{
-		// Check if this is a pre-processed heredoc (temp file)
 		if (ft_strncmp(processed_filename, "/tmp/.minishell_heredoc_", 24) == 0)
 		{
-			// This is a pre-processed heredoc, treat as input redirection
 			*fds->input_fd = open(processed_filename, O_RDONLY);
 			if (*fds->input_fd == -1)
 				return (-1);
-			// Clean up the temporary file
 			unlink(processed_filename);
 			return (0);
 		}
 		else
-		{
-			// Normal heredoc processing
 			return (handle_here_document(processed_filename, fds));
-		}
 	}
 	else if (redirect_type == 3)
 	{
@@ -79,23 +73,17 @@ static char	*process_quote_aware_expansion(char *str, t_shell *shell)
 
 	if (!str)
 		return (NULL);
-
 	result = ft_calloc(1, 1);
 	if (!result)
 		return (NULL);
-
 	i = 0;
 	in_single_quotes = 0;
 	in_double_quotes = 0;
-
 	while (str[i])
 	{
 		start = i;
-		
-		// Handle quote characters - preserve them in output
 		if (str[i] == '\'' && !in_double_quotes)
 		{
-			// Add the quote to result
 			char quote_str[2] = {'\'', '\0'};
 			temp = ft_strjoin(result, quote_str);
 			free(result);
@@ -107,18 +95,14 @@ static char	*process_quote_aware_expansion(char *str, t_shell *shell)
 		}
 		else if (str[i] == '"' && !in_single_quotes)
 		{
-			// Add the quote to result
 			char quote_str[2] = {'"', '\0'};
 			temp = ft_strjoin(result, quote_str);
 			free(result);
 			result = temp;
-			
 			in_double_quotes = !in_double_quotes;
 			i++;
 			continue;
 		}
-
-		// Find the end of the current content segment
 		while (str[i] && 
 			   ((str[i] != '\'' || in_double_quotes) && 
 				(str[i] != '"' || in_single_quotes)))
@@ -126,30 +110,24 @@ static char	*process_quote_aware_expansion(char *str, t_shell *shell)
 
 		if (i > start)
 		{
-			// Extract segment
 			char *segment = ft_substr(str, start, i - start);
 			if (!segment)
 			{
 				free(result);
 				return (NULL);
 			}
-
-			// Expand variables only if not in single quotes
 			if (!in_single_quotes)
 			{
 				char *expanded = expand_variables(segment, shell);
 				free(segment);
 				segment = expanded;
 			}
-
-			// Append to result
 			temp = ft_strjoin(result, segment ? segment : "");
 			free(result);
 			free(segment);
 			result = temp;
 		}
 	}
-
 	return (result);
 }
 
@@ -158,30 +136,20 @@ static char	*process_filename(char *filename, t_shell *shell)
 	char	*expanded_with_quotes;
 	char	*final_result;
 
-	// First: expand variables while respecting quote boundaries
 	expanded_with_quotes = process_quote_aware_expansion(filename, shell);
 	if (!expanded_with_quotes)
 		return (NULL);
-
-	// Second: remove quotes from the expanded result
 	final_result = remove_quotes_for_redirection(expanded_with_quotes);
 	if (!final_result)
-	{
 		final_result = ft_strdup(expanded_with_quotes);
-	}
-	
 	free(expanded_with_quotes);
 	return (final_result);
 }
 
-char	*process_heredoc_delimiter(char *filename, t_shell *shell)
+char	*process_heredoc_delimiter(char *filename)
 {
 	char	*result;
 
-	(void)shell; // Unused parameter - heredoc delimiters are never expanded
-
-	// Remove quotes but NEVER expand variables
-	// Heredoc delimiters are always treated literally in bash
 	result = remove_quotes_for_redirection(filename);
 	if (!result)
 	{
@@ -189,7 +157,6 @@ char	*process_heredoc_delimiter(char *filename, t_shell *shell)
 		if (!result)
 			return (NULL);
 	}
-
 	return (result);
 }
 
@@ -205,8 +172,6 @@ int	process_single_redirection(char **args, int i, t_redir_fds *fds,
 		write(STDERR_FILENO, "syntax error: missing filename\n", 32);
 		return (-1);
 	}
-	
-	// Use special heredoc delimiter processing for heredoc (redirect_type == 1)
 	if (redirect_type == 1)
 		processed_filename = process_heredoc_delimiter(args[i + 1], shell);
 	else

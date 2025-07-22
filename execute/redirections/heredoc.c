@@ -38,7 +38,6 @@ int	handle_here_doc(char *delimiter, int *pipe_fd)
 		}
 		if (!line)
 		{
-			// EOF encountered before delimiter was found - show warning like bash
 			write(STDERR_FILENO, "minishell: warning: here-document delimited by end-of-file (wanted `", 68);
 			write(STDERR_FILENO, delimiter, ft_strlen(delimiter));
 			write(STDERR_FILENO, "')\n", 3);
