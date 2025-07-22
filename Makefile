@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+         #
+#    By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/13 12:36:09 by kuzyilma          #+#    #+#              #
-#    Updated: 2025/07/20 22:15:05 by emgenc           ###   ########.fr        #
+#    Updated: 2025/07/22 18:30:27 by kuzyilma         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 

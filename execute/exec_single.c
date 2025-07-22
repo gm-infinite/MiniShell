@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_single.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 16:20:00 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/20 18:41:56 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/22 17:53:14 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ static int	handle_parent_process(pid_t pid, char *executable)
 		if (WTERMSIG(status) == SIGINT)
 			write(STDOUT_FILENO, "\n", 1);
 		else if (WTERMSIG(status) == SIGQUIT)
-			write(STDOUT_FILENO, "Quit: 3\n", 8);
+			write(STDOUT_FILENO, "Quit (core dumped)\n", 20);
 		return (128 + WTERMSIG(status));
 	}
 	return (0);
