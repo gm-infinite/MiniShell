@@ -110,7 +110,7 @@ static int	handle_dollar_expansion(t_expand *holder, t_shell *shell)
 		int		i;
 		char	*content;
 		char	*new_str;
-		
+
 		i = holder->indx + 2;
 		while (holder->result[i] && holder->result[i] != '\'')
 			i++;
@@ -136,7 +136,7 @@ static int	handle_dollar_expansion(t_expand *holder, t_shell *shell)
 		holder->indx++;
 		return (1);
 	}
-	if (*holder->var_start == ' ' || *holder->var_start == '/' 
+	if (*holder->var_start == ' ' || *holder->var_start == '/'
 		|| *holder->var_start == '\t' || *holder->var_start == '\n')
 	{
 		holder->indx++;

@@ -62,6 +62,7 @@ static int	handle_redirection_type(int redirect_type, char *processed_filename,
 		return (handle_output_redirect(processed_filename, fds, redirect_type));
 	return (0);
 }
+
 static char	*process_quote_aware_expansion(char *str, t_shell *shell)
 {
 	char	*result;
@@ -88,10 +89,9 @@ static char	*process_quote_aware_expansion(char *str, t_shell *shell)
 			temp = ft_strjoin(result, quote_str);
 			free(result);
 			result = temp;
-			
 			in_single_quotes = !in_single_quotes;
 			i++;
-			continue;
+			continue ;
 		}
 		else if (str[i] == '"' && !in_single_quotes)
 		{
@@ -101,7 +101,7 @@ static char	*process_quote_aware_expansion(char *str, t_shell *shell)
 			result = temp;
 			in_double_quotes = !in_double_quotes;
 			i++;
-			continue;
+			continue ;
 		}
 		while (str[i] && 
 			   ((str[i] != '\'' || in_double_quotes) && 
