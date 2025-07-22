@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   heredoc.c                                          :+:      :+:    :+:   */
+/*   heredoc_input_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -13,43 +13,39 @@
 #include "../../main/minishell.h"
 #include "../../main/get_next_line.h"
 
-static void	write_line_to_pipe(int pipe_fd, char *line)
-{
-	write(pipe_fd, line, ft_strlen(line));
-	write(pipe_fd, "\n", 1);
-}
-
-static int	process_heredoc_loop(char *delimiter, int pipe_fd)
+char	*read_heredoc_input_line(void)
 {
 	char	*line;
+	char	*trimmed;
 
-	while (1)
+	if (isatty(fileno(stdin)))
+		line = readline("> ");
+	else
 	{
-		line = read_heredoc_input_line();
-		if (!line)
+		line = get_next_line(fileno(stdin));
+		if (line)
 		{
-			write_heredoc_warning_message(delimiter);
-			break ;
-		}
-		if (is_delimiter_match(line, delimiter))
-		{
+			trimmed = ft_strtrim(line, "\n");
 			free(line);
-			break ;
+			line = trimmed;
 		}
-		write_line_to_pipe(pipe_fd, line);
-		free(line);
 	}
-	return (0);
+	return (line);
 }
 
-int	handle_here_doc(char *delimiter, int *pipe_fd)
+void	write_heredoc_warning_message(char *delimiter)
 {
-	if (pipe(pipe_fd) == -1)
-	{
-		perror("pipe");
+	write(STDERR_FILENO,
+		"minishell: warning: here-document delimited by end-of-file (wanted `",
+		68);
+	write(STDERR_FILENO, delimiter, ft_strlen(delimiter));
+	write(STDERR_FILENO, "')\n", 3);
+}
+
+int	is_delimiter_match(char *line, char *delimiter)
+{
+	if (ft_strncmp(line, delimiter, ft_strlen(delimiter)) == 0
+		&& ft_strlen(line) == ft_strlen(delimiter))
 		return (1);
-	}
-	process_heredoc_loop(delimiter, pipe_fd[1]);
-	close(pipe_fd[1]);
 	return (0);
 }
