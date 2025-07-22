@@ -25,5 +25,14 @@ void	apply_filter(t_split cur_dir, char *check_list, char *wildcard);
 char	*wildcard_input_modify(char *current_input);
 int		ft_strrcmp(const char *s1, const char *s2);
 char	*ft_strjoin_sq_f(char **to_free, const char *to_add);
+void	restore_asterisks_in_filter(t_split *filter);
+int		setup_filter_memory(t_split *filter, char *processed_wildcard);
+int		calculate_filter_size(char *processed_wildcard);
+int		handle_single_quote(const char *wildcard, int *i,
+			int *in_single_quotes, int in_double_quotes);
+int		handle_double_quote(const char *wildcard, int *i,
+			int *in_double_quotes, int in_single_quotes);
+char	*init_pattern_result(const char *wildcard, int *vars);
+void	process_wildcard_loop(const char *wildcard, char *result, int *vars);
 
 #endif

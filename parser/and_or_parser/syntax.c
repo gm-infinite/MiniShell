@@ -12,7 +12,7 @@
 
 #include "../../main/minishell.h"
 
-static char	*ft_strnstr_not_quote(const char *haystack, const char *needle,
+static char	*ft_strnstr_not_q(const char *haystack, const char *needle,
 	size_t len)
 {
 	size_t	needle_len;
@@ -77,7 +77,7 @@ int	check_parentheses_syntax_errors(t_split split)
 	i = -1;
 	while (++i < split.size)
 	{
-		if (ft_strnstr_not_quote(split.start[i], "()", ft_strlen(split.start[i])))
+		if (ft_strnstr_not_q(split.start[i], "()", ft_strlen(split.start[i])))
 			return (write(STDERR_FILENO,
 					"bash: syntax error near unexpected token `)'\n", 45), 0);
 		if (i < split.size - 1 && ft_strncmp(split.start[i], "(", 2) == 0

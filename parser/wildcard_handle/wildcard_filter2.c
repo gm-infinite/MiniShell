@@ -40,61 +40,16 @@ static void	extract_wildcard_parts(char *processed_wildcard, t_split *filter)
 	}
 }
 
-static int	calculate_filter_size(char *processed_wildcard)
-{
-	int	size;
-	int	i;
-
-	if (ft_strlen(processed_wildcard) == 0)
-		size = 1;
-	else
-		size = 1;
-	i = 0;
-	while (processed_wildcard[i])
-	{
-		if (processed_wildcard[i] == '*')
-			size++;
-		i++;
-	}
-	return (size);
-}
-
 static char	*process_wildcard_pattern(const char *wildcard)
 {
 	char	*result;
-	int		i;
-	int		j;
-	int		in_single_quotes;
-	int		in_double_quotes;
+	int		vars[4];
 
-	result = malloc(ft_strlen(wildcard) + 1);
+	result = init_pattern_result(wildcard, vars);
 	if (!result)
 		return (NULL);
-	i = 0;
-	j = 0;
-	in_single_quotes = 0;
-	in_double_quotes = 0;
-	while (wildcard[i])
-	{
-		if (wildcard[i] == '\'' && !in_double_quotes)
-		{
-			in_single_quotes = !in_single_quotes;
-			i++;
-			continue ;
-		}
-		if (wildcard[i] == '"' && !in_single_quotes)
-		{
-			in_double_quotes = !in_double_quotes;
-			i++;
-			continue ;
-		}
-		if (wildcard[i] == '*' && (in_single_quotes || in_double_quotes))
-			result[j++] = '\001';
-		else
-			result[j++] = wildcard[i];
-		i++;
-	}
-	result[j] = '\0';
+	process_wildcard_loop(wildcard, result, vars);
+	result[vars[1]] = '\0';
 	return (result);
 }
 
@@ -103,29 +58,18 @@ static t_split	create_filter(const char *wildcard)
 	t_split		filter;
 	char		*processed_wildcard;
 	char		*temp;
-	int			i;
-	int			j;
 
 	temp = process_wildcard_pattern(wildcard);
 	if (!temp)
 		return (create_split(NULL, 0));
 	processed_wildcard = temp;
-	filter.size = calculate_filter_size(processed_wildcard);
-	filter.start = (char **)ft_calloc(filter.size + 1, sizeof(char *));
-	if (filter.start == NULL)
+	if (!setup_filter_memory(&filter, processed_wildcard))
 	{
 		free(processed_wildcard);
 		return (create_split(NULL, 0));
 	}
 	extract_wildcard_parts(processed_wildcard, &filter);
-	i = -1;
-	while (++i < filter.size && filter.start[i])
-	{
-		j = -1;
-		while (filter.start[i][++j])
-			if (filter.start[i][j] == '\001')
-				filter.start[i][j] = '*';
-	}
+	restore_asterisks_in_filter(&filter);
 	free(processed_wildcard);
 	return (filter);
 }

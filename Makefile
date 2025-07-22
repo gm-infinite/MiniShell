@@ -20,7 +20,7 @@ PARSER_SRC = quotes.c quotes_utils.c
 SPLIT_SRC = t_split_utils.c ft_split_quotes.c t_split_utils2.c
 AOPSR_SRC = parser_and_or.c and_or_utils.c and_or_helpers.c parser_and_or2.c syntax.c parser_and_or_utils.c
 SOA_SRC = sep_opt_arg.c
-WILDCARD_SRC = wildcard_handle.c wildcard_filter.c wildcard_filter2.c wildcard_utils.c
+WILDCARD_SRC = wildcard_handle.c wildcard_filter.c wildcard_filter2.c wildcard_filter2_utils.c wildcard_quote_utils.c wildcard_utils.c
 GLOBAL_SRC = global.c
 
 SRC = $(addprefix main/, $(MAIN_SRC)) \
