@@ -72,12 +72,6 @@ static char	*search_in_path(char *cmd, char **paths)
 	return (NULL);
 }
 
-static void	write_error_message(char *cmd, char *message)
-{
-	write(STDERR_FILENO, cmd, ft_strlen(cmd));
-	write(STDERR_FILENO, message, ft_strlen(message));
-}
-
 char	*find_executable(char *cmd, t_shell *shell)
 {
 	char	*path_env;
@@ -85,35 +79,14 @@ char	*find_executable(char *cmd, t_shell *shell)
 	char	*result;
 
 	result = check_absolute_path(cmd);
-	if (result && ft_strncmp(result, "__IS_DIRECTORY__", 16) == 0)
-	{
-		free(result);
-		write_error_message(cmd, ": Is a directory\n");
-		return (NULL);
-	}
-	if (result && ft_strncmp(result, "__NOT_EXECUTABLE__", 18) == 0)
-	{
-		free(result);
-		write_error_message(cmd, ": Permission denied\n");
-		return (NULL);
-	}
-	if (result && ft_strncmp(result, "__NOT_FOUND__", 13) == 0)
-	{
-		free(result);
-		write_error_message(cmd, ": No such file or directory\n");
-		return (NULL);
-	}
+	result = handle_absolute_path_result(result, cmd);
 	if (result)
 		return (result);
 	if (ft_strchr(cmd, '/'))
 		return (NULL);
 	path_env = get_env_value("PATH", shell);
 	if (!path_env)
-	{
-		if (access(cmd, F_OK) == 0)
-			return (ft_strdup(cmd));
-		return (NULL);
-	}
+		return (handle_no_path_env(cmd));
 	paths = ft_split(path_env, ':');
 	if (!paths)
 		return (NULL);

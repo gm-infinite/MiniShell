@@ -263,6 +263,10 @@ t_split	remove_closing_paren(t_split cmd, int last_idx);
 int		execute_pipe_command(t_split cmd, t_pipe_context *ctx, t_shell *shell);
 void	execute_pipe_child(t_split cmd, t_pipe_child_context *ctx,
 			t_shell *shell);
+char	**execute_expanded_args_split(char *reconstructed, char **args,
+		t_shell *shell);
+void	write_pipe_error_message(char *cmd, char *message);
+void	execute_pipe_external_command(char **args, t_shell *shell);
 void	setup_and_execute_child(t_process_pipeline_context *proc_ctx, int i);
 void	setup_pipeline_signals(void);
 void	execute_pipe_child_with_redirections(t_split cmd,
@@ -372,6 +376,8 @@ int		copy_non_empty_args(char **args, char **filtered);
 void	process_and_check_args(char **args, t_shell *shell);
 void	handle_empty_pipe_args(char **args);
 char	*find_executable(char *cmd, t_shell *shell);
+char	*handle_absolute_path_result(char *result, char *cmd);
+char	*handle_no_path_env(char *cmd);
 void	compact_args(char **args);
 char	*wildcard_input_modify(char *current_input);
 void	expand_wildcards_in_args(char **args);

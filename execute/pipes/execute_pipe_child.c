@@ -35,86 +35,19 @@ static void	cleanup_pipe_descriptors(int **pipes, int cmd_count)
 
 static char	**process_argument_expansion(char **args, t_shell *shell)
 {
-	char	*expanded;
 	char	*reconstructed;
-	char	*wildcard_expanded;
-	t_split	new_split;
-	int		i;
 
-	i = 0;
-	while (args[i])
-	{
-		expanded = expand_variables_quoted(args[i], shell);
-		if (expanded && expanded != args[i])
-		{
-			free(args[i]);
-			args[i] = expanded;
-		}
-		i++;
-	}
-	reconstructed = NULL;
-	i = 0;
-	while (args[i])
-	{
-		if (reconstructed == NULL)
-			reconstructed = ft_strdup(args[i]);
-		else
-		{
-			char *temp = ft_strjoin(reconstructed, " ");
-			free(reconstructed);
-			reconstructed = temp;
-			temp = ft_strjoin(reconstructed, args[i]);
-			free(reconstructed);
-			reconstructed = temp;
-		}
-		i++;
-	}
+	args = expand_args_variables(args, shell);
+	reconstructed = reconstruct_args_string(args);
 	if (!reconstructed)
 	{
 		process_args_quotes(args, shell);
 		return (args);
 	}
-	wildcard_expanded = wildcard_input_modify(reconstructed);
-	if (wildcard_expanded && wildcard_expanded != reconstructed)
-	{
-		free(reconstructed);
-		reconstructed = wildcard_expanded;
-	}
-	new_split = create_split_str(reconstructed);
+	reconstructed = apply_wildcard_expansion(reconstructed);
+	args = execute_expanded_args_split(reconstructed, args, shell);
 	free(reconstructed);
-	if (new_split.size == 0)
-	{
-		free_split(&new_split);
-		process_args_quotes(args, shell);
-		return (args);
-	}
-	free_args(args);
-	args = split_to_args(new_split);
-	free_split(&new_split);
-	if (args)
-		process_args_quotes(args, shell);
 	return (args);
-}
-
-static void	write_error_message(char *cmd, char *message)
-{
-	write(STDERR_FILENO, cmd, ft_strlen(cmd));
-	write(STDERR_FILENO, message, ft_strlen(message));
-}
-
-static void	execute_external_command(char **args, t_shell *shell)
-{
-	char	*executable;
-
-	executable = find_executable(args[0], shell);
-	if (!executable)
-	{
-		write_error_message(args[0], ": command not found\n");
-		exit(127);
-	}
-	execve(executable, args, shell->envp);
-	perror("execve");
-	exit(127);
 }
 
 void	execute_pipe_child(t_split cmd, t_pipe_child_context *ctx,
@@ -139,5 +72,5 @@ void	execute_pipe_child(t_split cmd, t_pipe_child_context *ctx,
 	if (is_builtin(args[0]))
 		exit(execute_builtin(args, shell));
 	else
-		execute_external_command(args, shell);
+		execute_pipe_external_command(args, shell);
 }
