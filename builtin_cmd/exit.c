@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 13:31:37 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/20 21:24:37 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/22 15:36:29 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,15 +66,15 @@ int	builtin_exit(char **args, t_shell *shell)
 {
 	int	exit_code;
 
-	if (args[1] && args[2])
-	{
-		write(STDERR_FILENO, "exit: too many arguments\n", 25);
-		return (1);
-	}
 	if (args[1])
 	{
 		if (!validate_numeric_arg(args[1], shell))
 			return (shell->exit_code);
+		if (args[2])
+		{
+			write(STDERR_FILENO, "exit: too many arguments\n", 25);
+			return (1);
+		}
 		exit_code = ft_atoi(args[1]) & 255;
 	}
 	else
