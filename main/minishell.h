@@ -301,6 +301,23 @@ int		handle_here_document(char *processed_filename, t_redir_fds *fds);
 int		handle_output_redirect(char *processed_filename, t_redir_fds *fds,
 			int redirect_type);
 char	*process_heredoc_delimiter(char *filename);
+char	*process_filename(char *filename, t_shell *shell);
+char	*process_quote_aware_expansion(char *str, t_shell *shell);
+int		handle_heredoc_file_cleanup(char *processed_filename, t_redir_fds *fds);
+int		handle_input_redirection(char *processed_filename, t_redir_fds *fds);
+char	*join_expanded_segment(char *result, char *expanded);
+char	*expand_segment(char *result, char *str, int start, int end);
+char	*process_expandable_segment(char *result, char *str, int *range,
+			t_shell *shell);
+char	*handle_segment_processing(char *result, char *str, int *vars,
+			t_shell *shell);
+char	*handle_quote_char(char *result, char quote_char);
+char	*handle_single_quote_case(char *result, int *i,
+			int *in_single_quotes, int in_double_quotes);
+char	*handle_double_quote_case(char *result, int *i,
+			int *in_double_quotes, int in_single_quotes);
+char	*init_expansion_result(void);
+void	init_expansion_vars(int *vars);
 char	**build_clean_args(char **args, int clean_count);
 int		count_clean_args(char **args);
 void	print_pipe_error(void);
