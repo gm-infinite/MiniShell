@@ -51,22 +51,110 @@ static int	handle_redirection_type(int redirect_type, char *processed_filename,
 		return (handle_output_redirect(processed_filename, fds, redirect_type));
 	return (0);
 }
+static char	*process_quote_aware_expansion(char *str, t_shell *shell)
+{
+	char	*result;
+	char	*temp;
+	int		i;
+	int		start;
+	int		in_single_quotes;
+	int		in_double_quotes;
+
+	if (!str)
+		return (NULL);
+
+	result = ft_calloc(1, 1);
+	if (!result)
+		return (NULL);
+
+	i = 0;
+	in_single_quotes = 0;
+	in_double_quotes = 0;
+
+	while (str[i])
+	{
+		start = i;
+		
+		// Handle quote characters - preserve them in output
+		if (str[i] == '\'' && !in_double_quotes)
+		{
+			// Add the quote to result
+			char quote_str[2] = {'\'', '\0'};
+			temp = ft_strjoin(result, quote_str);
+			free(result);
+			result = temp;
+			
+			in_single_quotes = !in_single_quotes;
+			i++;
+			continue;
+		}
+		else if (str[i] == '"' && !in_single_quotes)
+		{
+			// Add the quote to result
+			char quote_str[2] = {'"', '\0'};
+			temp = ft_strjoin(result, quote_str);
+			free(result);
+			result = temp;
+			
+			in_double_quotes = !in_double_quotes;
+			i++;
+			continue;
+		}
+
+		// Find the end of the current content segment
+		while (str[i] && 
+			   ((str[i] != '\'' || in_double_quotes) && 
+				(str[i] != '"' || in_single_quotes)))
+			i++;
+
+		if (i > start)
+		{
+			// Extract segment
+			char *segment = ft_substr(str, start, i - start);
+			if (!segment)
+			{
+				free(result);
+				return (NULL);
+			}
+
+			// Expand variables only if not in single quotes
+			if (!in_single_quotes)
+			{
+				char *expanded = expand_variables(segment, shell);
+				free(segment);
+				segment = expanded;
+			}
+
+			// Append to result
+			temp = ft_strjoin(result, segment ? segment : "");
+			free(result);
+			free(segment);
+			result = temp;
+		}
+	}
+
+	return (result);
+}
 
 static char	*process_filename(char *filename, t_shell *shell)
 {
-	char	*quoted_removed;
-	char	*processed_filename;
+	char	*expanded_with_quotes;
+	char	*final_result;
 
-	quoted_removed = remove_quotes_for_redirection(filename);
-	if (!quoted_removed)
+	// First: expand variables while respecting quote boundaries
+	expanded_with_quotes = process_quote_aware_expansion(filename, shell);
+	if (!expanded_with_quotes)
+		return (NULL);
+
+	// Second: remove quotes from the expanded result
+	final_result = remove_quotes_for_redirection(expanded_with_quotes);
+	if (!final_result)
 	{
-		quoted_removed = ft_strdup(filename);
-		if (!quoted_removed)
-			return (NULL);
+		final_result = ft_strdup(expanded_with_quotes);
 	}
-	processed_filename = expand_variables(quoted_removed, shell);
-	free(quoted_removed);
-	return (processed_filename);
+	
+	free(expanded_with_quotes);
+	return (final_result);
 }
 
 static char	*process_heredoc_delimiter(char *filename, t_shell *shell)
