@@ -193,6 +193,14 @@ int		set_env_var(char *var_name, char *value, t_shell *shell);
 int		unset_env_var(char *var_name, t_shell *shell);
 int		replace_var_with_value(t_expand *holder, int flags);
 char	*expand_with_quotes(char *str, t_shell *shell);
+int		handle_dollar_expansion(t_expand *holder, t_shell *shell);
+int		handle_double_quote_content(t_expand *holder, int i, char *content);
+int		create_escaped_content(char *content, char **escaped_content);
+int		handle_double_quote_expansion(t_expand *holder);
+int		handle_single_quote_expansion(t_expand *holder);
+void	init_expand_holder(t_expand *holder, char *tilde_expanded);
+void	process_expansion_loop(t_expand *holder, t_shell *shell);
+int		handle_special_chars(t_expand *holder);
 
 /*
 ** ────────────────────────────────────────────────────────────────────────────
