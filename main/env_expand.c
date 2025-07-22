@@ -232,8 +232,6 @@ char	*expand_with_quotes(char *str, t_shell *shell)
 	tilde_expanded = expand_tilde(str, shell);
 	if (!tilde_expanded)
 		return (NULL);
-	
-	// Initialize all fields of holder
 	holder.result = tilde_expanded;
 	holder.var_start = NULL;
 	holder.var_end = NULL;
@@ -244,15 +242,12 @@ char	*expand_with_quotes(char *str, t_shell *shell)
 	holder.var_len = 0;
 	in_single_quotes = 0;
 	in_double_quotes = 0;
-	
 	while (holder.result[holder.indx])
 	{
-		// Track quote state but don't skip the quote characters
 		if (holder.result[holder.indx] == '\'' && !in_double_quotes)
 			in_single_quotes = !in_single_quotes;
 		else if (holder.result[holder.indx] == '"' && !in_single_quotes)
 			in_double_quotes = !in_double_quotes;
-		// Only expand $ if not in single quotes
 		else if (holder.result[holder.indx] == '$' && !in_single_quotes)
 		{
 			expansion_result = handle_dollar_expansion(&holder, shell);

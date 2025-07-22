@@ -58,7 +58,7 @@ static int	preprocess_heredocs_in_pipeline(t_pipeline_context *pipeline_ctx)
 		j = 0;
 		while (args[j])
 		{
-			if (is_redirection(args[j]) == 1) // heredoc redirection
+			if (is_redirection(args[j]) == 1)
 			{
 				if (!args[j + 1])
 				{
@@ -66,16 +66,12 @@ static int	preprocess_heredocs_in_pipeline(t_pipeline_context *pipeline_ctx)
 					free_args(args);
 					return (1);
 				}
-				
-				// Process heredoc delimiter
 				char *processed_delimiter = process_heredoc_delimiter(args[j + 1]);
 				if (!processed_delimiter)
 				{
 					free_args(args);
 					return (1);
 				}
-				
-				// Create a temporary file to store heredoc content
 				char temp_filename[64];
 				snprintf(temp_filename, sizeof(temp_filename), "/tmp/.minishell_heredoc_%d_%d", getpid(), i);
 				
@@ -86,8 +82,6 @@ static int	preprocess_heredocs_in_pipeline(t_pipeline_context *pipeline_ctx)
 					free_args(args);
 					return (1);
 				}
-				
-				// Collect heredoc input and write to temp file
 				char *line;
 				while (1)
 				{
@@ -106,7 +100,6 @@ static int	preprocess_heredocs_in_pipeline(t_pipeline_context *pipeline_ctx)
 					
 					if (!line)
 					{
-						// EOF encountered - show warning
 						write(STDERR_FILENO, "minishell: warning: here-document delimited by end-of-file (wanted `", 68);
 						write(STDERR_FILENO, processed_delimiter, ft_strlen(processed_delimiter));
 						write(STDERR_FILENO, "')\n", 3);
@@ -124,18 +117,14 @@ static int	preprocess_heredocs_in_pipeline(t_pipeline_context *pipeline_ctx)
 					write(temp_fd, "\n", 1);
 					free(line);
 				}
-				
 				close(temp_fd);
-				
-				// Update the original t_split structure
-				// Find the corresponding position in the t_split
+
 				int split_pos = j + 1;
 				if (split_pos < pipeline_ctx->commands[i].size)
 				{
 					free(pipeline_ctx->commands[i].start[split_pos]);
 					pipeline_ctx->commands[i].start[split_pos] = ft_strdup(temp_filename);
 				}
-				
 				free(processed_delimiter);
 				j += 2;
 			}
@@ -147,7 +136,6 @@ static int	preprocess_heredocs_in_pipeline(t_pipeline_context *pipeline_ctx)
 					j++;
 			}
 		}
-		
 		free_args(args);
 		i++;
 	}
@@ -177,12 +165,10 @@ int	execute_pipeline_children(t_pipeline_context *pipeline_ctx)
 	int						i;
 	t_pipe_child_context	ctx;
 
-	// Pre-process all heredocs sequentially before forking any children
 	if (preprocess_heredocs_in_pipeline(pipeline_ctx) != 0)
 		return (1);
-
-	i = 0;
-	while (i < pipeline_ctx->cmd_count)
+	i = -1;
+	while (++i < pipeline_ctx->cmd_count)
 	{
 		pipeline_ctx->pids[i] = fork();
 		if (pipeline_ctx->pids[i] == -1)
@@ -199,7 +185,6 @@ int	execute_pipeline_children(t_pipeline_context *pipeline_ctx)
 				&ctx, pipeline_ctx->shell);
 			exit(127);
 		}
-		i++;
 	}
 	close_all_pipes(pipeline_ctx->pipes, pipeline_ctx->cmd_count);
 	return (wait_for_children(pipeline_ctx->pids, pipeline_ctx->cmd_count));

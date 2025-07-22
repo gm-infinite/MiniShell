@@ -60,19 +60,14 @@ static int	execute_args_array(t_split split, t_shell *shell)
 
 	if (!reconstructed)
 		return (1);
-
-	// Apply wildcard expansion
 	wildcard_expanded = wildcard_input_modify(reconstructed);
 	if (wildcard_expanded && wildcard_expanded != reconstructed)
 	{
 		free(reconstructed);
 		reconstructed = wildcard_expanded;
 	}
-
-	// Split again with wildcard expansion applied
 	new_split = create_split_str(reconstructed);
 	free(reconstructed);
-
 	if (new_split.size == 0)
 	{
 		free_split(&new_split);

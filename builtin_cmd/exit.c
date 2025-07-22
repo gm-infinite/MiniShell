@@ -19,10 +19,8 @@ static int	is_valid_number(char *arg)
 	int	i;
 
 	i = 0;
-	// Only one + or - allowed at the beginning
 	if (arg[i] == '+' || arg[i] == '-')
 		i++;
-	// Must have at least one digit after optional sign
 	if (arg[i] == '\0')
 		return (0);
 	while (arg[i])
@@ -52,7 +50,6 @@ static int	validate_numeric_arg(char *arg, t_shell *shell)
 		shell->exit_code = 2;
 		return (0);
 	}
-	// Check for overflow using strtoll
 	errno = 0;
 	strtoll(arg, &endptr, 10);
 	if (errno == ERANGE || *endptr != '\0')
@@ -69,7 +66,6 @@ int	builtin_exit(char **args, t_shell *shell)
 {
 	int	exit_code;
 
-	// printf("exit\n");
 	if (args[1] && args[2])
 	{
 		write(STDERR_FILENO, "exit: too many arguments\n", 25);
