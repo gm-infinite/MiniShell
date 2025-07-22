@@ -291,6 +291,7 @@ void	redirection_fail_procedure(t_redir_fds *fds);
 int		handle_here_document(char *processed_filename, t_redir_fds *fds);
 int		handle_output_redirect(char *processed_filename, t_redir_fds *fds,
 			int redirect_type);
+char	*process_heredoc_delimiter(char *filename, t_shell *shell);
 char	**build_clean_args(char **args, int clean_count);
 int		count_clean_args(char **args);
 void	print_pipe_error(void);

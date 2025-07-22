@@ -39,8 +39,25 @@ int	count_clean_args(char **args)
 static int	handle_redirection_type(int redirect_type, char *processed_filename,
 		t_redir_fds *fds)
 {
-	if (redirect_type == 1)
-		return (handle_here_document(processed_filename, fds));
+	if (redirect_type == 1) // heredoc redirection
+	{
+		// Check if this is a pre-processed heredoc (temp file)
+		if (ft_strncmp(processed_filename, "/tmp/.minishell_heredoc_", 24) == 0)
+		{
+			// This is a pre-processed heredoc, treat as input redirection
+			*fds->input_fd = open(processed_filename, O_RDONLY);
+			if (*fds->input_fd == -1)
+				return (-1);
+			// Clean up the temporary file
+			unlink(processed_filename);
+			return (0);
+		}
+		else
+		{
+			// Normal heredoc processing
+			return (handle_here_document(processed_filename, fds));
+		}
+	}
 	else if (redirect_type == 3)
 	{
 		*fds->input_fd = open(processed_filename, O_RDONLY);
@@ -157,7 +174,7 @@ static char	*process_filename(char *filename, t_shell *shell)
 	return (final_result);
 }
 
-static char	*process_heredoc_delimiter(char *filename, t_shell *shell)
+char	*process_heredoc_delimiter(char *filename, t_shell *shell)
 {
 	char	*result;
 
