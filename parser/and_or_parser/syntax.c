@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   syntax.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 23:29:57 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/20 22:00:13 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/22 15:58:54 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,11 @@ int	check_operator_syntax_errors(t_split split)
 		last_token = split.start[split.size - 1];
 		if (ft_strncmp(last_token, "&&", 3) == 0
 			|| ft_strncmp(last_token, "||", 3) == 0)
-			return (write(STDERR_FILENO,
-					"bash: syntax error: unexpected end of file2\n", 44), 0);
+		{
+			write(STDERR_FILENO,
+				"bash: syntax error: unexpected end of file\n", 44);
+			return (0);
+		}
 	}
 	i = -1;
 	while (++i < split.size - 1)
