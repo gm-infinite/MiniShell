@@ -61,32 +61,58 @@ static int	handle_dollar_expansion(t_expand *holder, t_shell *shell)
 		int		i;
 		char	*content;
 		char	*new_str;
+		char	*escaped_content;
 		
 		i = holder->indx + 2;
 		while (holder->result[i] && holder->result[i] != '"')
 			i++;
-		if (holder->result[i] == '"')
+		// Check if we found a closing quote and there's actually content between quotes
+		if (holder->result[i] == '"' && i > holder->indx + 2)
 		{
 			// Extract content between quotes
 			content = ft_substr(holder->result, holder->indx + 2, i - holder->indx - 2);
 			if (content)
 			{
+				// Escape single quotes to protect them from quote removal
+				escaped_content = malloc(ft_strlen(content) * 2 + 1);
+				if (escaped_content)
+				{
+					int j = 0, k = 0;
+					while (content[j])
+					{
+						if (content[j] == '\'')
+						{
+							escaped_content[k++] = '\001'; // Use SOH as escape marker
+							escaped_content[k++] = '\'';
+						}
+						else
+							escaped_content[k++] = content[j];
+						j++;
+					}
+					escaped_content[k] = '\0';
+				}
+				else
+					escaped_content = content;
+				
 				// Create new string without $"..."
-				new_str = ft_calloc(ft_strlen(holder->result) + 1, 1);
+				new_str = ft_calloc(ft_strlen(holder->result) + ft_strlen(escaped_content) + 1, 1);
 				if (new_str)
 				{
 					ft_strlcpy(new_str, holder->result, holder->indx + 1);
-					ft_strlcat(new_str, content, ft_strlen(holder->result) + 1);
-					ft_strlcat(new_str, &holder->result[i + 1], ft_strlen(holder->result) + 1);
+					ft_strlcat(new_str, escaped_content, ft_strlen(holder->result) + ft_strlen(escaped_content) + 1);
+					ft_strlcat(new_str, &holder->result[i + 1], ft_strlen(holder->result) + ft_strlen(escaped_content) + 1);
 					free(holder->result);
 					holder->result = new_str;
-					holder->indx += ft_strlen(content);
+					holder->indx += ft_strlen(escaped_content);
 				}
+				if (escaped_content != content)
+					free(escaped_content);
 				free(content);
 				return (1);
 			}
 		}
-		// If no closing quote or error, keep the $
+		// If no closing quote found, or quote is immediately after $", or empty content
+		// This is just a lone $ followed by a quote character - keep it literal
 		holder->indx++;
 		return (1);
 	}
@@ -154,10 +180,17 @@ static int	handle_dollar_expansion(t_expand *holder, t_shell *shell)
 			return (0);
 		return (1);
 	}
-	// Lone $ not followed by valid variable name - remove it
-	ft_memmove(&holder->result[holder->indx], 
-			&holder->result[holder->indx + 1], 
-			ft_strlen(&holder->result[holder->indx + 1]) + 1);
+	// Lone $ followed by quote character or other special char - keep it literal
+	// This fixes cases like "$" where $ is followed by closing quote
+	if (*holder->var_start == '"' || *holder->var_start == '\'' || 
+		*holder->var_start == '$' || !ft_isprint(*holder->var_start))
+	{
+		holder->indx++;
+		return (1);
+	}
+	// Lone $ not followed by valid variable name - keep it literal (changed from remove)
+	// This matches bash behavior where lone $ is preserved
+	holder->indx++;
 	return (1);
 }
 
