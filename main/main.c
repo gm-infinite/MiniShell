@@ -28,6 +28,13 @@ static void	begin_command_parsing_and_execution(t_shell *shell)
 			free(shell->current_input);
 			shell->current_input = expanded_input;
 		}
+		else if (expanded_input && expanded_input != shell->current_input)
+		{
+			// If wildcard_input_modify returned different string, we own it
+			free(shell->current_input);
+			shell->current_input = expanded_input;
+		}
+		// If expanded_input == shell->current_input, no change needed
 		shell->split_input = create_split_str(shell->current_input);
 		if (shell->split_input.size > 0)
 			parser_and_or(shell, shell->split_input);

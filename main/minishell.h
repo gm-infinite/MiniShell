@@ -286,6 +286,7 @@ int		check_redirection_error(t_split split, int i);
 char	*remove_quotes_for_redirection(char *str);
 int		create_pipes_array(int ***pipes, int cmd_count);
 void	cleanup_pipes(int **pipes, int cmd_count);
+void	cleanup_pipes_safe(int **pipes, int cmd_count);
 void	close_all_pipes(int **pipes, int cmd_count);
 void	setup_pipe_fds(t_pipe_setup_context *ctx);
 int		create_pipeline_pipes(int ***pipes, int cmd_count);

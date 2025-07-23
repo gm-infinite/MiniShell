@@ -23,9 +23,21 @@ int	create_pipes_array(int ***pipes, int cmd_count)
 	while (i < cmd_count - 1)
 	{
 		(*pipes)[i] = malloc(sizeof(int) * 2);
+		if (!(*pipes)[i])
+		{
+			// Free previously allocated pipes on error
+			while (--i >= 0)
+			{
+				free((*pipes)[i]);
+			}
+			free(*pipes);
+			*pipes = NULL;
+			return (0);
+		}
 		if (pipe((*pipes)[i]) == -1)
 		{
 			perror("pipe");
+			free((*pipes)[i]); // Free the current allocation
 			while (--i >= 0)
 			{
 				close((*pipes)[i][0]);
@@ -33,6 +45,7 @@ int	create_pipes_array(int ***pipes, int cmd_count)
 				free((*pipes)[i]);
 			}
 			free(*pipes);
+			*pipes = NULL;
 			return (0);
 		}
 		i++;
@@ -74,4 +87,24 @@ void	setup_pipe_fds(t_pipe_setup_context *ctx)
 		*(ctx->input_fd) = ctx->pipes[ctx->cmd_index - 1][0];
 	if (ctx->cmd_index < ctx->cmd_count - 1)
 		*(ctx->output_fd) = ctx->pipes[ctx->cmd_index][1];
+}
+
+void	cleanup_pipes_safe(int **pipes, int cmd_count)
+{
+	int	i;
+
+	if (!pipes)
+		return ;
+	i = 0;
+	while (i < cmd_count - 1 && pipes[i])
+	{
+		if (pipes[i][0] >= 0)
+			close(pipes[i][0]);
+		if (pipes[i][1] >= 0) 
+			close(pipes[i][1]);
+		free(pipes[i]);
+		pipes[i] = NULL;
+		i++;
+	}
+	free(pipes);
 }

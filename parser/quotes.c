@@ -45,9 +45,16 @@ char	*process_quotes(char *str, t_shell *shell)
 		return (NULL);
 	result = remove_quotes_from_string(expanded);
 	if (!result)
+	{
+		// If remove_quotes_from_string failed, return expanded
 		result = expanded;
-	else if (expanded != str)
-		free(expanded);
+	}
+	else 
+	{
+		// remove_quotes_from_string succeeded, free expanded if different from str
+		if (expanded != str)
+			free(expanded);
+	}
 	return (result);
 }
 

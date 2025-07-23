@@ -42,13 +42,16 @@ int	setup_pipeline_resources(t_split **commands, int ***pipes, pid_t **pids,
 	if (!create_pipes_array(pipes, cmd_count))
 	{
 		free(*commands);
+		*commands = NULL;
 		return (0);
 	}
 	*pids = malloc(sizeof(pid_t) * cmd_count);
 	if (!*pids)
 	{
-		cleanup_pipes(*pipes, cmd_count);
+		cleanup_pipes_safe(*pipes, cmd_count);
+		*pipes = NULL;
 		free(*commands);
+		*commands = NULL;
 		return (0);
 	}
 	return (1);
@@ -73,7 +76,10 @@ int	execute_pipeline_children(t_pipeline_context *pipeline_ctx)
 void	cleanup_pipeline_resources(t_split *commands, int **pipes, pid_t *pids,
 		int cmd_count)
 {
-	cleanup_pipes(pipes, cmd_count);
-	free(pids);
-	free(commands);
+	if (pipes)
+		cleanup_pipes_safe(pipes, cmd_count);
+	if (pids)
+		free(pids);
+	if (commands)
+		free(commands);
 }
