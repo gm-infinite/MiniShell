@@ -6,7 +6,7 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 22:25:13 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/23 17:43:28 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/07/23 19:11:29 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,28 +61,35 @@ void	execute_pipe_child(t_split cmd, t_pipe_child_context *ctx,
 	setup_child_signals();
 	if (has_parentheses_in_split(cmd))
 	{
+		t_pipeline_cleanup cleanup = {commands, ctx->pipes, pids, ctx->cmd_count};
 		parser_and_or(shell, cmd);
-		free_child_pipeline_memory(NULL, shell, commands, ctx->pipes, pids, ctx->cmd_count);
+		free_child_pipeline_memory(NULL, shell, &cleanup);
 		exit(shell->past_exit_status);
 	}
 	args = split_to_args(cmd);
 	if (!args || !args[0])
 	{
-		free_child_pipeline_memory(args, shell, commands, ctx->pipes, pids, ctx->cmd_count);
+		t_pipeline_cleanup cleanup = {commands, ctx->pipes, pids, ctx->cmd_count};
+		free_child_pipeline_memory(args, shell, &cleanup);
 		exit(1);
 	}
 	args = process_argument_expansion(args, shell);
 	if (!args || !args[0])
 	{
-		free_child_pipeline_memory(args, shell, commands, ctx->pipes, pids, ctx->cmd_count);
+		t_pipeline_cleanup cleanup = {commands, ctx->pipes, pids, ctx->cmd_count};
+		free_child_pipeline_memory(args, shell, &cleanup);
 		exit(0);
 	}
 	if (is_builtin(args[0]))
 	{
+		t_pipeline_cleanup cleanup = {commands, ctx->pipes, pids, ctx->cmd_count};
 		builtin_result = execute_builtin(args, shell);
-		free_child_pipeline_memory(args, shell, commands, ctx->pipes, pids, ctx->cmd_count);
+		free_child_pipeline_memory(args, shell, &cleanup);
 		exit(builtin_result);
 	}
 	else
-		execute_pipe_external_command(args, shell, commands, ctx->pipes, pids, ctx->cmd_count);
+	{
+		t_pipeline_cleanup cleanup = {commands, ctx->pipes, pids, ctx->cmd_count};
+		execute_pipe_external_command(args, shell, &cleanup);
+	}
 }

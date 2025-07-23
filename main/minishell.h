@@ -6,7 +6,7 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 10:53:30 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/07/23 18:10:43 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/07/23 19:11:29 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,6 +139,14 @@ typedef struct s_redirect_info
 	int		redirect_type;
 	char	*processed_filename;
 }	t_redirect_info;
+
+typedef struct s_pipeline_cleanup
+{
+	t_split	*commands;
+	int		**pipes;
+	pid_t	*pids;
+	int		cmd_count;
+}	t_pipeline_cleanup;
 
 /*
 ** ────────────────────────────────────────────────────────────────────────────
@@ -281,13 +289,13 @@ void	execute_pipe_child(t_split cmd, t_pipe_child_context *ctx,
 char	**execute_expanded_args_split(char *reconstructed, char **args,
 		t_shell *shell);
 void	write_pipe_error_message(char *cmd, char *message);
-void	execute_pipe_external_command(char **args, t_shell *shell, t_split *commands,
-	int **pipes, pid_t *pids, int cmd_count);
+void	execute_pipe_external_command(char **args, t_shell *shell, 
+	t_pipeline_cleanup *cleanup);
 void	setup_and_execute_child(t_process_pipeline_context *proc_ctx, int i);
 void	setup_pipeline_signals(void);
 void	free_child_memory(char **args, t_shell *shell);
-void	free_child_pipeline_memory(char **args, t_shell *shell, t_split *commands,
-	int **pipes, pid_t *pids, int cmd_count);
+void	free_child_pipeline_memory(char **args, t_shell *shell, 
+	t_pipeline_cleanup *cleanup);
 void	execute_pipe_child_with_redirections(t_split cmd,
 			t_pipe_child_context *ctx, t_shell *shell);
 int		has_parentheses_in_split(t_split split);

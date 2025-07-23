@@ -6,7 +6,7 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 11:00:00 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/23 17:56:29 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/07/23 19:11:29 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,8 @@ void	free_child_memory(char **args, t_shell *shell)
 	}
 }
 
-void	free_child_pipeline_memory(char **args, t_shell *shell, t_split *commands,
-	int **pipes, pid_t *pids, int cmd_count)
+void	free_child_pipeline_memory(char **args, t_shell *shell, 
+	t_pipeline_cleanup *cleanup)
 {
 	int	i;
 
@@ -36,19 +36,22 @@ void	free_child_pipeline_memory(char **args, t_shell *shell, t_split *commands,
 		free_environment(shell);
 		free(shell->current_input);
 	}
-	if (commands)
-		free(commands);
-	if (pipes)
+	if (cleanup)
 	{
-		i = 0;
-		while (i < cmd_count - 1)
+		if (cleanup->commands)
+			free(cleanup->commands);
+		if (cleanup->pipes)
 		{
-			if (pipes[i])
-				free(pipes[i]);
-			i++;
+			i = 0;
+			while (i < cleanup->cmd_count - 1)
+			{
+				if (cleanup->pipes[i])
+					free(cleanup->pipes[i]);
+				i++;
+			}
+			free(cleanup->pipes);
 		}
-		free(pipes);
+		if (cleanup->pids)
+			free(cleanup->pids);
 	}
-	if (pids)
-		free(pids);
 }
