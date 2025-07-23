@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirect_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 20:00:00 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/20 16:52:01 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/23 11:34:19 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,14 +37,15 @@ int	count_clean_args(char **args)
 }
 
 static int	handle_redirection_type(int redirect_type, char *processed_filename,
-		t_redir_fds *fds)
+		t_redir_fds *fds, t_shell *shell, char *original_delimiter)
 {
 	if (redirect_type == 1)
 	{
 		if (ft_strncmp(processed_filename, "/tmp/.minishell_heredoc_", 24) == 0)
 			return (handle_heredoc_file_cleanup(processed_filename, fds));
 		else
-			return (handle_here_document(processed_filename, fds));
+			return (handle_here_document(processed_filename, fds, shell, 
+				original_delimiter));
 	}
 	else if (redirect_type == 3)
 		return (handle_input_redirection(processed_filename, fds));
@@ -77,7 +78,8 @@ int	process_single_redirection(char **args, int i, t_redir_fds *fds,
 	processed_filename = get_processed_filename(args, i, redirect_type, shell);
 	if (!processed_filename)
 		return (-1);
-	if (handle_redirection_type(redirect_type, processed_filename, fds) == -1)
+	if (handle_redirection_type(redirect_type, processed_filename, fds, shell, 
+			args[i + 1]) == -1)
 	{
 		perror(processed_filename);
 		if (processed_filename != args[i + 1])

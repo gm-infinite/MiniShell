@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 19:00:00 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/20 20:17:42 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/23 11:34:19 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,9 +68,11 @@ void	write_heredoc_warning(char *processed_delimiter)
 	write(STDERR_FILENO, "')\n", 3);
 }
 
-int	process_heredoc_content(int temp_fd, char *processed_delimiter)
+int	process_heredoc_content(int temp_fd, char *processed_delimiter, 
+		t_shell *shell, int should_expand)
 {
 	char	*line;
+	char	*expanded_line;
 	size_t	delimiter_len;
 
 	delimiter_len = ft_strlen(processed_delimiter);
@@ -87,7 +89,19 @@ int	process_heredoc_content(int temp_fd, char *processed_delimiter)
 			free(line);
 			break ;
 		}
-		write(temp_fd, line, ft_strlen(line));
+		if (should_expand && shell)
+		{
+			expanded_line = expand_variables(line, shell);
+			if (expanded_line)
+			{
+				write(temp_fd, expanded_line, ft_strlen(expanded_line));
+				free(expanded_line);
+			}
+			else
+				write(temp_fd, line, ft_strlen(line));
+		}
+		else
+			write(temp_fd, line, ft_strlen(line));
 		write(temp_fd, "\n", 1);
 		free(line);
 	}

@@ -6,7 +6,7 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 10:53:30 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/07/23 10:51:48 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/07/23 11:34:19 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -300,7 +300,8 @@ void	cleanup_pipeline_resources(t_split *commands, int **pipes, pid_t *pids,
 char	*create_heredoc_filename(int cmd_index);
 int		read_heredoc_line(char **line);
 void	write_heredoc_warning(char *processed_delimiter);
-int		process_heredoc_content(int temp_fd, char *processed_delimiter);
+int		process_heredoc_content(int temp_fd, char *processed_delimiter, 
+			t_shell *shell, int should_expand);
 int		handle_heredoc_redirection(char **args, int j,
 			t_pipeline_context *pipeline_ctx, int i);
 int		process_command_redirections(char **args,
@@ -318,7 +319,8 @@ int		is_redirection(char *token);
 int		has_redirections(t_split split);
 int		validate_redirection_syntax(t_split split);
 char	*remove_quotes_for_redirection(char *str);
-int		handle_here_doc(char *delimiter, int *pipe_fd);
+int		handle_here_doc(char *delimiter, int *pipe_fd, t_shell *shell, 
+			int should_expand);
 char	*read_heredoc_input_line(void);
 void	write_heredoc_warning_message(char *delimiter);
 int		is_delimiter_match(char *line, char *delimiter);
@@ -327,10 +329,12 @@ int		execute_with_redirections(t_split split, t_shell *shell);
 int		process_single_redirection(char **args, int i, t_redir_fds *fds,
 			t_shell *shell);
 void	redirection_fail_procedure(t_redir_fds *fds);
-int		handle_here_document(char *processed_filename, t_redir_fds *fds);
+int		handle_here_document(char *processed_filename, t_redir_fds *fds,
+			t_shell *shell, char *original_delimiter);
 int		handle_output_redirect(char *processed_filename, t_redir_fds *fds,
 			int redirect_type);
 char	*process_heredoc_delimiter(char *filename);
+int		delimiter_was_quoted(char *filename);
 char	*process_filename(char *filename, t_shell *shell);
 char	*process_quote_aware_expansion(char *str, t_shell *shell);
 int		handle_heredoc_file_cleanup(char *processed_filename, t_redir_fds *fds);

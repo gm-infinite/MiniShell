@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipeline_process_utils.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 19:00:00 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/20 20:17:42 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/23 11:34:19 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,12 +57,15 @@ int	handle_heredoc_redirection(char **args, int j,
 	char	*processed_delimiter;
 	int		temp_fd;
 	char	*temp_filename;
+	int		should_expand;
 
 	temp_fd = setup_heredoc_file(&processed_delimiter, &temp_filename,
 			i, args[j + 1]);
 	if (temp_fd == -1)
 		return (1);
-	process_heredoc_content(temp_fd, processed_delimiter);
+	should_expand = !delimiter_was_quoted(args[j + 1]);
+	process_heredoc_content(temp_fd, processed_delimiter, 
+		pipeline_ctx->shell, should_expand);
 	close(temp_fd);
 	update_command_filename(pipeline_ctx, i, j, temp_filename);
 	free(processed_delimiter);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redir_process_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 20:00:00 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/20 16:52:01 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/23 11:34:19 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,22 @@ char	*process_filename(char *filename, t_shell *shell)
 		final_result = ft_strdup(expanded_with_quotes);
 	free(expanded_with_quotes);
 	return (final_result);
+}
+
+int	delimiter_was_quoted(char *filename)
+{
+	int	i;
+
+	if (!filename)
+		return (0);
+	i = 0;
+	while (filename[i])
+	{
+		if (filename[i] == '\'' || filename[i] == '"')
+			return (1);
+		i++;
+	}
+	return (0);
 }
 
 char	*process_heredoc_delimiter(char *filename)
