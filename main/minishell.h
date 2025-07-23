@@ -6,7 +6,7 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 10:53:30 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/07/23 17:43:28 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/07/23 18:10:43 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,6 +133,12 @@ typedef struct s_expand
 	int		indx;
 	int		var_len;
 }	t_expand;
+
+typedef struct s_redirect_info
+{
+	int		redirect_type;
+	char	*processed_filename;
+}	t_redirect_info;
 
 /*
 ** ────────────────────────────────────────────────────────────────────────────
@@ -333,6 +339,7 @@ char	**parse_redirections(t_split split, t_redir_fds *fds, t_shell *shell);
 int		execute_with_redirections(t_split split, t_shell *shell);
 int		process_single_redirection(char **args, int i, t_redir_fds *fds,
 			t_shell *shell);
+t_redirect_info	get_redirect_info(char **args, int i, t_shell *shell);
 void	redirection_fail_procedure(t_redir_fds *fds);
 int		handle_here_document(char *processed_filename, t_redir_fds *fds,
 			t_shell *shell, char *original_delimiter);

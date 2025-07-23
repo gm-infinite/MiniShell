@@ -6,7 +6,7 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 20:00:00 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/23 11:34:19 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/07/23 18:23:15 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,21 +36,24 @@ int	count_clean_args(char **args)
 	return (j);
 }
 
-static int	handle_redirection_type(int redirect_type, char *processed_filename,
-		t_redir_fds *fds, t_shell *shell, char *original_delimiter)
+static int	handle_redirection_type(t_redirect_info *info, t_redir_fds *fds,
+		t_shell *shell, char *original_delimiter)
 {
-	if (redirect_type == 1)
+	if (info->redirect_type == 1)
 	{
-		if (ft_strncmp(processed_filename, "/tmp/.minishell_heredoc_", 24) == 0)
-			return (handle_heredoc_file_cleanup(processed_filename, fds));
+		if (ft_strncmp(info->processed_filename, "/tmp/.minishell_heredoc_", 24)
+			== 0)
+			return (handle_heredoc_file_cleanup(info->processed_filename, fds));
 		else
-			return (handle_here_document(processed_filename, fds, shell, 
-				original_delimiter));
+			return (handle_here_document(info->processed_filename, fds, shell,
+					original_delimiter));
 	}
-	else if (redirect_type == 3)
-		return (handle_input_redirection(processed_filename, fds));
-	else if (redirect_type == 2 || redirect_type == 4 || redirect_type == 5)
-		return (handle_output_redirect(processed_filename, fds, redirect_type));
+	else if (info->redirect_type == 3)
+		return (handle_input_redirection(info->processed_filename, fds));
+	else if (info->redirect_type == 2 || info->redirect_type == 4
+		|| info->redirect_type == 5)
+		return (handle_output_redirect(info->processed_filename, fds,
+				info->redirect_type));
 	return (0);
 }
 
@@ -63,58 +66,43 @@ static char	*get_processed_filename(char **args, int i, int redirect_type,
 		return (process_filename(args[i + 1], shell));
 }
 
+t_redirect_info	get_redirect_info(char **args, int i, t_shell *shell)
+{
+	t_redirect_info	info;
+
+	info.redirect_type = is_redirection(args[i]);
+	if (!args[i + 1])
+	{
+		info.redirect_type = -1;
+		info.processed_filename = NULL;
+		return (info);
+	}
+	info.processed_filename = get_processed_filename(args, i,
+			info.redirect_type, shell);
+	return (info);
+}
+
 int	process_single_redirection(char **args, int i, t_redir_fds *fds,
 		t_shell *shell)
 {
-	int		redirect_type;
-	char	*processed_filename;
+	t_redirect_info	redirect_info;
 
-	redirect_type = is_redirection(args[i]);
-	if (!args[i + 1])
+	redirect_info = get_redirect_info(args, i, shell);
+	if (redirect_info.redirect_type == -1)
 	{
 		write(STDERR_FILENO, "syntax error: missing filename\n", 32);
 		return (-1);
 	}
-	processed_filename = get_processed_filename(args, i, redirect_type, shell);
-	if (!processed_filename)
+	if (!redirect_info.processed_filename)
 		return (-1);
-	if (handle_redirection_type(redirect_type, processed_filename, fds, shell, 
-			args[i + 1]) == -1)
+	if (handle_redirection_type(&redirect_info, fds, shell, args[i + 1]) == -1)
 	{
-		perror(processed_filename);
-		if (processed_filename != args[i + 1])
-			free(processed_filename);
+		perror(redirect_info.processed_filename);
+		if (redirect_info.processed_filename != args[i + 1])
+			free(redirect_info.processed_filename);
 		return (-1);
 	}
-	if (processed_filename != args[i + 1])
-		free(processed_filename);
+	if (redirect_info.processed_filename != args[i + 1])
+		free(redirect_info.processed_filename);
 	return (0);
-}
-
-char	**build_clean_args(char **args, int clean_count)
-{
-	char	**clean_args;
-	int		i;
-	int		j;
-	int		redirect_type;
-
-	clean_args = malloc(sizeof(char *) * (clean_count + 1));
-	if (!clean_args)
-		return (NULL);
-	i = 0;
-	j = 0;
-	while (args[i])
-	{
-		redirect_type = is_redirection(args[i]);
-		if (redirect_type)
-			i += 2;
-		else
-		{
-			clean_args[j] = ft_strdup(args[i]);
-			j++;
-			i++;
-		}
-	}
-	clean_args[j] = NULL;
-	return (clean_args);
 }
