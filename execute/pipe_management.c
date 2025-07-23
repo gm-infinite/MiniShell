@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipe_management.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 20:00:00 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/20 18:41:56 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/23 17:56:21 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,6 @@ int	create_pipes_array(int ***pipes, int cmd_count)
 		(*pipes)[i] = malloc(sizeof(int) * 2);
 		if (!(*pipes)[i])
 		{
-			// Free previously allocated pipes on error
 			while (--i >= 0)
 			{
 				free((*pipes)[i]);
@@ -37,7 +36,7 @@ int	create_pipes_array(int ***pipes, int cmd_count)
 		if (pipe((*pipes)[i]) == -1)
 		{
 			perror("pipe");
-			free((*pipes)[i]); // Free the current allocation
+			free((*pipes)[i]);
 			while (--i >= 0)
 			{
 				close((*pipes)[i][0]);

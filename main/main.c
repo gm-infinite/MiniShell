@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 10:55:46 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/07/20 16:15:03 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/23 17:56:25 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,11 +30,9 @@ static void	begin_command_parsing_and_execution(t_shell *shell)
 		}
 		else if (expanded_input && expanded_input != shell->current_input)
 		{
-			// If wildcard_input_modify returned different string, we own it
 			free(shell->current_input);
 			shell->current_input = expanded_input;
 		}
-		// If expanded_input == shell->current_input, no change needed
 		shell->split_input = create_split_str(shell->current_input);
 		if (shell->split_input.size > 0)
 			parser_and_or(shell, shell->split_input);

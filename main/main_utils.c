@@ -6,7 +6,7 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 13:29:14 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/07/22 18:05:02 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/07/23 17:56:24 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,6 @@ void	safe_exit(t_shell *shell)
 		free_split(&(shell->split_input));
 	free_environment(shell);
 	rl_clear_history();
-	//printf("exit\n");
 	exit(shell->past_exit_status);
 }
 

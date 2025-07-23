@@ -12,7 +12,6 @@
 
 #include "t_split.h"
 
-// Error? Return -2. Not found? Return -1 Else return first occurrence position
 int	strnsplit(t_split split, char *find)
 {
 	int	i;
@@ -29,7 +28,6 @@ int	strnsplit(t_split split, char *find)
 	return (-1);
 }
 
-// Creates a new t_split struct from the provided char** and size.
 t_split	create_split(char **start, int size)
 {
 	t_split	ret;
@@ -57,7 +55,6 @@ t_split	create_split_str(char *str)
 	return (ret);
 }
 
-// Frees the given t_split, NULLs the strings inside it, resets the size to 0
 void	free_split(t_split *split)
 {
 	int	i;

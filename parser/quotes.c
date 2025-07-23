@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   quotes.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/13 00:00:00 by user              #+#    #+#             */
-/*   Updated: 2025/07/20 19:57:43 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/23 17:57:04 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,13 +45,9 @@ char	*process_quotes(char *str, t_shell *shell)
 		return (NULL);
 	result = remove_quotes_from_string(expanded);
 	if (!result)
-	{
-		// If remove_quotes_from_string failed, return expanded
 		result = expanded;
-	}
-	else 
+	else
 	{
-		// remove_quotes_from_string succeeded, free expanded if different from str
 		if (expanded != str)
 			free(expanded);
 	}
