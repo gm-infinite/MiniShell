@@ -229,16 +229,12 @@ int		builtin_env(t_shell *shell);
 int		builtin_exit(char **args, t_shell *shell);
 int		set_env_var(char *var_name, char *value, t_shell *shell);
 int		append_env_var(char *var_name, char *value, t_shell *shell);
-int		print_sorted_env(t_shell *shell);
-int		process_export_args(char **args, t_shell *shell);
 void	print_export_error(char *arg);
 void	print_option_error(char *arg, t_shell *shell);
 int		process_assign_export(char *arg, char *eq_pos, t_shell *shell);
 int		process_append_export(char *arg, char *eq_pos, t_shell *shell);
 int		process_single_export(char *arg, t_shell *shell);
 int		create_new_env_var(char *var_name, char *value, t_shell *shell);
-int		append_existing_var(int index, char *var_name, char *value,
-			t_shell *shell);
 int		unset_env_var(char *var_name, t_shell *shell);
 int		unset_check_and_remove(t_shell *shell, char *var_name, int len,
 			int index);

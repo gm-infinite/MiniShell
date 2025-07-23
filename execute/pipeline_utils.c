@@ -20,8 +20,8 @@ static int	wait_for_children(pid_t *pids, int cmd_count)
 	int	i;
 
 	exit_status = 0;
-	i = 0;
-	while (i < cmd_count)
+	i = -1;
+	while (++i < cmd_count)
 	{
 		waitpid(pids[i], &status, 0);
 		if (WIFEXITED(status))
@@ -32,7 +32,6 @@ static int	wait_for_children(pid_t *pids, int cmd_count)
 			if (WTERMSIG(status) == SIGINT)
 				write(1, "\n", 1);
 		}
-		i++;
 	}
 	return (exit_status);
 }

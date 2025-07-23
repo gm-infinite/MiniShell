@@ -58,8 +58,8 @@ void	process_args_quotes(char **args, t_shell *shell)
 
 	if (!args)
 		return ;
-	i = 0;
-	while (args[i])
+	i = -1;
+	while (args[++i])
 	{
 		processed = process_quotes(args[i], shell);
 		if (processed)
@@ -67,6 +67,5 @@ void	process_args_quotes(char **args, t_shell *shell)
 			free(args[i]);
 			args[i] = processed;
 		}
-		i++;
 	}
 }

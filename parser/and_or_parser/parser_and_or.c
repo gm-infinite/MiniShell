@@ -39,9 +39,7 @@ void	parse_and_or(t_shell *shell, t_split split, char *c_i)
 			vars[1] += countchr_not_quote(split.start[vars[2]], '(');
 		if (vars[1] == 0 && (vars[2] == split.size
 				|| is_and_or_operator(split.start[vars[2]])))
-		{
 			process_segment(shell, split, vars, c_i);
-		}
 		if (vars[2] < split.size)
 			vars[1] -= countchr_not_quote(split.start[vars[2]], ')');
 	}

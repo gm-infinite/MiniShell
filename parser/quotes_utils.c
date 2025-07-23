@@ -31,10 +31,8 @@ char	*remove_quotes_from_string(char *str)
 		return (NULL);
 	init_quote_removal(&indices[0], &indices[1], states);
 	while (str[indices[0]])
-	{
 		if (process_quote_character(str, result, indices, states))
 			continue ;
-	}
 	result[indices[1]] = '\0';
 	return (result);
 }
@@ -47,13 +45,10 @@ int	is_entirely_single_quoted(char *str)
 	if (str[0] != '\'' || str[ft_strlen(str) - 1] != '\'')
 		return (0);
 	quote_count = 0;
-	k = 0;
-	while (str[k])
-	{
+	k = -1;
+	while (str[++k])
 		if (str[k] == '\'')
 			quote_count++;
-		k++;
-	}
 	return (quote_count == 2);
 }
 
@@ -63,16 +58,15 @@ int	is_in_single_quotes(char *str, int pos)
 	int	in_single;
 	int	in_double;
 
-	i = 0;
+	i = -1;
 	in_single = 0;
 	in_double = 0;
-	while (i < pos && str[i])
+	while (++i < pos && str[i])
 	{
 		if (str[i] == '"' && !in_single)
 			in_double = !in_double;
 		else if (str[i] == '\'' && !in_double)
 			in_single = !in_single;
-		i++;
 	}
 	return (in_single);
 }
