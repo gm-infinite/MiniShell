@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_redirection_utils.c                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 13:50:25 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/20 21:30:11 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/23 17:02:14 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,16 +62,23 @@ void	write_exec_error_message(char *cmd, char *message)
 void	execute_child_command(char **args, t_shell *shell)
 {
 	char	*executable;
+	int		builtin_result;
 
 	if (is_builtin(args[0]))
-		exit(execute_builtin(args, shell));
+	{
+		builtin_result = execute_builtin(args, shell);
+		free_child_memory(args, shell);
+		exit(builtin_result);
+	}
 	executable = find_executable(args[0], shell);
 	if (!executable)
 	{
 		write_exec_error_message(args[0], ": command not found\n");
+		free_child_memory(args, shell);
 		exit(127);
 	}
 	execve(executable, args, shell->envp);
 	perror("execve");
+	free_child_memory(args, shell);
 	exit(127);
 }

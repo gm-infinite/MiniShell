@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redir_external.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 17:25:00 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/20 22:00:13 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/23 17:02:14 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,7 @@ static void	child_setup_and_exec(t_redir_exec_context *ctx, char *executable)
 	setup_child_redirections(ctx->input_fd, ctx->output_fd, ctx->stderr_fd);
 	execve(executable, ctx->args, ctx->shell->envp);
 	perror("execve");
+	free_child_memory(ctx->args, ctx->shell);
 	exit(127);
 }
 

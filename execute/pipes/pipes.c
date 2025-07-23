@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipes.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 15:24:56 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/20 21:23:24 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/23 17:26:17 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,11 +97,19 @@ int	execute_pipeline(t_split split, t_shell *shell)
 {
 	t_split	*commands;
 	int		cmd_count;
+	int		result;
 
 	commands = split_by_pipes(split, &cmd_count);
 	if (!commands)
 		return (1);
+	
 	if (cmd_count == 1)
-		return (handle_single_command(commands, shell));
-	return (execute_multi_command_pipeline(commands, cmd_count, shell));
+	{
+		result = handle_single_command(commands, shell);
+	}
+	else
+	{
+		result = execute_multi_command_pipeline(commands, cmd_count, shell);
+	}
+	return (result);
 }

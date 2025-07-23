@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_pipe_child.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 22:25:13 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/20 21:30:44 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/23 17:26:17 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,9 +51,10 @@ static char	**process_argument_expansion(char **args, t_shell *shell)
 }
 
 void	execute_pipe_child(t_split cmd, t_pipe_child_context *ctx,
-		t_shell *shell)
+		t_shell *shell, t_split *commands, pid_t *pids)
 {
 	char	**args;
+	int		builtin_result;
 
 	setup_pipe_redirection(ctx->cmd_index, ctx->cmd_count, ctx->pipes);
 	cleanup_pipe_descriptors(ctx->pipes, ctx->cmd_count);
@@ -61,16 +62,27 @@ void	execute_pipe_child(t_split cmd, t_pipe_child_context *ctx,
 	if (has_parentheses_in_split(cmd))
 	{
 		parser_and_or(shell, cmd);
+		free_child_pipeline_memory(NULL, shell, commands, ctx->pipes, pids, ctx->cmd_count);
 		exit(shell->past_exit_status);
 	}
 	args = split_to_args(cmd);
 	if (!args || !args[0])
+	{
+		free_child_pipeline_memory(args, shell, commands, ctx->pipes, pids, ctx->cmd_count);
 		exit(1);
+	}
 	args = process_argument_expansion(args, shell);
 	if (!args || !args[0])
+	{
+		free_child_pipeline_memory(args, shell, commands, ctx->pipes, pids, ctx->cmd_count);
 		exit(0);
+	}
 	if (is_builtin(args[0]))
-		exit(execute_builtin(args, shell));
+	{
+		builtin_result = execute_builtin(args, shell);
+		free_child_pipeline_memory(args, shell, commands, ctx->pipes, pids, ctx->cmd_count);
+		exit(builtin_result);
+	}
 	else
-		execute_pipe_external_command(args, shell);
+		execute_pipe_external_command(args, shell, commands, ctx->pipes, pids, ctx->cmd_count);
 }
