@@ -23,35 +23,19 @@ static void	init_quote_removal(int *i, int *j, int *states)
 char	*remove_quotes_from_string(char *str)
 {
 	char	*result;
-	int		i;
-	int		j;
+	int		indices[2];
 	int		states[2];
 
 	result = malloc(ft_strlen(str) * 2 + 1);
 	if (!result)
 		return (NULL);
-	init_quote_removal(&i, &j, states);
-	while (str[i])
+	init_quote_removal(&indices[0], &indices[1], states);
+	while (str[indices[0]])
 	{
-		if (str[i] == '\001' && str[i + 1] == '\'')
-		{
-			result[j] = '\'';
-			j++;
-			i += 2;
+		if (process_quote_character(str, result, indices, states))
 			continue ;
-		}
-		if (str[i] == '\'' && !states[1])
-			states[0] = !states[0];
-		else if (str[i] == '"' && !states[0])
-			states[1] = !states[1];
-		else
-		{
-			result[j] = str[i];
-			j++;
-		}
-		i++;
 	}
-	result[j] = '\0';
+	result[indices[1]] = '\0';
 	return (result);
 }
 

@@ -16,30 +16,16 @@ void	cut_out_par(t_split *split)
 {
 	char	*start;
 	char	*end;
-	int		start_len;
 
 	start = split->start[0];
 	end = split->start[split->size - 1];
-	if (start == end && (size_t)(countchr_str(start, '(')
-		+ countchr_str(start, ')')) == ft_strlen(start))
+	if (is_single_parentheses_string(start, end))
 	{
 		split->size--;
 		return ;
 	}
-	if (start[0] == '(' && end[ft_strlen(end) - 1] == ')')
-	{
-		end[ft_strlen(end) - 1] = '\0';
-		start_len = ft_strlen(start);
-		ft_memmove(&(start[0]), &(start[1]), start_len - 1);
-		start[start_len - 1] = '\0';
-	}
-	if (split->size > 1 && start[0] == '\0')
-	{
-		split->start = &(split->start[1]);
-		split->size--;
-	}
-	if (end[0] == '\0')
-		split->size--;
+	remove_outer_parentheses(start, end);
+	cleanup_empty_elements(split);
 }
 
 void	parse_and_or(t_shell *shell, t_split split, char *c_i)
@@ -52,19 +38,9 @@ void	parse_and_or(t_shell *shell, t_split split, char *c_i)
 		if (vars[2] < split.size)
 			vars[1] += countchr_not_quote(split.start[vars[2]], '(');
 		if (vars[1] == 0 && (vars[2] == split.size
-				|| ft_strncmp("&&", split.start[vars[2]], 3) == 0
-				|| ft_strncmp("||", split.start[vars[2]], 3) == 0))
+				|| is_and_or_operator(split.start[vars[2]])))
 		{
-			if (vars[2] < split.size && split.start[vars[2]] != NULL)
-				free(split.start[vars[2]]);
-			if (vars[2] < split.size)
-				split.start[vars[2]] = NULL;
-			if (++vars[3] == -1 || (c_i[vars[3]] == '0'
-					&& shell->past_exit_status == 0) || (c_i[vars[3]] == '1'
-					&& shell->past_exit_status != 0))
-				parser_and_or(shell, create_split(&(split.start[vars[0]]),
-						vars[2] - vars[0]));
-			vars[0] = vars[2] + 1;
+			process_segment(shell, split, vars, c_i);
 		}
 		if (vars[2] < split.size)
 			vars[1] -= countchr_not_quote(split.start[vars[2]], ')');

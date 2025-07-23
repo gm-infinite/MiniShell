@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exec_utils.c                                       :+:      :+:    :+:   */
+/*   exec_args_utils.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,51 +12,41 @@
 
 #include "../main/minishell.h"
 
-char	**split_to_args(t_split split)
+char	**allocate_args_array(int size)
 {
 	char	**args;
 
-	args = allocate_args_array(split.size);
-	if (!args)
-		return (NULL);
-	if (copy_split_strings(args, split) == -1)
-		return (NULL);
+	args = malloc(sizeof(char *) * (size + 1));
 	return (args);
 }
 
-char	**filter_empty_args(char **args)
+void	cleanup_args_on_error(char **args, int up_to_index)
 {
-	char	**filtered;
-	int		count;
-	int		result;
-
-	if (!args)
-		return (NULL);
-	count = count_non_empty_args(args);
-	filtered = malloc(sizeof(char *) * (count + 1));
-	if (!filtered)
-		return (NULL);
-	result = copy_non_empty_args(args, filtered);
-	if (result == -1)
-	{
-		free_args(filtered);
-		return (NULL);
-	}
-	filtered[result] = NULL;
-	return (filtered);
+	while (--up_to_index >= 0)
+		free(args[up_to_index]);
+	free(args);
 }
 
-void	free_args(char **args)
+int	copy_split_strings(char **args, t_split split)
 {
 	int	i;
 
-	if (!args)
-		return ;
 	i = 0;
-	while (args[i])
+	while (i < split.size)
 	{
-		free(args[i]);
+		if (split.start[i])
+		{
+			args[i] = ft_strdup(split.start[i]);
+			if (!args[i])
+			{
+				cleanup_args_on_error(args, i);
+				return (-1);
+			}
+		}
+		else
+			args[i] = NULL;
 		i++;
 	}
-	free(args);
+	args[i] = NULL;
+	return (0);
 }

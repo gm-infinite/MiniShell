@@ -56,7 +56,7 @@ static int	wait_for_child_exit(pid_t pid)
 	return (exit_status);
 }
 
-static void	execute_child_process(t_redir_exec_context *ctx, char *executable)
+static void	child_setup_and_exec(t_redir_exec_context *ctx, char *executable)
 {
 	setup_child_signals();
 	setup_child_redirections(ctx->input_fd, ctx->output_fd, ctx->stderr_fd);
@@ -79,7 +79,7 @@ int	execute_external_with_redirect(t_redir_exec_context *ctx)
 	}
 	pid = fork();
 	if (pid == 0)
-		execute_child_process(ctx, executable);
+		child_setup_and_exec(ctx, executable);
 	close_parent_fds(ctx->input_fd, ctx->output_fd, ctx->stderr_fd);
 	free(executable);
 	return (wait_for_child_exit(pid));

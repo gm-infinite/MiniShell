@@ -12,7 +12,7 @@
 
 #include "../main/minishell.h"
 
-static int	execute_child_process(char **args, char *executable, t_shell *shell)
+static int	exec_child_process(char **args, char *executable, t_shell *shell)
 {
 	setup_child_signals();
 	if (execve(executable, args, shell->envp) == -1)
@@ -74,7 +74,7 @@ static int	execute_external_command(char **args, t_shell *shell)
 		return (1);
 	}
 	else if (pid == 0)
-		return (execute_child_process(args, executable, shell));
+		return (exec_child_process(args, executable, shell));
 	else
 		return (handle_parent_process(pid, executable));
 }

@@ -55,8 +55,8 @@ int	validate_executable(char *cmd, char *executable)
 	{
 		if (S_ISDIR(file_stat.st_mode))
 		{
-			if ((ft_strncmp(cmd, ".", 2) == 0 && ft_strlen(cmd) == 1) ||
-				(ft_strncmp(cmd, "..", 3) == 0 && ft_strlen(cmd) == 2))
+			if ((ft_strncmp(cmd, ".", 2) == 0 && ft_strlen(cmd) == 1)
+				|| (ft_strncmp(cmd, "..", 3) == 0 && ft_strlen(cmd) == 2))
 			{
 				write_error_message(cmd, ": command not found\n");
 				return (127);
@@ -77,15 +77,15 @@ int	handle_executable_not_found(char **args)
 {
 	struct stat	file_stat;
 
-	if ((ft_strncmp(args[0], ".", 2) == 0 && ft_strlen(args[0]) == 1) ||
-		(ft_strncmp(args[0], "..", 3) == 0 && ft_strlen(args[0]) == 2))
+	if ((ft_strncmp(args[0], ".", 2) == 0 && ft_strlen(args[0]) == 1)
+		|| (ft_strncmp(args[0], "..", 3) == 0 && ft_strlen(args[0]) == 2))
 	{
 		write_error_message(args[0], ": command not found\n");
 		return (127);
 	}
 	if (ft_strchr(args[0], '/'))
 	{
-		if (access(args[0], F_OK) == 0 && stat(args[0], &file_stat) == 0 
+		if (access(args[0], F_OK) == 0 && stat(args[0], &file_stat) == 0
 			&& S_ISDIR(file_stat.st_mode))
 			return (126);
 		return (127);

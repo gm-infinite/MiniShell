@@ -162,6 +162,13 @@ void	setup_child_signals(void);
 ** Advanced command line parsing with operator precedence and grouping support
 */
 void	parser_and_or(t_shell *shell, t_split split);
+void	parse_and_or(t_shell *shell, t_split split, char *c_i);
+int		is_and_or_operator(char *str);
+int		should_execute_segment(int operator_index, char *c_i, t_shell *shell);
+void	process_segment(t_shell *shell, t_split split, int *vars, char *c_i);
+int		is_single_parentheses_string(char *start, char *end);
+void	remove_outer_parentheses(char *start, char *end);
+void	cleanup_empty_elements(t_split *split);
 int		countchr_str(char *str, char c);
 int		countchr_quote(char *str, char c);
 int		countchr_not_quote(char *str, char c);
@@ -252,6 +259,11 @@ char	*apply_wildcard_expansion(char *reconstructed);
 int		execute_expanded_args(char *reconstructed, t_shell *shell);
 int		execute_pipeline(t_split split, t_shell *shell);
 int		execute_pipeline_with_redirections(t_split split, t_shell *shell);
+int		setup_and_execute_pipeline(t_split *commands, int cmd_count,
+		t_shell *shell);
+void	redirect_fds(int input_fd, int output_fd, int stderr_fd);
+void	write_exec_error_message(char *cmd, char *message);
+void	execute_child_command(char **args, t_shell *shell);
 int		execute_single_command(char **args, t_shell *shell);
 int		count_pipes(t_split split);
 t_split	*split_by_pipes(t_split split, int *cmd_count);
@@ -261,8 +273,13 @@ t_split	handle_parentheses_removal(t_split cmd, t_paren_info info,
 t_split	remove_opening_paren(t_split cmd, int first_idx);
 t_split	remove_closing_paren(t_split cmd, int last_idx);
 int		execute_pipe_command(t_split cmd, t_pipe_context *ctx, t_shell *shell);
+void	write_pipe_cmd_error_message(char *cmd, char *message);
+void	expand_command_args(char **args, t_shell *shell);
+void	execute_child_process(char **args, char *executable, t_shell *shell);
+int		handle_builtin_command(char **args, t_pipe_context *ctx, t_shell *shell);
+int		handle_external_command(char **args, t_pipe_context *ctx, t_shell *shell);
 void	execute_pipe_child(t_split cmd, t_pipe_child_context *ctx,
-			t_shell *shell);
+		t_shell *shell);
 char	**execute_expanded_args_split(char *reconstructed, char **args,
 		t_shell *shell);
 void	write_pipe_error_message(char *cmd, char *message);
@@ -359,6 +376,11 @@ void	process_args_quotes(char **args, t_shell *shell);
 char	*expand_variables_quoted(char *str, t_shell *shell);
 char	*remove_quotes_from_string(char *str);
 int		is_entirely_single_quoted(char *str);
+int		is_in_single_quotes(char *str, int pos);
+int		handle_escaped_quote(char *str, char *result, int i, int j);
+void	update_quote_states(char c, int *states);
+int		should_copy_character(char c, int *states);
+int		process_quote_character(char *str, char *result, int *indices, int *states);
 
 /*
 ** ────────────────────────────────────────────────────────────────────────────
@@ -367,6 +389,9 @@ int		is_entirely_single_quoted(char *str);
 ** General-purpose utility functions for common operations
 */
 char	**split_to_args(t_split split);
+char	**allocate_args_array(int size);
+void	cleanup_args_on_error(char **args, int up_to_index);
+int		copy_split_strings(char **args, t_split split);
 char	**filter_empty_args(char **args);
 char	*revert_split_str(t_split split);
 void	free_args(char **args);
