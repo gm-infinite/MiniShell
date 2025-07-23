@@ -12,6 +12,37 @@
 
 #include "../../main/minishell.h"
 
+static int	handle_syntax_validation(t_shell *shell, t_split split)
+{
+	if (!check_operator_syntax_errors(split)
+		|| !check_parentheses_syntax_errors(split)
+		|| paranthesis_parity_check(split) == 0)
+	{
+		if (paranthesis_parity_check(split) == 0 && !shell->in_subshell)
+			write(STDERR_FILENO,
+				"bash: syntax error: unexpected end of file\n", 43);
+		shell->past_exit_status = 2;
+		return (1);
+	}
+	return (0);
+}
+
+static int	handle_parentheses_processing(t_shell *shell, t_split *split)
+{
+	int	was_in_subshell;
+
+	if (check_single_par(*split) != 0)
+	{
+		was_in_subshell = shell->in_subshell;
+		shell->in_subshell = 1;
+		cut_out_par(split);
+		parser_and_or(shell, *split);
+		shell->in_subshell = was_in_subshell;
+		return (1);
+	}
+	return (0);
+}
+
 void	cut_out_par(t_split *split)
 {
 	char	*start;
@@ -32,7 +63,10 @@ void	parse_and_or(t_shell *shell, t_split split, char *c_i)
 {
 	int	vars[4];
 
-	init_parse_vars(vars);
+	vars[2] = -1;
+	vars[1] = 0;
+	vars[0] = 0;
+	vars[3] = -2;
 	while (++vars[2] <= split.size)
 	{
 		if (vars[2] < split.size)

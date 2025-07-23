@@ -174,9 +174,6 @@ int		countchr_quote(char *str, char c);
 int		countchr_not_quote(char *str, char c);
 int		check_single_par(t_split split);
 int		check_symbol(t_split split, char *find, int flag);
-void	init_parse_vars(int *vars);
-int		handle_syntax_validation(t_shell *shell, t_split split);
-int		handle_parentheses_processing(t_shell *shell, t_split *split);
 void	sep_opt_arg(t_shell *shell);
 int		count_str_split(t_split split, const char *str, int flag);
 char	*get_cut_indexs(t_split split);
@@ -266,8 +263,6 @@ t_split	*split_by_pipes(t_split split, int *cmd_count);
 t_split	process_parentheses_in_split(t_split cmd, t_shell *shell);
 t_split	handle_parentheses_removal(t_split cmd, t_paren_info info,
 			t_shell *shell);
-t_split	remove_opening_paren(t_split cmd, int first_idx);
-t_split	remove_closing_paren(t_split cmd, int last_idx);
 int		execute_pipe_command(t_split cmd, t_pipe_context *ctx, t_shell *shell);
 void	write_pipe_cmd_error_message(char *cmd, char *message);
 void	expand_command_args(char **args, t_shell *shell);
