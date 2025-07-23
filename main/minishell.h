@@ -6,7 +6,7 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 10:53:30 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/07/22 15:59:02 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/07/23 10:51:48 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -232,6 +232,7 @@ int		process_assign_export(char *arg, char *eq_pos, t_shell *shell);
 int		process_append_export(char *arg, char *eq_pos, t_shell *shell);
 int		process_single_export(char *arg, t_shell *shell);
 int		create_new_env_var(char *var_name, char *value, t_shell *shell);
+int		create_env_var_no_value(char *var_name, t_shell *shell);
 int		unset_env_var(char *var_name, t_shell *shell);
 int		unset_check_and_remove(t_shell *shell, char *var_name, int len,
 			int index);

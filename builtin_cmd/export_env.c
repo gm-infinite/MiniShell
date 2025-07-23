@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export_env.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/27 00:00:00 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/20 18:41:56 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/23 10:51:48 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,24 @@ int	create_new_env_var(char *var_name, char *value, t_shell *shell)
 	if (!new_envp)
 		return (1);
 	new_var = create_env_string(var_name, value);
+	if (!new_var)
+	{
+		free(new_envp);
+		return (1);
+	}
+	finalize_new_envp(new_envp, new_var, shell);
+	return (0);
+}
+
+int	create_env_var_no_value(char *var_name, t_shell *shell)
+{
+	char	**new_envp;
+	char	*new_var;
+
+	new_envp = allocate_new_envp(shell);
+	if (!new_envp)
+		return (1);
+	new_var = ft_strdup(var_name);
 	if (!new_var)
 	{
 		free(new_envp);

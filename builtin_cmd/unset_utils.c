@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   unset_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/27 00:00:00 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/20 20:17:42 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/23 10:51:48 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,11 @@ int	unset_check_and_remove(t_shell *shell, char *var_name, int len, int index)
 
 	eq_pos = ft_strchr(shell->envp[index], '=');
 	if (eq_pos && (eq_pos - shell->envp[index]) == len)
+	{
+		if (ft_strncmp(shell->envp[index], var_name, len) == 0)
+			return (1);
+	}
+	else if (!eq_pos && (int)ft_strlen(shell->envp[index]) == len)
 	{
 		if (ft_strncmp(shell->envp[index], var_name, len) == 0)
 			return (1);
