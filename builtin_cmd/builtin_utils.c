@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 13:29:46 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/20 16:15:03 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/23 10:39:42 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,13 +20,10 @@ int	is_valid_var_name(const char *name)
 		return (0);
 	if (!ft_isalpha(name[0]) && name[0] != '_')
 		return (0);
-	i = 1;
-	while (name[i])
-	{
+	i = 0;
+	while (name[++i])
 		if (!ft_isalnum(name[i]) && name[i] != '_')
 			return (0);
-		i++;
-	}
 	return (1);
 }
 

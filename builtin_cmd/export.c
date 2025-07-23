@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 13:36:19 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/20 16:15:03 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/23 12:33:09 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,8 @@ static int	print_sorted_env(t_shell *shell)
 	printer = 0;
 	while (printer < count)
 	{
-		printf("declare -x %s\n", sorted_env[printer]);
+		if (!(sorted_env[printer][0] == '_' && sorted_env[printer][1] == '='))
+			printf("declare -x %s\n", sorted_env[printer]);
 		printer++;
 	}
 	free(sorted_env);
