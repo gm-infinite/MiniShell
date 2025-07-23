@@ -6,7 +6,7 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 22:25:13 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/23 19:11:29 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/07/23 19:14:27 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ void	write_pipe_error_message(char *cmd, char *message)
 	write(STDERR_FILENO, message, ft_strlen(message));
 }
 
-void	execute_pipe_external_command(char **args, t_shell *shell, 
+void	execute_pipe_external_command(char **args, t_shell *shell,
 	t_pipeline_cleanup *cleanup)
 {
 	char	*executable;

@@ -5,12 +5,11 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/08 10:53:30 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/07/23 19:11:29 by kuzyilma         ###   ########.fr       */
+/*   Created: 2025/07/23 19:11:29 by kuzyilma          #+#    #+#             */
+/*   Updated: 2025/07/23 19:32:33 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef MINISHELL_H
 # define MINISHELL_H
 
 # include <stdio.h>
@@ -113,6 +112,24 @@ typedef struct s_pipe_child_context
 	int		cmd_index;
 	int		cmd_count;
 }			t_pipe_child_context;
+
+typedef struct s_pipe_child_params
+{
+	t_split				cmd;
+	t_pipe_child_context	*ctx;
+	t_shell				*shell;
+	t_split				*commands;
+	pid_t				*pids;
+}	t_pipe_child_params;
+
+typedef struct s_pipe_child_redir_params
+{
+	t_split				cmd;
+	t_pipe_child_context	*ctx;
+	t_shell				*shell;
+	t_split				*commands;
+	pid_t				*pids;
+}	t_pipe_child_redir_params;
 
 typedef struct s_paren_info
 {
@@ -284,8 +301,8 @@ void	expand_command_args(char **args, t_shell *shell);
 void	execute_child_process(char **args, char *executable, t_shell *shell);
 int		handle_builtin_command(char **args, t_pipe_context *ctx, t_shell *shell);
 int		handle_external_command(char **args, t_pipe_context *ctx, t_shell *shell);
-void	execute_pipe_child(t_split cmd, t_pipe_child_context *ctx,
-		t_shell *shell, t_split *commands, pid_t *pids);
+void	execute_pipe_child(t_pipe_child_params *params);
+void	execute_pipe_child_process(t_pipe_child_params *params);
 char	**execute_expanded_args_split(char *reconstructed, char **args,
 		t_shell *shell);
 void	write_pipe_error_message(char *cmd, char *message);
@@ -296,8 +313,7 @@ void	setup_pipeline_signals(void);
 void	free_child_memory(char **args, t_shell *shell);
 void	free_child_pipeline_memory(char **args, t_shell *shell, 
 	t_pipeline_cleanup *cleanup);
-void	execute_pipe_child_with_redirections(t_split cmd,
-			t_pipe_child_context *ctx, t_shell *shell);
+void	execute_pipe_child_with_redirections(t_pipe_child_redir_params *params);
 int		has_parentheses_in_split(t_split split);
 int		check_pipe_error(t_split split, int i, int has_parentheses);
 int		check_redirection_error(t_split split, int i);

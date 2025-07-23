@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipeline_child_utils.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 19:00:00 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/20 20:17:42 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/23 19:32:33 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,11 +49,17 @@ int	fork_pipeline_child(t_pipeline_context *pipeline_ctx, int i)
 	}
 	else if (pipeline_ctx->pids[i] == 0)
 	{
+		t_pipe_child_redir_params	params;
+
 		ctx.pipes = pipeline_ctx->pipes;
 		ctx.cmd_index = i;
 		ctx.cmd_count = pipeline_ctx->cmd_count;
-		execute_pipe_child_with_redirections(pipeline_ctx->commands[i],
-			&ctx, pipeline_ctx->shell);
+		params.cmd = pipeline_ctx->commands[i];
+		params.ctx = &ctx;
+		params.shell = pipeline_ctx->shell;
+		params.commands = pipeline_ctx->commands;
+		params.pids = pipeline_ctx->pids;
+		execute_pipe_child_with_redirections(&params);
 		exit(127);
 	}
 	return (0);
