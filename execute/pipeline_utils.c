@@ -6,7 +6,7 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 19:00:00 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/23 17:02:14 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/07/24 14:26:56 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,4 +82,24 @@ void	cleanup_pipeline_resources(t_split *commands, int **pipes, pid_t *pids,
 		free(pids);
 	if (commands)
 		free(commands);
+}
+
+void	cleanup_pipes_safe(int **pipes, int cmd_count)
+{
+	int	i;
+
+	if (!pipes)
+		return ;
+	i = 0;
+	while (i < cmd_count - 1 && pipes[i])
+	{
+		if (pipes[i][0] >= 0)
+			close(pipes[i][0]);
+		if (pipes[i][1] >= 0)
+			close(pipes[i][1]);
+		free(pipes[i]);
+		pipes[i] = NULL;
+		i++;
+	}
+	free(pipes);
 }
