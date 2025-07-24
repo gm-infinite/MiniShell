@@ -6,14 +6,14 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 19:00:00 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/24 13:27:57 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/07/24 14:48:04 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../main/minishell.h"
 
-static int	heredoc_subprocess(int temp_fd, char *delim, t_shell *shell,
-					int should_expand, char *temp_filename)
+static int	heredoc_subprocess(t_heredoc_sub heresub, char *delim,
+					t_shell *shell, char *temp_filename)
 {
 	pid_t	pid;
 	int		status;
@@ -26,7 +26,8 @@ static int	heredoc_subprocess(int temp_fd, char *delim, t_shell *shell,
 		rl_catch_signals = 0;
 		signal(SIGINT, SIG_DFL);
 		signal(SIGQUIT, SIG_IGN);
-		process_heredoc_content(temp_fd, delim, shell, should_expand);
+		process_heredoc_content(heresub.temp_fd, delim, shell,
+			heresub.should_expand);
 		_exit(EXIT_SUCCESS);
 	}
 	waitpid(pid, &status, 0);
@@ -80,23 +81,22 @@ static void	update_command_filename(t_pipeline_context *pipeline_ctx, int i,
 int	handle_heredoc_redirection(char **args, int j,
 		t_pipeline_context *pipeline_ctx, int i)
 {
-	char	*processed_delimiter;
-	int		temp_fd;
-	char	*temp_filename;
-	int		should_expand;
+	char			*processed_delimiter;
+	t_heredoc_sub	heresub;
+	char			*temp_filename;
 
-	temp_fd = setup_heredoc_file(&processed_delimiter, &temp_filename,
+	heresub.temp_fd = setup_heredoc_file(&processed_delimiter, &temp_filename,
 			i, args[j + 1]);
-	if (temp_fd == -1)
+	if (heresub.temp_fd == -1)
 		return (1);
-	should_expand = !delimiter_was_quoted(args[j + 1]);
-	if (heredoc_subprocess(temp_fd, processed_delimiter, pipeline_ctx->shell,
-			should_expand, temp_filename) != 0)
+	heresub.should_expand = !delimiter_was_quoted(args[j + 1]);
+	if (heredoc_subprocess(heresub, processed_delimiter, pipeline_ctx->shell,
+			temp_filename) != 0)
 	{
-		close(temp_fd);
+		close(heresub.temp_fd);
 		return (1);
 	}
-	close(temp_fd);
+	close(heresub.temp_fd);
 	update_command_filename(pipeline_ctx, i, j, temp_filename);
 	free(processed_delimiter);
 	return (0);

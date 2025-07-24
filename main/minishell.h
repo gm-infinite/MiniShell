@@ -6,7 +6,7 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 19:11:29 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/07/24 14:39:17 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/07/24 14:43:46 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,13 @@ typedef struct s_shell
 	char	*prompt;
 	char	*terminal_prompt;
 }			t_shell;
+
+typedef struct s_heredoc_sub
+{
+	int temp_fd;
+	int should_expand;
+}			t_heredoc_sub;
+
 
 typedef struct s_pipe_context
 {
