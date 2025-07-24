@@ -40,7 +40,7 @@ static int	heredoc_subprocess(t_heredoc_sub heresub, char *delim, t_pipeline_con
 				free(pipeline_ctx->pipes[i]);
 		free(pipeline_ctx->pids);
 		free(pipeline_ctx->pipes);
-		_exit(EXIT_SUCCESS);
+		exit(EXIT_SUCCESS);
 	}
 	waitpid(pid, &status, 0);
 	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)

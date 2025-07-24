@@ -56,7 +56,7 @@ static void	heredoc_sigint(int sig)
 {
 	(void)sig;
 	rl_cleanup_after_signal();
-	_exit(128 + SIGINT);
+	exit(128 + SIGINT);
 }
 
 void	execute_heredoc_child(char *delimiter, int pipe_fd,
