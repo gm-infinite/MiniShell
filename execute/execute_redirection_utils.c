@@ -6,7 +6,7 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 13:50:25 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/23 17:02:14 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/07/24 14:15:46 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,6 @@ int	setup_and_execute_pipeline(t_split *commands, int cmd_count,
 
 	if (!setup_pipeline_resources(&commands, &pipes, &pids, cmd_count))
 		return (1);
-	//signal(SIGINT, SIG_IGN);
-	//signal(SIGQUIT, SIG_IGN);
 	pipeline_ctx.commands = commands;
 	pipeline_ctx.pipes = pipes;
 	pipeline_ctx.pids = pids;
@@ -81,4 +79,22 @@ void	execute_child_command(char **args, t_shell *shell)
 	perror("execve");
 	free_child_memory(args, shell);
 	exit(127);
+}
+
+int	execute_pipeline_with_redirections(t_split split, t_shell *shell)
+{
+	t_split	*commands;
+	int		cmd_count;
+	int		exit_status;
+
+	commands = split_by_pipes(split, &cmd_count);
+	if (!commands)
+		return (1);
+	if (cmd_count == 1)
+	{
+		exit_status = execute_with_redirections(commands[0], shell);
+		free(commands);
+		return (exit_status);
+	}
+	return (setup_and_execute_pipeline(commands, cmd_count, shell));
 }
