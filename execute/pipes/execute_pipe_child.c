@@ -6,7 +6,7 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 22:25:13 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/23 19:32:33 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/07/24 14:34:40 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,14 +50,15 @@ static char	**process_argument_expansion(char **args, t_shell *shell)
 	return (args);
 }
 
-t_pipeline_cleanup cleanup_assignment(t_pipe_child_params *params)
+t_pipeline_cleanup	cleanup_assignment(t_pipe_child_params *params)
 {
-	return (t_pipeline_cleanup){
-		params->commands,
-		params->ctx->pipes,
-		params->pids,
-		params->ctx->cmd_count
-	};
+	t_pipeline_cleanup	ret;
+
+    ret.commands = params->commands;
+    ret.pipes = params->ctx->pipes;
+    ret.pids = params->pids;
+    ret.cmd_count = params->ctx->cmd_count;
+    return (ret);
 }
 
 void	execute_pipe_child_process(t_pipe_child_params *params)
@@ -67,31 +68,26 @@ void	execute_pipe_child_process(t_pipe_child_params *params)
 	t_pipeline_cleanup	cleanup;
 
 	args = split_to_args(params->cmd);
+	cleanup = cleanup_assignment(params);
 	if (!args || !args[0])
 	{
-		cleanup = cleanup_assignment(params);
 		free_child_pipeline_memory(args, params->shell, &cleanup);
 		exit(1);
 	}
 	args = process_argument_expansion(args, params->shell);
 	if (!args || !args[0])
 	{
-		cleanup = cleanup_assignment(params);
 		free_child_pipeline_memory(args, params->shell, &cleanup);
 		exit(0);
 	}
 	if (is_builtin(args[0]))
 	{
-		cleanup = cleanup_assignment(params);
 		builtin_result = execute_builtin(args, params->shell);
 		free_child_pipeline_memory(args, params->shell, &cleanup);
 		exit(builtin_result);
 	}
 	else
-	{
-		cleanup = cleanup_assignment(params);
 		execute_pipe_external_command(args, params->shell, &cleanup);
-	}
 }
 
 void	execute_pipe_child(t_pipe_child_params *params)
