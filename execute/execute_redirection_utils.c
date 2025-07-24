@@ -6,7 +6,7 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 13:50:25 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/24 14:15:46 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/07/24 21:08:24 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,10 +51,13 @@ void	redirect_fds(int input_fd, int output_fd, int stderr_fd)
 	}
 }
 
-void	write_exec_error_message(char *cmd, char *message)
+static void	execute_external_command(char **args, char *executable,
+		t_shell *shell)
 {
-	write(STDERR_FILENO, cmd, ft_strlen(cmd));
-	write(STDERR_FILENO, message, ft_strlen(message));
+	execve(executable, args, shell->envp);
+	perror("execve");
+	free_child_memory(args, shell);
+	exit(127);
 }
 
 void	execute_child_command(char **args, t_shell *shell)
@@ -69,16 +72,8 @@ void	execute_child_command(char **args, t_shell *shell)
 		exit(builtin_result);
 	}
 	executable = find_executable(args[0], shell);
-	if (!executable)
-	{
-		write_exec_error_message(args[0], ": command not found\n");
-		free_child_memory(args, shell);
-		exit(127);
-	}
-	execve(executable, args, shell->envp);
-	perror("execve");
-	free_child_memory(args, shell);
-	exit(127);
+	handle_executable_error_and_exit(args, executable, shell);
+	execute_external_command(args, executable, shell);
 }
 
 int	execute_pipeline_with_redirections(t_split split, t_shell *shell)

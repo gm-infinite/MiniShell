@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   path_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 17:00:00 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/20 18:41:56 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/24 20:59:39 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@ static char	*check_absolute_path(char *cmd)
 
 	if (ft_strchr(cmd, '/'))
 	{
+		if (has_not_directory_error(cmd))
+			return (ft_strdup("__NOT_DIRECTORY__"));
 		if (access(cmd, F_OK) == 0)
 		{
 			if (stat(cmd, &file_stat) == 0 && S_ISDIR(file_stat.st_mode))
@@ -39,10 +41,8 @@ static char	*check_absolute_path(char *cmd)
 	if (access(cmd, F_OK) == 0)
 	{
 		if (stat(cmd, &file_stat) == 0 && S_ISDIR(file_stat.st_mode))
-		{
 			if (is_special_directory(cmd))
 				return (NULL);
-		}
 		return (ft_strdup(cmd));
 	}
 	return (NULL);
@@ -81,7 +81,14 @@ char	*find_executable(char *cmd, t_shell *shell)
 	result = check_absolute_path(cmd);
 	result = handle_absolute_path_result(result, cmd);
 	if (result)
+	{
+		if (ft_strncmp(result, "__NOT_DIRECTORY__", 17) == 0)
+		{
+			free(result);
+			return (ft_strdup("__NOT_DIRECTORY__"));
+		}
 		return (result);
+	}
 	if (ft_strchr(cmd, '/'))
 		return (NULL);
 	path_env = get_env_value("PATH", shell);

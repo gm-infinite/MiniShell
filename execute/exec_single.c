@@ -6,7 +6,7 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 16:20:00 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/22 17:53:14 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/07/24 21:07:08 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,21 +51,11 @@ static int	handle_parent_process(pid_t pid, char *executable)
 	return (0);
 }
 
-static int	execute_external_command(char **args, t_shell *shell)
+static int	create_and_execute_process(char **args, char *executable,
+		t_shell *shell)
 {
-	char	*executable;
-	int		validation_result;
 	pid_t	pid;
 
-	executable = find_executable(args[0], shell);
-	if (!executable)
-		return (handle_executable_not_found(args));
-	validation_result = validate_executable(args[0], executable);
-	if (validation_result != 0)
-	{
-		free(executable);
-		return (validation_result);
-	}
 	pid = fork();
 	if (pid == -1)
 	{
@@ -77,6 +67,22 @@ static int	execute_external_command(char **args, t_shell *shell)
 		return (exec_child_process(args, executable, shell));
 	else
 		return (handle_parent_process(pid, executable));
+}
+
+static int	execute_external_command(char **args, t_shell *shell)
+{
+	char	*executable;
+	int		validation_result;
+
+	executable = find_executable(args[0], shell);
+	validation_result = handle_executable_validation(args, executable);
+	if (validation_result != 0)
+	{
+		if (executable)
+			free(executable);
+		return (validation_result);
+	}
+	return (create_and_execute_process(args, executable, shell));
 }
 
 int	execute_single_command(char **args, t_shell *shell)

@@ -6,7 +6,7 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 20:00:00 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/23 11:34:19 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/07/24 20:40:33 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,12 @@ int	handle_heredoc_file_cleanup(char *processed_filename, t_redir_fds *fds)
 
 int	handle_input_redirection(char *processed_filename, t_redir_fds *fds)
 {
+	if (has_not_directory_error(processed_filename))
+	{
+		write_not_directory_error(processed_filename);
+		errno = ENOTDIR;
+		return (-1);
+	}
 	*fds->input_fd = open(processed_filename, O_RDONLY);
 	if (*fds->input_fd == -1)
 		return (-1);

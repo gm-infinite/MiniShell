@@ -6,11 +6,20 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 13:50:25 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/24 14:14:02 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/07/24 21:13:03 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../main/minishell.h"
+
+static void	execute_pipeline_external_command(char **args, char *executable,
+		t_shell *shell, t_pipeline_cleanup *cleanup)
+{
+	execve(executable, args, shell->envp);
+	perror("execve");
+	free_child_pipeline_memory(args, shell, cleanup);
+	exit(127);
+}
 
 static void	execute_child_command_with_pipeline_cleanup(char **args,
 			t_shell *shell, t_pipeline_cleanup *cleanup)
@@ -25,41 +34,8 @@ static void	execute_child_command_with_pipeline_cleanup(char **args,
 		exit(builtin_result);
 	}
 	executable = find_executable(args[0], shell);
-	if (!executable)
-	{
-		write_exec_error_message(args[0], ": command not found\n");
-		free_child_pipeline_memory(args, shell, cleanup);
-		exit(127);
-	}
-	execve(executable, args, shell->envp);
-	perror("execve");
-	free_child_pipeline_memory(args, shell, cleanup);
-	exit(127);
-}
-
-static t_pipe_setup_context	get_pipe_ctx(int cmd_index, int cmd_count,
-	int **pipes, int *fd_values)
-{
-	t_pipe_setup_context	ret;
-
-	ret.cmd_count = cmd_count;
-	ret.cmd_index = cmd_index;
-	ret.pipes = pipes;
-	ret.input_fd = &(fd_values[0]);
-	ret.output_fd = &(fd_values[1]);
-	return (ret);
-}
-
-static t_pipeline_cleanup	get_cleanup(t_split *commands, int **pipes,
-		pid_t *pids, int cmd_count)
-{
-	t_pipeline_cleanup	ret;
-
-	ret.commands = commands;
-	ret.pipes = pipes;
-	ret.pids = pids;
-	ret.cmd_count = cmd_count;
-	return (ret);
+	handle_pipeline_executable_error(args, executable, shell, cleanup);
+	execute_pipeline_external_command(args, executable, shell, cleanup);
 }
 
 static t_redir_fds	get_fds(int *fd_values)

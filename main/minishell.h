@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 19:11:29 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/07/24 19:02:33 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/24 21:24:19 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -213,6 +213,11 @@ void	process_segment(t_shell *shell, t_split split, int *vars, char *c_i);
 int		is_single_parentheses_string(char *start, char *end);
 void	remove_outer_parentheses(char *start, char *end);
 void	cleanup_empty_elements(t_split *split);
+int		handle_executable_validation(char **args, char *executable);
+void	handle_executable_error_and_exit(char **args, char *executable,
+			t_shell *shell);
+void	handle_pipeline_executable_error(char **args, char *executable,
+			t_shell *shell, t_pipeline_cleanup *cleanup);
 int		countchr_str(char *str, char c);
 int		countchr_not_quote(char *str, char c);
 void	sep_opt_arg(t_shell *shell);
@@ -420,6 +425,13 @@ int		check_single_par(t_split split);
 int		validate_and_process_args(char **args, t_shell *shell);
 int		validate_executable(char *cmd, char *executable);
 int		handle_executable_not_found(char **args);
+int		has_not_directory_error(char *path);
+void	write_not_directory_error(char *filename);
+void	write_exec_error_message(char *cmd, char *message);
+void	handle_executable_error_and_exit(char **args, char *executable,
+			t_shell *shell);
+void	handle_pipeline_executable_error(char **args, char *executable,
+			t_shell *shell, t_pipeline_cleanup *cleanup);
 int		execute_builtin_with_redirect(t_redir_exec_context *ctx);
 int		execute_external_with_redirect(t_redir_exec_context *ctx);
 int		handle_empty_args(char **args, int input_fd, int output_fd,
@@ -432,5 +444,10 @@ void	execute_heredoc_child(char *delimiter, int pipe_fd,
 int		handle_heredoc_parent(pid_t pid, int *pipe_fd);
 void	write_line_to_pipe(int pipe_fd, char *line);
 void	setup_pipe_redirection(int cmd_index, int cmd_count, int **pipes);
+
+t_pipe_setup_context	get_pipe_ctx(int cmd_index, int cmd_count,
+			int **pipes, int *fd_values);
+t_pipeline_cleanup		get_cleanup(t_split *commands, int **pipes,
+			pid_t *pids, int cmd_count);
 
 #endif

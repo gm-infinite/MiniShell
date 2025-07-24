@@ -6,7 +6,7 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 17:25:00 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/23 17:02:14 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/07/24 20:40:33 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,12 @@ int	execute_external_with_redirect(t_redir_exec_context *ctx)
 		write(STDERR_FILENO, ctx->args[0], ft_strlen(ctx->args[0]));
 		write(STDERR_FILENO, ": command not found\n", 20);
 		return (127);
+	}
+	if (ft_strncmp(executable, "__NOT_DIRECTORY__", 17) == 0)
+	{
+		write_not_directory_error(ctx->args[0]);
+		free(executable);
+		return (126);
 	}
 	pid = fork();
 	if (pid == 0)

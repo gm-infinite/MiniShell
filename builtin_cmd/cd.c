@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+        */
+/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 13:30:39 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/24 19:46:49 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/24 20:40:33 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,12 @@ static int	change_directory(char *path)
 {
 	char	*errmsg;
 
+	if (has_not_directory_error(path))
+	{
+		write(STDERR_FILENO, "cd: ", 4);
+		write_not_directory_error(path);
+		return (1);
+	}
 	if (chdir(path) == -1)
 	{
 		errmsg = ft_strjoin("cd: ", path);

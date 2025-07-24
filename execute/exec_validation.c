@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_validation.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 17:10:00 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/20 22:15:09 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/24 20:40:33 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,11 @@ int	handle_executable_not_found(char **args)
 	}
 	if (ft_strchr(args[0], '/'))
 	{
+		if (has_not_directory_error(args[0]))
+		{
+			write_not_directory_error(args[0]);
+			return (126);
+		}
 		if (access(args[0], F_OK) == 0 && stat(args[0], &file_stat) == 0
 			&& S_ISDIR(file_stat.st_mode))
 			return (126);
