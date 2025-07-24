@@ -36,8 +36,7 @@ int	count_clean_args(char **args)
 	return (j);
 }
 
-static int	handle_redirection_type(t_redirect_info *info, t_redir_fds *fds,
-		t_shell *shell, char *original_delimiter, char **args, char **clean_args)
+static int	handle_redirection_type(t_redirect_info *info, t_redir_fds *fds, t_shell *shell, char *original_delimiter, char **args, char **clean_args)
 {
 	if (info->redirect_type == 1)
 	{
@@ -82,8 +81,7 @@ t_redirect_info	get_redirect_info(char **args, int i, t_shell *shell)
 	return (info);
 }
 
-int	process_single_redir(char **args, int i, t_redir_fds *fds,
-		t_shell *shell, char **clean_args)
+int	process_single_redir(char **args, int i, t_redir_fds *fds, t_shell *shell, char **clean_args)
 {
 	t_redirect_info	redirect_info;
 	int				rc;
@@ -96,7 +94,8 @@ int	process_single_redir(char **args, int i, t_redir_fds *fds,
 	}
 	if (!redirect_info.processed_filename)
 		return (-1);
-	rc = handle_redirection_type(&redirect_info, fds, shell, args[i + 1], args, clean_args);
+	rc = handle_redirection_type(&redirect_info, fds,
+			shell, args[i + 1], args, clean_args);
 	if (rc == -1)
 	{
 		if (redirect_info.redirect_type != 1)

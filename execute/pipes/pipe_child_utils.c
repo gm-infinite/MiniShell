@@ -16,6 +16,7 @@ void	setup_and_execute_child(t_process_pipeline_context *proc_ctx, int i)
 {
 	t_pipe_child_context	ctx;
 	t_pipe_child_params		params;
+	t_pipeline_cleanup		cleanup;
 
 	ctx.pipes = proc_ctx->pipes;
 	ctx.cmd_index = i;
@@ -26,10 +27,11 @@ void	setup_and_execute_child(t_process_pipeline_context *proc_ctx, int i)
 	params.commands = proc_ctx->commands;
 	params.pids = proc_ctx->pids;
 	execute_pipe_child(&params);
-	{
-		t_pipeline_cleanup cleanup = {proc_ctx->commands, proc_ctx->pipes, proc_ctx->pids, proc_ctx->cmd_count};
-		free_child_pipeline_memory(NULL, proc_ctx->shell, &cleanup);
-	}
+	cleanup.commands = proc_ctx->commands;
+	cleanup.pipes = proc_ctx->pipes;
+	cleanup.pids = proc_ctx->pids;
+	cleanup.cmd_count = proc_ctx->cmd_count;
+	free_child_pipeline_memory(NULL, proc_ctx->shell, &cleanup);
 	exit(127);
 }
 
