@@ -6,7 +6,7 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 19:00:00 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/23 19:32:33 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/07/24 14:28:58 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,8 @@ int	preprocess_heredocs_in_pipeline(t_pipeline_context *pipeline_ctx)
 
 int	fork_pipeline_child(t_pipeline_context *pipeline_ctx, int i)
 {
-	t_pipe_child_context	ctx;
+	t_pipe_child_context		ctx;
+	t_pipe_child_redir_params	params;
 
 	pipeline_ctx->pids[i] = fork();
 	if (pipeline_ctx->pids[i] == -1)
@@ -49,8 +50,6 @@ int	fork_pipeline_child(t_pipeline_context *pipeline_ctx, int i)
 	}
 	else if (pipeline_ctx->pids[i] == 0)
 	{
-		t_pipe_child_redir_params	params;
-
 		ctx.pipes = pipeline_ctx->pipes;
 		ctx.cmd_index = i;
 		ctx.cmd_count = pipeline_ctx->cmd_count;

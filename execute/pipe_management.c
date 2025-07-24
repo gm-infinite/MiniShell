@@ -6,7 +6,7 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 20:00:00 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/23 17:56:21 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/07/24 14:26:53 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,24 +87,4 @@ void	setup_pipe_fds(t_pipe_setup_context *ctx)
 		*(ctx->input_fd) = ctx->pipes[ctx->cmd_index - 1][0];
 	if (ctx->cmd_index < ctx->cmd_count - 1)
 		*(ctx->output_fd) = ctx->pipes[ctx->cmd_index][1];
-}
-
-void	cleanup_pipes_safe(int **pipes, int cmd_count)
-{
-	int	i;
-
-	if (!pipes)
-		return ;
-	i = 0;
-	while (i < cmd_count - 1 && pipes[i])
-	{
-		if (pipes[i][0] >= 0)
-			close(pipes[i][0]);
-		if (pipes[i][1] >= 0)
-			close(pipes[i][1]);
-		free(pipes[i]);
-		pipes[i] = NULL;
-		i++;
-	}
-	free(pipes);
 }

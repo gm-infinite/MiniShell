@@ -6,7 +6,7 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 15:24:56 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/23 17:26:17 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/07/24 14:30:48 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,6 @@ int	execute_pipeline(t_split split, t_shell *shell)
 	commands = split_by_pipes(split, &cmd_count);
 	if (!commands)
 		return (1);
-	
 	if (cmd_count == 1)
 	{
 		result = handle_single_command(commands, shell);

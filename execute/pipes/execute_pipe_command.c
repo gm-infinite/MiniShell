@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_pipe_command.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/19 22:24:01 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/20 21:31:52 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/24 14:39:26 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,4 +34,12 @@ int	execute_pipe_command(t_split cmd, t_pipe_context *ctx, t_shell *shell)
 		pid = handle_external_command(args, ctx, shell);
 	free_args(args);
 	return (pid);
+}
+
+void	setup_pipe_redirection(int cmd_index, int cmd_count, int **pipes)
+{
+	if (cmd_index > 0)
+		dup2(pipes[cmd_index - 1][0], STDIN_FILENO);
+	if (cmd_index < cmd_count - 1)
+		dup2(pipes[cmd_index][1], STDOUT_FILENO);
 }

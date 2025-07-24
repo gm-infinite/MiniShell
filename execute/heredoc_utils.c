@@ -6,7 +6,7 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 19:00:00 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/23 11:34:19 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/07/24 14:23:10 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,19 +60,31 @@ int	read_heredoc_line(char **line)
 	return (*line != NULL);
 }
 
-void	write_heredoc_warning(char *processed_delimiter)
+static void	process_and_write_heredoc_line(int temp_fd, char *line,
+		t_shell *shell, int should_expand)
 {
-	write(STDERR_FILENO, "minishell: warning: here-document delimited by "
-		"end-of-file (wanted `", 68);
-	write(STDERR_FILENO, processed_delimiter, ft_strlen(processed_delimiter));
-	write(STDERR_FILENO, "')\n", 3);
+	char	*expanded_line;
+
+	if (should_expand && shell)
+	{
+		expanded_line = expand_variables(line, shell);
+		if (expanded_line)
+		{
+			write(temp_fd, expanded_line, ft_strlen(expanded_line));
+			free(expanded_line);
+		}
+		else
+			write(temp_fd, line, ft_strlen(line));
+	}
+	else
+		write(temp_fd, line, ft_strlen(line));
+	write(temp_fd, "\n", 1);
 }
 
-int	process_heredoc_content(int temp_fd, char *processed_delimiter, 
+int	process_heredoc_content(int temp_fd, char *processed_delimiter,
 		t_shell *shell, int should_expand)
 {
 	char	*line;
-	char	*expanded_line;
 	size_t	delimiter_len;
 
 	delimiter_len = ft_strlen(processed_delimiter);
@@ -89,20 +101,7 @@ int	process_heredoc_content(int temp_fd, char *processed_delimiter,
 			free(line);
 			break ;
 		}
-		if (should_expand && shell)
-		{
-			expanded_line = expand_variables(line, shell);
-			if (expanded_line)
-			{
-				write(temp_fd, expanded_line, ft_strlen(expanded_line));
-				free(expanded_line);
-			}
-			else
-				write(temp_fd, line, ft_strlen(line));
-		}
-		else
-			write(temp_fd, line, ft_strlen(line));
-		write(temp_fd, "\n", 1);
+		process_and_write_heredoc_line(temp_fd, line, shell, should_expand);
 		free(line);
 	}
 	return (0);
