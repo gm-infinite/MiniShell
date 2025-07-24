@@ -6,7 +6,7 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 19:11:29 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/07/24 13:20:01 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/07/24 14:39:17 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -462,5 +462,6 @@ void	execute_heredoc_child(char *delimiter, int pipe_fd,
         t_shell *shell, int should_expand);
 int	handle_heredoc_parent(pid_t pid, int *pipe_fd);
 void	write_line_to_pipe(int pipe_fd, char *line);
+void	setup_pipe_redirection(int cmd_index, int cmd_count, int **pipes);
 
 #endif
