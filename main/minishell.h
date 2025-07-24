@@ -6,7 +6,7 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 19:11:29 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/07/24 14:43:46 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/07/24 15:41:55 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,6 +114,13 @@ typedef struct s_redir_fds
 	int	*output_fd;
 	int	*stderr_fd;
 }	t_redir_fds;
+
+typedef struct s_heredoc_params
+{
+	char	*delimiter;
+	char	**args;
+	char	**clean_args;
+}	t_heredoc_params;
 
 typedef struct s_pipe_child_context
 {
@@ -320,7 +327,7 @@ void	execute_pipe_external_command(char **args, t_shell *shell,
 void	setup_and_execute_child(t_process_pipeline_context *proc_ctx, int i);
 void	setup_pipeline_signals(void);
 void	free_child_memory(char **args, t_shell *shell);
-void	free_heredoc_child_memory(char *deliminiter ,char **args, t_shell *shell, char **clean_args);
+void	free_heredoc_child_memory(t_shell *shell, t_heredoc_params *params);
 void	free_child_pipeline_memory(char **args, t_shell *shell, 
 	t_pipeline_cleanup *cleanup);
 void	execute_pipe_child_with_redirections(t_pipe_child_redir_params *params);
@@ -364,19 +371,19 @@ int		is_redirection(char *token);
 int		has_redirections(t_split split);
 int		validate_redirection_syntax(t_split split);
 char	*remove_quotes_for_redirection(char *str);
-int		handle_here_doc(char *delimiter, int *pipe_fd, t_shell *shell, 
-			int should_expand, char **args, char **clean_args);
+int		handle_here_doc(int *pipe_fd, t_shell *shell, int should_expand,
+			t_heredoc_params *params);
 char	*read_heredoc_input_line(void);
 void	write_heredoc_warning_message(char *delimiter);
 int		is_delimiter_match(char *line, char *delimiter);
 char	**parse_redirections(t_split split, t_redir_fds *fds, t_shell *shell);
 int		execute_with_redirections(t_split split, t_shell *shell);
-int		process_single_redir(char **args, int i, t_redir_fds *fds,
-	t_shell *shell, char **clean_args);
+int		process_single_redir(int i, t_redir_fds *fds, t_shell *shell,
+	t_heredoc_params *params);
 t_redirect_info	get_redirect_info(char **args, int i, t_shell *shell);
 void	redirection_fail_procedure(t_redir_fds *fds);
 int		handle_here_document(char *processed_filename, t_redir_fds *fds,
-			t_shell *shell, char *original_delimiter, char **args, char **clean_args);
+			t_shell *shell, t_heredoc_params *params);
 int		handle_output_redirect(char *processed_filename, t_redir_fds *fds,
 			int redirect_type);
 char	*process_heredoc_delimiter(char *filename);

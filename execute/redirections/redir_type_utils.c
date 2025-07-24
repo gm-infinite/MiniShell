@@ -6,21 +6,22 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 23:00:00 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/24 11:49:25 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/07/24 15:36:38 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../main/minishell.h"
 
-int	handle_here_document(char *processed_delimiter, t_redir_fds *fds, t_shell *shell, char *original_delimiter, char **args, char **clean_args)
+int	handle_here_document(char *processed_delimiter, t_redir_fds *fds,
+		t_shell *shell, t_heredoc_params *params)
 {
 	int	here_doc_pipe[2];
 	int	should_expand;
 	int	ret;
 
-	should_expand = !delimiter_was_quoted(original_delimiter);
-	ret = handle_here_doc(processed_delimiter, here_doc_pipe,
-			shell, should_expand, args, clean_args);
+	should_expand = !delimiter_was_quoted(params->delimiter);
+	params->delimiter = processed_delimiter;
+	ret = handle_here_doc(here_doc_pipe, shell, should_expand, params);
 	if (ret != 0)
 		return (-1);
 	*fds->input_fd = here_doc_pipe[0];

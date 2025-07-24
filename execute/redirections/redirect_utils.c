@@ -6,7 +6,7 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 20:00:00 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/24 11:49:25 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/07/24 15:41:55 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,8 @@ int	count_clean_args(char **args)
 	return (j);
 }
 
-static int	handle_redirection_type(t_redirect_info *info, t_redir_fds *fds, t_shell *shell, char *original_delimiter, char **args, char **clean_args)
+static int	handle_redirection_type(t_redirect_info *info, t_redir_fds *fds,
+		t_shell *shell, t_heredoc_params *params)
 {
 	if (info->redirect_type == 1)
 	{
@@ -45,7 +46,7 @@ static int	handle_redirection_type(t_redirect_info *info, t_redir_fds *fds, t_sh
 			return (handle_heredoc_file_cleanup(info->processed_filename, fds));
 		else
 			return (handle_here_document(info->processed_filename, fds, shell,
-					original_delimiter, args, clean_args));
+					params));
 	}
 	else if (info->redirect_type == 3)
 		return (handle_input_redirection(info->processed_filename, fds));
@@ -81,12 +82,13 @@ t_redirect_info	get_redirect_info(char **args, int i, t_shell *shell)
 	return (info);
 }
 
-int	process_single_redir(char **args, int i, t_redir_fds *fds, t_shell *shell, char **clean_args)
+int	process_single_redir(int i, t_redir_fds *fds, t_shell *shell,
+		t_heredoc_params *params)
 {
 	t_redirect_info	redirect_info;
 	int				rc;
 
-	redirect_info = get_redirect_info(args, i, shell);
+	redirect_info = get_redirect_info(params->args, i, shell);
 	if (redirect_info.redirect_type == -1)
 	{
 		write(STDERR_FILENO, "syntax error: missing filename\n", 32);
@@ -94,17 +96,17 @@ int	process_single_redir(char **args, int i, t_redir_fds *fds, t_shell *shell, c
 	}
 	if (!redirect_info.processed_filename)
 		return (-1);
-	rc = handle_redirection_type(&redirect_info, fds,
-			shell, args[i + 1], args, clean_args);
+	params->delimiter = params->args[i + 1];
+	rc = handle_redirection_type(&redirect_info, fds, shell, params);
 	if (rc == -1)
 	{
 		if (redirect_info.redirect_type != 1)
 			perror(redirect_info.processed_filename);
-		if (redirect_info.processed_filename != args[i + 1])
+		if (redirect_info.processed_filename != params->args[i + 1])
 			free(redirect_info.processed_filename);
 		return (-1);
 	}
-	if (redirect_info.processed_filename != args[i + 1])
+	if (redirect_info.processed_filename != params->args[i + 1])
 		free(redirect_info.processed_filename);
 	return (0);
 }

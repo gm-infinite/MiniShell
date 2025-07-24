@@ -6,7 +6,7 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 14:15:09 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/24 11:49:25 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/07/24 15:42:30 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,14 +34,18 @@ void	redirection_fail_procedure(t_redir_fds *fds)
 static int	process_redirections_loop(char **args, t_redir_fds *fds,
 		t_shell *shell, char **clean_args)
 {
-	int	i;
+	int					i;
+	t_heredoc_params	params;
 
 	i = 0;
 	while (args[i])
 	{
 		if (is_redirection(args[i]))
 		{
-			if (process_single_redir(args, i, fds, shell, clean_args) == -1)
+			params.args = args;
+			params.clean_args = clean_args;
+			params.delimiter = NULL;
+			if (process_single_redir(i, fds, shell, &params) == -1)
 				return (-1);
 			i += 2;
 		}
