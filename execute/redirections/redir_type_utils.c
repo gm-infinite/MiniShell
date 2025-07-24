@@ -12,30 +12,19 @@
 
 #include "../../main/minishell.h"
 
-int handle_here_document(char *processed_delimiter,
-                         t_redir_fds *fds,
-                         t_shell   *shell,
-                         char      *original_delimiter,
-                         char      **args,
-                         char      **clean_args)
+int	handle_here_document(char *processed_delimiter, t_redir_fds *fds, t_shell *shell, char *original_delimiter, char **args, char **clean_args)
 {
-    int here_doc_pipe[2];
-    int should_expand;
-    int ret;
+	int	here_doc_pipe[2];
+	int	should_expand;
+	int	ret;
 
-    should_expand = !delimiter_was_quoted(original_delimiter);
-    ret = handle_here_doc(processed_delimiter,
-                          here_doc_pipe,
-                          shell,
-                          should_expand,
-                          args,
-                          clean_args);
-    if (ret != 0)              /* on fork/read error or user ^C */
-        return (-1);
-
-    /* success: hook up the read‑end as stdin for the command */
-    *fds->input_fd = here_doc_pipe[0];
-    return (0);
+	should_expand = !delimiter_was_quoted(original_delimiter);
+	ret = handle_here_doc(processed_delimiter, here_doc_pipe,
+			shell, should_expand, args, clean_args);
+	if (ret != 0)
+		return (-1);
+	*fds->input_fd = here_doc_pipe[0];
+	return (0);
 }
 
 int	handle_output_redirect(char *processed_filename, t_redir_fds *fds,
