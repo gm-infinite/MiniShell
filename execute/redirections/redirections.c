@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirections.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 14:15:09 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/20 18:41:56 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/24 11:49:25 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void	redirection_fail_procedure(t_redir_fds *fds)
 }
 
 static int	process_redirections_loop(char **args, t_redir_fds *fds,
-		t_shell *shell)
+		t_shell *shell, char **clean_args)
 {
 	int	i;
 
@@ -41,7 +41,7 @@ static int	process_redirections_loop(char **args, t_redir_fds *fds,
 	{
 		if (is_redirection(args[i]))
 		{
-			if (process_single_redirection(args, i, fds, shell) == -1)
+			if (process_single_redirection(args, i, fds, shell, clean_args) == -1)
 				return (-1);
 			i += 2;
 		}
@@ -67,7 +67,7 @@ char	**parse_redirections(t_split split, t_redir_fds *fds, t_shell *shell)
 		free_args(args);
 		return (NULL);
 	}
-	if (process_redirections_loop(args, fds, shell) == -1)
+	if (process_redirections_loop(args, fds, shell, clean_args) == -1)
 	{
 		free_args(args);
 		free_args(clean_args);

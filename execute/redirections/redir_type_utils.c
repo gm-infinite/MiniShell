@@ -6,7 +6,7 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 23:00:00 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/23 18:25:32 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/07/24 11:49:25 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,8 @@ int handle_here_document(char *processed_delimiter,
                          t_redir_fds *fds,
                          t_shell   *shell,
                          char      *original_delimiter,
-                         char      **args)
+                         char      **args,
+                         char      **clean_args)
 {
     int here_doc_pipe[2];
     int should_expand;
@@ -27,7 +28,8 @@ int handle_here_document(char *processed_delimiter,
                           here_doc_pipe,
                           shell,
                           should_expand,
-                          args);
+                          args,
+                          clean_args);
     if (ret != 0)              /* on fork/read error or user ^C */
         return (-1);
 

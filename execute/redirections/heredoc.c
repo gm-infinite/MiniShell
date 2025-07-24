@@ -6,12 +6,12 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 13:53:10 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/24 09:53:47 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/07/24 12:10:14 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../main/minishell.h"
-#include "../../main/get_next_line.h"
+
 
 static void	write_line_to_pipe(int pipe_fd, char *line)
 {
@@ -64,7 +64,8 @@ int handle_here_doc(char *delimiter,
                     int *pipe_fd,      /* [0]=read, [1]=write */
                     t_shell *shell,
                     int should_expand,
-                    char **args)
+                    char **args,
+                    char **clean_args)
 {
     pid_t pid;
     int status;
@@ -97,7 +98,7 @@ int handle_here_doc(char *delimiter,
         /* clean up and exit */
         close(pipe_fd[1]);
         close(pipe_fd[0]);
-        free_heredoc_child_memory(args, shell);
+        free_heredoc_child_memory(delimiter ,args, shell, clean_args);
         _exit(EXIT_SUCCESS);
     }
 
