@@ -15,7 +15,8 @@
 int handle_here_document(char *processed_delimiter,
                          t_redir_fds *fds,
                          t_shell   *shell,
-                         char      *original_delimiter)
+                         char      *original_delimiter,
+                         char      **args)
 {
     int here_doc_pipe[2];
     int should_expand;
@@ -25,7 +26,8 @@ int handle_here_document(char *processed_delimiter,
     ret = handle_here_doc(processed_delimiter,
                           here_doc_pipe,
                           shell,
-                          should_expand);
+                          should_expand,
+                          args);
     if (ret != 0)              /* on fork/read error or user ^C */
         return (-1);
 

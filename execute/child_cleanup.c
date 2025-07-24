@@ -6,7 +6,7 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 11:00:00 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/23 19:11:29 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/07/24 09:42:53 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,18 @@ void	free_child_memory(char **args, t_shell *shell)
 	{
 		free_environment(shell);
 		
+	}
+}
+
+void	free_heredoc_child_memory(char **args, t_shell *shell)
+{
+	if (args)
+		free_args(args);
+	if (shell)
+	{
+		free_environment(shell);
+		free_split(&shell->split_input);
+		free(shell->current_input);
 	}
 }
 

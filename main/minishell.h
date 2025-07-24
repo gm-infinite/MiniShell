@@ -313,6 +313,7 @@ void	execute_pipe_external_command(char **args, t_shell *shell,
 void	setup_and_execute_child(t_process_pipeline_context *proc_ctx, int i);
 void	setup_pipeline_signals(void);
 void	free_child_memory(char **args, t_shell *shell);
+void	free_heredoc_child_memory(char **args, t_shell *shell);
 void	free_child_pipeline_memory(char **args, t_shell *shell, 
 	t_pipeline_cleanup *cleanup);
 void	execute_pipe_child_with_redirections(t_pipe_child_redir_params *params);
@@ -357,7 +358,7 @@ int		has_redirections(t_split split);
 int		validate_redirection_syntax(t_split split);
 char	*remove_quotes_for_redirection(char *str);
 int		handle_here_doc(char *delimiter, int *pipe_fd, t_shell *shell, 
-			int should_expand);
+			int should_expand, char **args);
 char	*read_heredoc_input_line(void);
 void	write_heredoc_warning_message(char *delimiter);
 int		is_delimiter_match(char *line, char *delimiter);
@@ -368,7 +369,7 @@ int		process_single_redirection(char **args, int i, t_redir_fds *fds,
 t_redirect_info	get_redirect_info(char **args, int i, t_shell *shell);
 void	redirection_fail_procedure(t_redir_fds *fds);
 int		handle_here_document(char *processed_filename, t_redir_fds *fds,
-			t_shell *shell, char *original_delimiter);
+			t_shell *shell, char *original_delimiter, char **args);
 int		handle_output_redirect(char *processed_filename, t_redir_fds *fds,
 			int redirect_type);
 char	*process_heredoc_delimiter(char *filename);

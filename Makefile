@@ -6,7 +6,7 @@
 #    By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/13 12:36:09 by kuzyilma          #+#    #+#              #
-#    Updated: 2025/07/23 18:10:43 by kuzyilma         ###   ########.fr        #
+#    Updated: 2025/07/24 09:41:00 by kuzyilma         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -36,7 +36,7 @@ SRC = $(addprefix main/, $(MAIN_SRC)) \
       $(addprefix global/, $(GLOBAL_SRC))
 
 CC = cc
-CFLAGS = -Wall -Werror -Wextra
+CFLAGS = -Wall -Werror -Wextra -g
 LIBFT = e-libft/libft.a
 LFLAGS = -lreadline
 OSRC = $(SRC:.c=.o)

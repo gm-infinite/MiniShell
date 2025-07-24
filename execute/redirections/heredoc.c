@@ -6,7 +6,7 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 13:53:10 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/23 11:34:19 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/07/24 09:53:47 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,8 @@ static void heredoc_sigint(int sig)
 int handle_here_doc(char *delimiter,
                     int *pipe_fd,      /* [0]=read, [1]=write */
                     t_shell *shell,
-                    int should_expand)
+                    int should_expand,
+                    char **args)
 {
     pid_t pid;
     int status;
@@ -96,6 +97,7 @@ int handle_here_doc(char *delimiter,
         /* clean up and exit */
         close(pipe_fd[1]);
         close(pipe_fd[0]);
+        free_heredoc_child_memory(args, shell);
         _exit(EXIT_SUCCESS);
     }
 

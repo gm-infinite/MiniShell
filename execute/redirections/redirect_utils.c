@@ -37,7 +37,7 @@ int	count_clean_args(char **args)
 }
 
 static int	handle_redirection_type(t_redirect_info *info, t_redir_fds *fds,
-		t_shell *shell, char *original_delimiter)
+		t_shell *shell, char *original_delimiter, char **args)
 {
 	if (info->redirect_type == 1)
 	{
@@ -46,7 +46,7 @@ static int	handle_redirection_type(t_redirect_info *info, t_redir_fds *fds,
 			return (handle_heredoc_file_cleanup(info->processed_filename, fds));
 		else
 			return (handle_here_document(info->processed_filename, fds, shell,
-					original_delimiter));
+					original_delimiter, args));
 	}
 	else if (info->redirect_type == 3)
 		return (handle_input_redirection(info->processed_filename, fds));
@@ -99,7 +99,7 @@ int	process_single_redirection(char **args, int i, t_redir_fds *fds,
 		return (-1);
 
 	/* Attempt the redirection; rc == -1 means error or user ^C in heredoc */
-	rc = handle_redirection_type(&redirect_info, fds, shell, args[i + 1]);
+	rc = handle_redirection_type(&redirect_info, fds, shell, args[i + 1], args);
 	if (rc == -1)
 	{
 		/* Only print perror for non‑heredoc errors */
