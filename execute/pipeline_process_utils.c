@@ -6,45 +6,36 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 19:00:00 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/23 11:34:19 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/07/24 13:27:57 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../main/minishell.h"
 
-static int
-heredoc_subprocess(int  temp_fd,
-                   char *delim,
-                   t_shell *shell,
-                   int should_expand,
-                   char *temp_filename)
+static int	heredoc_subprocess(int temp_fd, char *delim, t_shell *shell,
+					int should_expand, char *temp_filename)
 {
-    pid_t pid;
-    int   status;
+	pid_t	pid;
+	int		status;
 
-    pid = fork();
-    if (pid < 0)
-        return (perror("fork"), 1);
-
-    if (pid == 0)
-    {
-        /* child: disable readline’s handlers, restore default SIGINT */
-        rl_catch_signals = 0;
-        signal(SIGINT, SIG_DFL);
-        signal(SIGQUIT, SIG_IGN);
-
-        process_heredoc_content(temp_fd, delim, shell, should_expand);
-        _exit(EXIT_SUCCESS);
-    }
-
-    /* parent: wait and see if child died via Ctrl+C */
-    waitpid(pid, &status, 0);
-    if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
-    {
-        unlink(temp_filename);
-        return (1);
-    }
-    return (0);
+	pid = fork();
+	if (pid < 0)
+		return (perror("fork"), 1);
+	if (pid == 0)
+	{
+		rl_catch_signals = 0;
+		signal(SIGINT, SIG_DFL);
+		signal(SIGQUIT, SIG_IGN);
+		process_heredoc_content(temp_fd, delim, shell, should_expand);
+		_exit(EXIT_SUCCESS);
+	}
+	waitpid(pid, &status, 0);
+	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)
+	{
+		unlink(temp_filename);
+		return (1);
+	}
+	return (0);
 }
 
 static int	setup_heredoc_file(char **processed_delimiter, char **temp_filename,
@@ -94,27 +85,17 @@ int	handle_heredoc_redirection(char **args, int j,
 	char	*temp_filename;
 	int		should_expand;
 
-	/* create temp file and strip quotes off the delimiter */
-	temp_fd = setup_heredoc_file(&processed_delimiter,
-	                             &temp_filename,
-	                             i,
-	                             args[j + 1]);
+	temp_fd = setup_heredoc_file(&processed_delimiter, &temp_filename,
+			i, args[j + 1]);
 	if (temp_fd == -1)
 		return (1);
-
 	should_expand = !delimiter_was_quoted(args[j + 1]);
-
-	/* fork a child that will actually do the readline loop */
-	if (heredoc_subprocess(temp_fd,
-	                       processed_delimiter,
-	                       pipeline_ctx->shell,
-	                       should_expand,
-	                       temp_filename) != 0)
+	if (heredoc_subprocess(temp_fd, processed_delimiter, pipeline_ctx->shell,
+			should_expand, temp_filename) != 0)
 	{
 		close(temp_fd);
 		return (1);
 	}
-
 	close(temp_fd);
 	update_command_filename(pipeline_ctx, i, j, temp_filename);
 	free(processed_delimiter);

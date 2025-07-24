@@ -6,18 +6,11 @@
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 22:30:00 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/23 10:51:48 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/07/24 13:32:22 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../main/minishell.h"
-
-void	print_export_error(char *arg)
-{
-	write(STDERR_FILENO, "export: `", 9);
-	write(STDERR_FILENO, arg, ft_strlen(arg));
-	write(STDERR_FILENO, "': not a valid identifier\n", 26);
-}
 
 void	print_option_error(char *arg, t_shell *shell)
 {
