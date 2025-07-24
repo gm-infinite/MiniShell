@@ -364,8 +364,6 @@ void	write_heredoc_warning_message(char *delimiter);
 int		is_delimiter_match(char *line, char *delimiter);
 char	**parse_redirections(t_split split, t_redir_fds *fds, t_shell *shell);
 int		execute_with_redirections(t_split split, t_shell *shell);
-int		process_single_redirection(char **args, int i, t_redir_fds *fds,
-			t_shell *shell, char **clean_args);
 t_redirect_info	get_redirect_info(char **args, int i, t_shell *shell);
 void	redirection_fail_procedure(t_redir_fds *fds);
 int		handle_here_document(char *processed_filename, t_redir_fds *fds,

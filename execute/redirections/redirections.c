@@ -41,7 +41,7 @@ static int	process_redirections_loop(char **args, t_redir_fds *fds,
 	{
 		if (is_redirection(args[i]))
 		{
-			if (process_single_redirection(args, i, fds, shell, clean_args) == -1)
+			if (process_single_redir(args, i, fds, shell, clean_args) == -1)
 				return (-1);
 			i += 2;
 		}
