@@ -14,6 +14,34 @@
 #include <errno.h>
 #include <limits.h>
 
+static long long	ft_strtoll(char *str, char **endptr, int base)
+{
+	long long	result;
+	int			sign;
+	int			digit;
+
+	result = 0;
+	sign = 1;
+	if (*str == '-' || *str == '+')
+		if (*str++ == '-')
+			sign = -1;
+	while (*str && ft_isdigit(*str))
+	{
+		digit = *str++ - '0';
+		if (result > (LLONG_MAX - digit) / base)
+		{
+			errno = ERANGE;
+			if (sign == 1)
+				return (LLONG_MAX);
+			return (LLONG_MIN);
+		}
+		result = result * base + digit;
+	}
+	if (endptr)
+		*endptr = str;
+	return (result * sign);
+}
+
 static int	is_valid_number(char *arg)
 {
 	int	i;
@@ -51,7 +79,7 @@ static int	validate_numeric_arg(char *arg, t_shell *shell)
 		return (0);
 	}
 	errno = 0;
-	strtoll(arg, &endptr, 10);
+	ft_strtoll(arg, &endptr, 10);
 	if (errno == ERANGE || *endptr != '\0')
 	{
 		write_exit_error(arg);
