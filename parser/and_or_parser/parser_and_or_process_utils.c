@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_and_or_process_utils.c                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:15:24 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/07/21 01:00:18 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/24 18:49:37 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,8 @@ int	is_and_or_operator(char *str)
 	return (ft_strncmp("&&", str, 3) == 0 || ft_strncmp("||", str, 3) == 0);
 }
 
-static int	should_execute_segment(int operator_index, char *c_i, t_shell *shell)
+static int	should_execute_segment(int operator_index, char *c_i,
+	t_shell *shell)
 {
 	if (operator_index == -1)
 		return (1);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/23 19:11:29 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/07/24 15:41:55 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/07/24 19:02:33 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -321,6 +321,8 @@ void	setup_pipe_fds(t_pipe_setup_context *ctx);
 int		create_pipeline_pipes(int ***pipes, int cmd_count);
 void	cleanup_pipeline_pipes(int **pipes, int cmd_count);
 int		wait_for_pipeline_processes(pid_t *pids, int cmd_count);
+int		handle_heredoc_redirection(char **args, int j,
+			t_pipeline_context *pipeline_ctx, int i);
 void	setup_child_redirection(t_pipe_context *ctx);
 int		setup_pipeline_resources(t_split **commands, int ***pipes, pid_t **pids,
 			int cmd_count);
@@ -332,10 +334,6 @@ int		read_heredoc_line(char **line);
 void	write_heredoc_warning(char *processed_delimiter);
 int		process_heredoc_content(int temp_fd, char *processed_delimiter,
 			t_shell *shell, int should_expand);
-int		handle_heredoc_redirection(char **args, int j,
-			t_pipeline_context *pipeline_ctx, int i);
-int		process_command_redirections(char **args,
-			t_pipeline_context *pipeline_ctx, int i);
 int		preprocess_heredocs_in_pipeline(t_pipeline_context *pipeline_ctx);
 int		fork_pipeline_child(t_pipeline_context *pipeline_ctx, int i);
 

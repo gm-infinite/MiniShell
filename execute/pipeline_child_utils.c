@@ -3,14 +3,44 @@
 /*                                                        :::      ::::::::   */
 /*   pipeline_child_utils.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 19:00:00 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/24 14:28:58 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/07/24 18:51:13 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../main/minishell.h"
+
+static int	process_command_redirections(char **args,
+		t_pipeline_context *pipeline_ctx, int i)
+{
+	int	j;
+
+	j = 0;
+	while (args[j])
+	{
+		if (is_redirection(args[j]) == 1)
+		{
+			if (!args[j + 1])
+			{
+				write(STDERR_FILENO, "syntax error: missing filename\n", 32);
+				return (1);
+			}
+			if (handle_heredoc_redirection(args, j, pipeline_ctx, i) != 0)
+				return (1);
+			j += 2;
+		}
+		else
+		{
+			if (is_redirection(args[j]))
+				j += 2;
+			else
+				j++;
+		}
+	}
+	return (0);
+}
 
 int	preprocess_heredocs_in_pipeline(t_pipeline_context *pipeline_ctx)
 {

@@ -6,7 +6,7 @@
 /*   By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 13:31:37 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/23 10:47:04 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/24 19:19:27 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,5 +109,6 @@ int	builtin_exit(char **args, t_shell *shell)
 		exit_code = shell->past_exit_status;
 	shell->should_exit = 1;
 	shell->exit_code = exit_code;
+	printf("exit\n");
 	return (exit_code);
 }

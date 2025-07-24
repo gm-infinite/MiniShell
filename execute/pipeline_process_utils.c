@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipeline_process_utils.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 19:00:00 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/24 14:48:04 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/07/24 19:35:05 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,10 @@ static int	heredoc_subprocess(t_heredoc_sub heresub, char *delim,
 
 	pid = fork();
 	if (pid < 0)
-		return (perror("fork"), 1);
+	{
+		perror("fork");
+		return (1);
+	}
 	if (pid == 0)
 	{
 		rl_catch_signals = 0;
@@ -122,35 +125,5 @@ int	handle_heredoc_redirection(char **args, int j,
 	close(heresub.temp_fd);
 	update_command_filename(pipeline_ctx, i, j, temp_filename);
 	free(processed_delimiter);
-	return (0);
-}
-
-int	process_command_redirections(char **args,
-		t_pipeline_context *pipeline_ctx, int i)
-{
-	int	j;
-
-	j = 0;
-	while (args[j])
-	{
-		if (is_redirection(args[j]) == 1)
-		{
-			if (!args[j + 1])
-			{
-				write(STDERR_FILENO, "syntax error: missing filename\n", 32);
-				return (1);
-			}
-			if (handle_heredoc_redirection(args, j, pipeline_ctx, i) != 0)
-				return (1);
-			j += 2;
-		}
-		else
-		{
-			if (is_redirection(args[j]))
-				j += 2;
-			else
-				j++;
-		}
-	}
 	return (0);
 }

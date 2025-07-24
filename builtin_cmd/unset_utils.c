@@ -3,16 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   unset_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/27 00:00:00 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/23 10:51:48 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/07/24 18:54:46 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../main/minishell.h"
 
-static int	unset_check_and_remove(t_shell *shell, char *var_name, int len, int index)
+static int	unset_check_and_remove(t_shell *shell, char *var_name,
+	int len, int index)
 {
 	char	*eq_pos;
 

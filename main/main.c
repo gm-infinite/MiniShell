@@ -3,14 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 10:55:46 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/07/23 17:56:25 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/07/24 19:10:58 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+volatile sig_atomic_t	g_signal = 0;
 
 static void	begin_command_parsing_and_execution(t_shell *shell)
 {
@@ -54,9 +56,11 @@ static void	start_shell(t_shell *shell)
 			shell->past_exit_status = 130;
 			g_signal = 0;
 		}
-		add_history(shell->current_input);
 		if (!is_empty(shell->current_input))
+		{
+			add_history(shell->current_input);
 			begin_command_parsing_and_execution(shell);
+		}
 		free(shell->current_input);
 	}
 	free_environment(shell);

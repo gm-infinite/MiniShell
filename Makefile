@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+         #
+#    By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/13 12:36:09 by kuzyilma          #+#    #+#              #
-#    Updated: 2025/07/24 14:24:35 by kuzyilma         ###   ########.fr        #
+#    Updated: 2025/07/24 18:57:43 by emgenc           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,7 +21,6 @@ SPLIT_SRC = t_split_utils.c ft_split_quotes.c t_split_utils2.c
 AOPSR_SRC = parser_and_or.c parser_and_or_process_utils.c parser_and_or_parentheses_utils.c and_or_utils.c parser_and_or2.c syntax.c parser_and_or_utils.c
 SOA_SRC = sep_opt_arg.c
 WILDCARD_SRC = wildcard_handle.c wildcard_filter.c wildcard_filter2.c wildcard_filter2_utils.c wildcard_quote_utils.c wildcard_utils.c
-GLOBAL_SRC = global.c
 
 SRC = $(addprefix main/, $(MAIN_SRC)) \
       $(addprefix builtin_cmd/, $(BUILTIN_SRC)) \
@@ -32,11 +31,10 @@ SRC = $(addprefix main/, $(MAIN_SRC)) \
       $(addprefix parser/t_split_utils/, $(SPLIT_SRC)) \
       $(addprefix parser/and_or_parser/, $(AOPSR_SRC)) \
       $(addprefix parser/sep_opt_arg/, $(SOA_SRC)) \
-      $(addprefix parser/wildcard_handle/, $(WILDCARD_SRC)) \
-      $(addprefix global/, $(GLOBAL_SRC))
+      $(addprefix parser/wildcard_handle/, $(WILDCARD_SRC))
 
 CC = cc
-CFLAGS = -Wall -Werror -Wextra -g
+CFLAGS = -Wall -Werror -Wextra
 LIBFT = e-libft/libft.a
 LFLAGS = -lreadline
 OSRC = $(SRC:.c=.o)

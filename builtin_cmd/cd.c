@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 13:30:39 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/20 20:17:42 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/24 19:46:49 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,9 +33,13 @@ static int	path_error_checking(char **args, char **path, char **home,
 
 static int	change_directory(char *path)
 {
+	char	*errmsg;
+
 	if (chdir(path) == -1)
 	{
-		perror("cd");
+		errmsg = ft_strjoin("cd: ", path);
+		perror(errmsg);
+		free(errmsg);
 		return (1);
 	}
 	return (0);

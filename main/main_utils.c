@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/13 13:29:14 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/07/23 17:59:03 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/07/24 19:19:20 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ void	safe_exit(t_shell *shell)
 		free_split(&(shell->split_input));
 	free_environment(shell);
 	rl_clear_history();
-	//printf("exit\n");
+	printf("exit\n");
 	exit(shell->past_exit_status);
 }
 
