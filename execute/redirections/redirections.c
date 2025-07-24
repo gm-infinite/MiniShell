@@ -12,7 +12,7 @@
 
 #include "../../main/minishell.h"
 
-void	redirection_fail_procedure(t_redir_fds *fds)
+static void	redirection_failed(t_redir_fds *fds)
 {
 	if (*fds->input_fd != STDIN_FILENO && *fds->input_fd != -1)
 	{
@@ -75,7 +75,7 @@ char	**parse_redirections(t_split split, t_redir_fds *fds, t_shell *shell)
 	{
 		free_args(args);
 		free_args(clean_args);
-		redirection_fail_procedure(fds);
+		redirection_failed(fds);
 		return (NULL);
 	}
 	free_args(args);

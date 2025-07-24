@@ -66,7 +66,7 @@ static char	*get_processed_filename(char **args, int i, int redirect_type,
 		return (process_filename(args[i + 1], shell));
 }
 
-t_redirect_info	get_redirect_info(char **args, int i, t_shell *shell)
+static t_redirect_info	get_redirect_info(char **args, int i, t_shell *shell)
 {
 	t_redirect_info	info;
 

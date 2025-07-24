@@ -25,7 +25,7 @@ char	*join_expanded_segment(char *result, char *expanded)
 	return (temp);
 }
 
-char	*expand_segment(char *result, char *str, int start, int end)
+static char	*expand_segment(char *result, char *str, int start, int end)
 {
 	char	*segment;
 	char	*temp;
@@ -42,7 +42,7 @@ char	*expand_segment(char *result, char *str, int start, int end)
 	return (temp);
 }
 
-char	*process_expandable_segment(char *result, char *str, int *range,
+static char	*process_expandable_segment(char *result, char *str, int *range,
 		t_shell *shell)
 {
 	char	*segment;

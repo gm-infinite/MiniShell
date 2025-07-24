@@ -53,7 +53,7 @@ static t_pipeline_cleanup	cleanup_assignment(t_pipe_child_params *params)
 	return (ret);
 }
 
-void	execute_pipe_child_process(t_pipe_child_params *params)
+static void	execute_pipe_child_process(t_pipe_child_params *params)
 {
 	char				**args;
 	int					builtin_result;

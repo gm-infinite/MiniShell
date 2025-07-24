@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include "get_next_line.h"
 
 static void	begin_command_parsing_and_execution(t_shell *shell)
 {
@@ -46,21 +45,7 @@ static void	start_shell(t_shell *shell)
 	while (!shell->should_exit)
 	{
 		g_signal = 0;
-		if (isatty(fileno(stdin)))
-			shell->prompt = readline(shell->terminal_prompt);
-		else
-		{
-			char	*line;
-
-			line = get_next_line(fileno(stdin));
-			if (line)
-			{
-				shell->prompt = ft_strtrim(line, "\n");
-				free(line);
-			}
-			else
-				shell->prompt = NULL;
-		}
+		shell->prompt = readline(shell->terminal_prompt);
 		shell->current_input = shell->prompt;
 		if (shell->current_input == NULL)
 			safe_exit(shell);

@@ -13,16 +13,6 @@
 #include "../main/minishell.h"
 #include "../parser/wildcard_handle/wildcard_handler.h"
 
-int	is_empty_or_whitespace(char *str)
-{
-	int	k;
-
-	k = 0;
-	while (str[k] && (str[k] == ' ' || str[k] == '\t'))
-		k++;
-	return (str[k] == '\0');
-}
-
 int	count_non_empty_args(char **args)
 {
 	int	count;

@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "../main/minishell.h"
-#include "../main/get_next_line.h"
 
 static int	wait_for_children(pid_t *pids, int cmd_count)
 {

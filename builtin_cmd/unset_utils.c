@@ -12,7 +12,7 @@
 
 #include "../main/minishell.h"
 
-int	unset_check_and_remove(t_shell *shell, char *var_name, int len, int index)
+static int	unset_check_and_remove(t_shell *shell, char *var_name, int len, int index)
 {
 	char	*eq_pos;
 

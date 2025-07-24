@@ -12,7 +12,7 @@
 
 #include "../../main/minishell.h"
 
-void	write_pipe_cmd_error_message(char *cmd, char *message)
+static void	write_pipe_cmd_error_message(char *cmd, char *message)
 {
 	write(STDERR_FILENO, cmd, ft_strlen(cmd));
 	write(STDERR_FILENO, message, ft_strlen(message));
@@ -36,7 +36,7 @@ void	expand_command_args(char **args, t_shell *shell)
 	}
 }
 
-void	execute_child_process(char **args, char *executable, t_shell *shell)
+static void	execute_child_process(char **args, char *executable, t_shell *shell)
 {
 	if (execve(executable, args, shell->envp) == -1)
 	{

@@ -24,28 +24,6 @@ char	**split_to_args(t_split split)
 	return (args);
 }
 
-char	**filter_empty_args(char **args)
-{
-	char	**filtered;
-	int		count;
-	int		result;
-
-	if (!args)
-		return (NULL);
-	count = count_non_empty_args(args);
-	filtered = malloc(sizeof(char *) * (count + 1));
-	if (!filtered)
-		return (NULL);
-	result = copy_non_empty_args(args, filtered);
-	if (result == -1)
-	{
-		free_args(filtered);
-		return (NULL);
-	}
-	filtered[result] = NULL;
-	return (filtered);
-}
-
 void	free_args(char **args)
 {
 	int	i;

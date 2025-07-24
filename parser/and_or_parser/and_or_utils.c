@@ -12,7 +12,7 @@
 
 #include "../../main/minishell.h"
 
-int	check_symbol(t_split split, char *find, int flag)
+static int	check_symbol(t_split split, char *find, int flag)
 {
 	int	count;
 	int	i;
@@ -51,7 +51,7 @@ int	countchr_str(char *str, char c)
 	return (count);
 }
 
-int	countchr_quote(char *str, char c)
+static int	countchr_quote(char *str, char c)
 {
 	int	j;
 	int	inquote;

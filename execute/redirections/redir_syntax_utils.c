@@ -18,13 +18,7 @@ void	print_pipe_error(void)
 		"bash: syntax error near unexpected token `|'\n", 45);
 }
 
-void	print_newline_error(void)
-{
-	write(STDERR_FILENO,
-		"bash: syntax error near unexpected token `newline'\n", 52);
-}
-
-void	print_token_error(char *token)
+static void	print_token_error(char *token)
 {
 	write(STDERR_FILENO, "bash: syntax error near unexpected token `", 42);
 	write(STDERR_FILENO, token, ft_strlen(token));
@@ -49,7 +43,8 @@ int	check_redirection_error(t_split split, int i)
 	filename_index = i + 1;
 	if (filename_index >= split.size)
 	{
-		print_newline_error();
+		write(STDERR_FILENO,
+			"bash: syntax error near unexpected token `newline'\n", 52);
 		return (2);
 	}
 	next_token = split.start[filename_index];

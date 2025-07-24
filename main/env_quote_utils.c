@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-int	create_escaped_content(char *content, char **escaped_content)
+static int	create_escaped_content(char *content, char **escaped_content)
 {
 	int	j;
 	int	k;
@@ -37,7 +37,7 @@ int	create_escaped_content(char *content, char **escaped_content)
 	return (1);
 }
 
-int	handle_double_quote_content(t_expand *holder, int i, char *content)
+static int	handle_double_quote_content(t_expand *holder, int i, char *content)
 {
 	char	*new_str;
 	char	*escaped_content;

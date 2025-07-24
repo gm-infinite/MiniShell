@@ -59,7 +59,7 @@ void	cut_out_par(t_split *split)
 	cleanup_empty_elements(split);
 }
 
-void	parse_and_or(t_shell *shell, t_split split, char *c_i)
+static void	parse_and_or(t_shell *shell, t_split split, char *c_i)
 {
 	int	vars[4];
 

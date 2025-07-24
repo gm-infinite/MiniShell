@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "../main/minishell.h"
-#include "../main/get_next_line.h"
 
 static char	*ft_realloc_join(char *s1, char *s2)
 {
@@ -43,20 +42,7 @@ char	*create_heredoc_filename(int cmd_index)
 
 int	read_heredoc_line(char **line)
 {
-	char	*trimmed;
-
-	if (isatty(fileno(stdin)))
-		*line = readline("> ");
-	else
-	{
-		*line = get_next_line(fileno(stdin));
-		if (*line)
-		{
-			trimmed = ft_strtrim(*line, "\n");
-			free(*line);
-			*line = trimmed;
-		}
-	}
+	*line = readline("> ");
 	return (*line != NULL);
 }
 

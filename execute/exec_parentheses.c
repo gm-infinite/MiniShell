@@ -62,7 +62,7 @@ static t_split	remove_opening_paren(t_split cmd, int first_idx)
 	return (cmd);
 }
 
-t_split	handle_parentheses_removal(t_split cmd, t_paren_info info,
+static t_split	handle_parentheses_removal(t_split cmd, t_paren_info info,
 	t_shell *shell)
 {
 	int	last_len;

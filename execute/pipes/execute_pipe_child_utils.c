@@ -41,7 +41,7 @@ char	**execute_expanded_args_split(char *reconstructed, char **args,
 	return (args);
 }
 
-void	write_pipe_error_message(char *cmd, char *message)
+static void	write_pipe_error_message(char *cmd, char *message)
 {
 	write(STDERR_FILENO, cmd, ft_strlen(cmd));
 	write(STDERR_FILENO, message, ft_strlen(message));

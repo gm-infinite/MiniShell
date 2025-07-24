@@ -12,11 +12,33 @@
 
 #include "../main/minishell.h"
 
-static int	heredoc_subprocess(t_heredoc_sub heresub, char *delim, t_pipeline_context *pipeline_ctx, char *temp_filename)
+static void	free_everything_in_child(char *delim, t_heredoc_sub heresub,
+	t_pipeline_context *pipeline_ctx, char *temp_filename)
+{
+	int	i;
+
+	i = -1;
+	free(delim);
+	free_split(&(pipeline_ctx->shell->split_input));
+	free_environment(pipeline_ctx->shell);
+	free(temp_filename);
+	free(pipeline_ctx->shell->current_input);
+	free_args(heresub.args);
+	free(pipeline_ctx->commands);
+	i = -1;
+	while (++i < pipeline_ctx->cmd_count - 1)
+		if (pipeline_ctx->pipes[i])
+			free(pipeline_ctx->pipes[i]);
+	free(pipeline_ctx->pids);
+	free(pipeline_ctx->pipes);
+	exit(EXIT_SUCCESS);
+}
+
+static int	heredoc_subprocess(t_heredoc_sub heresub, char *delim,
+	t_pipeline_context *pipeline_ctx, char *temp_filename)
 {
 	pid_t	pid;
 	int		status;
-	int		i;
 
 	pid = fork();
 	if (pid < 0)
@@ -26,21 +48,9 @@ static int	heredoc_subprocess(t_heredoc_sub heresub, char *delim, t_pipeline_con
 		rl_catch_signals = 0;
 		signal(SIGINT, SIG_DFL);
 		signal(SIGQUIT, SIG_IGN);
-		process_heredoc_content(heresub.temp_fd, delim, pipeline_ctx->shell, heresub.should_expand);
-		free(delim);
-		free_split(&(pipeline_ctx->shell->split_input));
-		free_environment(pipeline_ctx->shell);
-		free(temp_filename);
-		free(pipeline_ctx->shell->current_input);
-		free_args(heresub.args);
-		free(pipeline_ctx->commands);
-		i = -1;
-		while (++i < pipeline_ctx->cmd_count - 1)
-			if (pipeline_ctx->pipes[i])
-				free(pipeline_ctx->pipes[i]);
-		free(pipeline_ctx->pids);
-		free(pipeline_ctx->pipes);
-		exit(EXIT_SUCCESS);
+		process_heredoc_content(heresub.temp_fd, delim,
+			pipeline_ctx->shell, heresub.should_expand);
+		free_everything_in_child(delim, heresub, pipeline_ctx, temp_filename);
 	}
 	waitpid(pid, &status, 0);
 	if (WIFSIGNALED(status) && WTERMSIG(status) == SIGINT)

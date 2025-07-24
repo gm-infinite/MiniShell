@@ -20,7 +20,7 @@ char	**allocate_args_array(int size)
 	return (args);
 }
 
-void	cleanup_args_on_error(char **args, int up_to_index)
+static void	cleanup_args_on_error(char **args, int up_to_index)
 {
 	while (--up_to_index >= 0)
 		free(args[up_to_index]);

@@ -19,7 +19,7 @@ int	is_and_or_operator(char *str)
 	return (ft_strncmp("&&", str, 3) == 0 || ft_strncmp("||", str, 3) == 0);
 }
 
-int	should_execute_segment(int operator_index, char *c_i, t_shell *shell)
+static int	should_execute_segment(int operator_index, char *c_i, t_shell *shell)
 {
 	if (operator_index == -1)
 		return (1);

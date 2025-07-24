@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
@@ -59,11 +58,10 @@ typedef struct s_shell
 
 typedef struct s_heredoc_sub
 {
-	int temp_fd;
-	int should_expand;
-	char **args;
-}			t_heredoc_sub;
-
+	int		temp_fd;
+	int		should_expand;
+	char	**args;
+}	t_heredoc_sub;
 
 typedef struct s_pipe_context
 {
@@ -132,20 +130,20 @@ typedef struct s_pipe_child_context
 
 typedef struct s_pipe_child_params
 {
-	t_split				cmd;
+	t_split					cmd;
 	t_pipe_child_context	*ctx;
-	t_shell				*shell;
-	t_split				*commands;
-	pid_t				*pids;
+	t_shell					*shell;
+	t_split					*commands;
+	pid_t					*pids;
 }	t_pipe_child_params;
 
 typedef struct s_pipe_child_redir_params
 {
-	t_split				cmd;
+	t_split					cmd;
 	t_pipe_child_context	*ctx;
-	t_shell				*shell;
-	t_split				*commands;
-	pid_t				*pids;
+	t_shell					*shell;
+	t_split					*commands;
+	pid_t					*pids;
 }	t_pipe_child_redir_params;
 
 typedef struct s_paren_info
@@ -154,7 +152,7 @@ typedef struct s_paren_info
 	int		last_idx;
 	int		open_count;
 	int		close_count;
-}			t_paren_info;
+}	t_paren_info;
 
 typedef struct s_expand
 {
@@ -186,7 +184,7 @@ typedef struct s_pipeline_cleanup
 ** ────────────────────────────────────────────────────────────────────────────
 **                           CORE SHELL FUNCTIONS
 ** ────────────────────────────────────────────────────────────────────────────
-** Primary shell control and utility functions for basic operation
+** Primary shell control
 */
 void	shell_init(t_shell *shell);
 void	safe_exit(t_shell *shell);
@@ -196,10 +194,9 @@ int		is_empty(char *str);
 ** ────────────────────────────────────────────────────────────────────────────
 **                           SIGNAL HANDLING SUBSYSTEM
 ** ────────────────────────────────────────────────────────────────────────────
-** Comprehensive signal management for interactive and batch operation modes
+** Comprehensive signal management
 */
 void	setup_signals(void);
-void	signal_handler(int sig);
 void	signal_handler_child(int sig);
 void	setup_child_signals(void);
 
@@ -210,22 +207,17 @@ void	setup_child_signals(void);
 ** Advanced command line parsing with operator precedence and grouping support
 */
 void	parser_and_or(t_shell *shell, t_split split);
-void	parse_and_or(t_shell *shell, t_split split, char *c_i);
 int		is_and_or_operator(char *str);
-int		should_execute_segment(int operator_index, char *c_i, t_shell *shell);
+t_split	process_parentheses_in_split(t_split cmd, t_shell *shell);
 void	process_segment(t_shell *shell, t_split split, int *vars, char *c_i);
 int		is_single_parentheses_string(char *start, char *end);
 void	remove_outer_parentheses(char *start, char *end);
 void	cleanup_empty_elements(t_split *split);
 int		countchr_str(char *str, char c);
-int		countchr_quote(char *str, char c);
 int		countchr_not_quote(char *str, char c);
-int		check_single_par(t_split split);
-int		check_symbol(t_split split, char *find, int flag);
 void	sep_opt_arg(t_shell *shell);
 int		count_str_split(t_split split, const char *str, int flag);
 char	*get_cut_indexs(t_split split);
-int		paranthesis_parity_check(t_split split);
 void	cut_out_par(t_split *split);
 int		check_operator_syntax_errors(t_split split);
 int		check_parentheses_syntax_errors(t_split split);
@@ -242,12 +234,9 @@ char	*get_env_value(char *var_name, t_shell *shell);
 void	init_environment(t_shell *shell, char **envp);
 void	free_environment(t_shell *shell);
 int		set_env_var(char *var_name, char *value, t_shell *shell);
-int		unset_env_var(char *var_name, t_shell *shell);
 int		replace_var_with_value(t_expand *holder, int flags);
 char	*expand_with_quotes(char *str, t_shell *shell);
 int		handle_dollar_expansion(t_expand *holder, t_shell *shell);
-int		handle_double_quote_content(t_expand *holder, int i, char *content);
-int		create_escaped_content(char *content, char **escaped_content);
 int		handle_double_quote_expansion(t_expand *holder);
 int		handle_single_quote_expansion(t_expand *holder);
 void	init_expand_holder(t_expand *holder, char *tilde_expanded);
@@ -272,7 +261,6 @@ int		builtin_export(char **args, t_shell *shell);
 int		builtin_unset(char **args, t_shell *shell);
 int		builtin_env(t_shell *shell);
 int		builtin_exit(char **args, t_shell *shell);
-int		set_env_var(char *var_name, char *value, t_shell *shell);
 int		append_env_var(char *var_name, char *value, t_shell *shell);
 void	print_export_error(char *arg);
 void	print_option_error(char *arg, t_shell *shell);
@@ -281,9 +269,6 @@ int		process_append_export(char *arg, char *eq_pos, t_shell *shell);
 int		process_single_export(char *arg, t_shell *shell);
 int		create_new_env_var(char *var_name, char *value, t_shell *shell);
 int		create_env_var_no_value(char *var_name, t_shell *shell);
-int		unset_env_var(char *var_name, t_shell *shell);
-int		unset_check_and_remove(t_shell *shell, char *var_name, int len,
-			int index);
 int		copy_env_without_var(t_shell *shell, int remove_index, int count);
 int		find_env_var_index(t_shell *shell, char *var_name, int len);
 int		count_env_vars(t_shell *shell);
@@ -307,28 +292,23 @@ void	execute_child_command(char **args, t_shell *shell);
 int		execute_single_command(char **args, t_shell *shell);
 int		count_pipes(t_split split);
 t_split	*split_by_pipes(t_split split, int *cmd_count);
-t_split	process_parentheses_in_split(t_split cmd, t_shell *shell);
-t_split	handle_parentheses_removal(t_split cmd, t_paren_info info,
-			t_shell *shell);
 int		execute_pipe_command(t_split cmd, t_pipe_context *ctx, t_shell *shell);
-void	write_pipe_cmd_error_message(char *cmd, char *message);
 void	expand_command_args(char **args, t_shell *shell);
-void	execute_child_process(char **args, char *executable, t_shell *shell);
-int		handle_builtin_command(char **args, t_pipe_context *ctx, t_shell *shell);
-int		handle_external_command(char **args, t_pipe_context *ctx, t_shell *shell);
+int		handle_builtin_command(char **args, t_pipe_context *ctx,
+			t_shell *shell);
+int		handle_external_command(char **args, t_pipe_context *ctx,
+			t_shell *shell);
 void	execute_pipe_child(t_pipe_child_params *params);
-void	execute_pipe_child_process(t_pipe_child_params *params);
 char	**execute_expanded_args_split(char *reconstructed, char **args,
-		t_shell *shell);
-void	write_pipe_error_message(char *cmd, char *message);
-void	execute_pipe_external_command(char **args, t_shell *shell, 
-	t_pipeline_cleanup *cleanup);
+			t_shell *shell);
+void	execute_pipe_external_command(char **args, t_shell *shell,
+			t_pipeline_cleanup *cleanup);
 void	setup_and_execute_child(t_process_pipeline_context *proc_ctx, int i);
 void	setup_pipeline_signals(void);
 void	free_child_memory(char **args, t_shell *shell);
 void	free_heredoc_child_memory(t_shell *shell, t_heredoc_params *params);
-void	free_child_pipeline_memory(char **args, t_shell *shell, 
-	t_pipeline_cleanup *cleanup);
+void	free_child_pipeline_memory(char **args, t_shell *shell,
+			t_pipeline_cleanup *cleanup);
 void	execute_pipe_child_with_redirections(t_pipe_child_redir_params *params);
 int		has_parentheses_in_split(t_split split);
 int		check_pipe_error(t_split split, int i, int has_parentheses);
@@ -350,7 +330,7 @@ void	cleanup_pipeline_resources(t_split *commands, int **pipes, pid_t *pids,
 char	*create_heredoc_filename(int cmd_index);
 int		read_heredoc_line(char **line);
 void	write_heredoc_warning(char *processed_delimiter);
-int		process_heredoc_content(int temp_fd, char *processed_delimiter, 
+int		process_heredoc_content(int temp_fd, char *processed_delimiter,
 			t_shell *shell, int should_expand);
 int		handle_heredoc_redirection(char **args, int j,
 			t_pipeline_context *pipeline_ctx, int i);
@@ -377,9 +357,7 @@ int		is_delimiter_match(char *line, char *delimiter);
 char	**parse_redirections(t_split split, t_redir_fds *fds, t_shell *shell);
 int		execute_with_redirections(t_split split, t_shell *shell);
 int		process_single_redir(int i, t_redir_fds *fds, t_shell *shell,
-	t_heredoc_params *params);
-t_redirect_info	get_redirect_info(char **args, int i, t_shell *shell);
-void	redirection_fail_procedure(t_redir_fds *fds);
+			t_heredoc_params *params);
 int		handle_here_document(char *processed_filename, t_redir_fds *fds,
 			t_shell *shell, t_heredoc_params *params);
 int		handle_output_redirect(char *processed_filename, t_redir_fds *fds,
@@ -391,9 +369,6 @@ char	*process_quote_aware_expansion(char *str, t_shell *shell);
 int		handle_heredoc_file_cleanup(char *processed_filename, t_redir_fds *fds);
 int		handle_input_redirection(char *processed_filename, t_redir_fds *fds);
 char	*join_expanded_segment(char *result, char *expanded);
-char	*expand_segment(char *result, char *str, int start, int end);
-char	*process_expandable_segment(char *result, char *str, int *range,
-			t_shell *shell);
 char	*handle_segment_processing(char *result, char *str, int *vars,
 			t_shell *shell);
 char	*handle_quote_char(char *result, char quote_char);
@@ -405,11 +380,6 @@ char	*init_expansion_result(void);
 void	init_expansion_vars(int *vars);
 char	**build_clean_args(char **args, int clean_count);
 int		count_clean_args(char **args);
-void	print_pipe_error(void);
-void	print_newline_error(void);
-void	print_token_error(char *token);
-int		check_pipe_error(t_split split, int i, int has_parentheses);
-int		check_redirection_error(t_split split, int i);
 
 /*
 ** ────────────────────────────────────────────────────────────────────────────
@@ -422,12 +392,11 @@ char	*process_quotes(char *str, t_shell *shell);
 void	process_args_quotes(char **args, t_shell *shell);
 char	*expand_variables_quoted(char *str, t_shell *shell);
 char	*remove_quotes_from_string(char *str);
-int		is_entirely_single_quoted(char *str);
-int		is_in_single_quotes(char *str, int pos);
 int		handle_escaped_quote(char *str, char *result, int i, int j);
 void	update_quote_states(char c, int *states);
 int		should_copy_character(char c, int *states);
-int		process_quote_character(char *str, char *result, int *indices, int *states);
+int		process_quote_character(char *str, char *result,
+			int *indices, int *states);
 
 /*
 ** ────────────────────────────────────────────────────────────────────────────
@@ -437,12 +406,9 @@ int		process_quote_character(char *str, char *result, int *indices, int *states)
 */
 char	**split_to_args(t_split split);
 char	**allocate_args_array(int size);
-void	cleanup_args_on_error(char **args, int up_to_index);
 int		copy_split_strings(char **args, t_split split);
-char	**filter_empty_args(char **args);
 char	*revert_split_str(t_split split);
 void	free_args(char **args);
-int		is_empty_or_whitespace(char *str);
 int		count_non_empty_args(char **args);
 int		copy_non_empty_args(char **args, char **filtered);
 void	process_and_check_args(char **args, t_shell *shell);
@@ -450,12 +416,7 @@ void	handle_empty_pipe_args(char **args);
 char	*find_executable(char *cmd, t_shell *shell);
 char	*handle_absolute_path_result(char *result, char *cmd);
 char	*handle_no_path_env(char *cmd);
-void	compact_args(char **args);
 char	*wildcard_input_modify(char *current_input);
-void	expand_wildcards_in_args(char **args);
-char	*build_temp_input(char **args);
-int		validate_and_expand_input(char *temp_input, char **wildcard_expanded);
-int		prepare_expanded_split(char *wildcard_expanded, t_split *expanded_split);
 int		paranthesis_parity_check(t_split split);
 int		check_single_par(t_split split);
 int		validate_and_process_args(char **args, t_shell *shell);
@@ -468,11 +429,9 @@ int		handle_empty_args(char **args, int input_fd, int output_fd,
 void	process_variable_expansion(char **args, t_shell *shell);
 int		check_empty_command_after_expansion(char **args, int input_fd,
 			int output_fd, int stderr_fd);
-
-
 void	execute_heredoc_child(char *delimiter, int pipe_fd,
-        t_shell *shell, int should_expand);
-int	handle_heredoc_parent(pid_t pid, int *pipe_fd);
+			t_shell *shell, int should_expand);
+int		handle_heredoc_parent(pid_t pid, int *pipe_fd);
 void	write_line_to_pipe(int pipe_fd, char *line);
 void	setup_pipe_redirection(int cmd_index, int cmd_count, int **pipes);
 

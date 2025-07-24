@@ -12,7 +12,7 @@
 
 #include "../main/minishell.h"
 
-int	unset_env_var(char *var_name, t_shell *shell)
+static int	unset_env_var(char *var_name, t_shell *shell)
 {
 	int	index;
 	int	count;

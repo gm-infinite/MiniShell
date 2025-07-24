@@ -12,7 +12,7 @@
 
 #include "../main/minishell.h"
 
-void	signal_handler(int sig)
+static void	signal_handler(int sig)
 {
 	if (sig == SIGINT)
 	{
