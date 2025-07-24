@@ -12,22 +12,6 @@
 
 #include "minishell.h"
 
-char	*expand_variables_quoted(char *str, t_shell *shell)
-{
-	char	*result;
-	char	*tilde_expanded;
-
-	if (!str)
-		return (NULL);
-	tilde_expanded = expand_tilde(str, shell);
-	if (!tilde_expanded)
-		return (NULL);
-	result = expand_with_quotes(tilde_expanded, shell);
-	if (result != tilde_expanded && tilde_expanded)
-		free(tilde_expanded);
-	return (result);
-}
-
 static void	init_quote_expansion(t_expand *holder, char *tilde_expanded,
 			int *in_single_quotes, int *in_double_quotes)
 {

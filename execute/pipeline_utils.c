@@ -36,6 +36,26 @@ static int	wait_for_children(pid_t *pids, int cmd_count)
 	return (exit_status);
 }
 
+static void	cleanup_pipes_safe(int **pipes, int cmd_count)
+{
+	int	i;
+
+	if (!pipes)
+		return ;
+	i = 0;
+	while (i < cmd_count - 1 && pipes[i])
+	{
+		if (pipes[i][0] >= 0)
+			close(pipes[i][0]);
+		if (pipes[i][1] >= 0)
+			close(pipes[i][1]);
+		free(pipes[i]);
+		pipes[i] = NULL;
+		i++;
+	}
+	free(pipes);
+}
+
 int	setup_pipeline_resources(t_split **commands, int ***pipes, pid_t **pids,
 		int cmd_count)
 {
@@ -82,24 +102,4 @@ void	cleanup_pipeline_resources(t_split *commands, int **pipes, pid_t *pids,
 		free(pids);
 	if (commands)
 		free(commands);
-}
-
-void	cleanup_pipes_safe(int **pipes, int cmd_count)
-{
-	int	i;
-
-	if (!pipes)
-		return ;
-	i = 0;
-	while (i < cmd_count - 1 && pipes[i])
-	{
-		if (pipes[i][0] >= 0)
-			close(pipes[i][0]);
-		if (pipes[i][1] >= 0)
-			close(pipes[i][1]);
-		free(pipes[i]);
-		pipes[i] = NULL;
-		i++;
-	}
-	free(pipes);
 }

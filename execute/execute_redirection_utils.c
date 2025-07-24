@@ -12,8 +12,8 @@
 
 #include "../main/minishell.h"
 
-int	setup_and_execute_pipeline(t_split *commands, int cmd_count,
-		t_shell *shell)
+static int	setup_and_execute_pipeline(t_split *commands, int cmd_count,
+	t_shell *shell)
 {
 	int					**pipes;
 	pid_t				*pids;

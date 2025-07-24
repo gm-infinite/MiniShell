@@ -61,6 +61,7 @@ typedef struct s_heredoc_sub
 {
 	int temp_fd;
 	int should_expand;
+	char **args;
 }			t_heredoc_sub;
 
 
@@ -300,8 +301,6 @@ char	*apply_wildcard_expansion(char *reconstructed);
 int		execute_expanded_args(char *reconstructed, t_shell *shell);
 int		execute_pipeline(t_split split, t_shell *shell);
 int		execute_pipeline_with_redirections(t_split split, t_shell *shell);
-int		setup_and_execute_pipeline(t_split *commands, int cmd_count,
-		t_shell *shell);
 void	redirect_fds(int input_fd, int output_fd, int stderr_fd);
 void	write_exec_error_message(char *cmd, char *message);
 void	execute_child_command(char **args, t_shell *shell);
@@ -337,7 +336,6 @@ int		check_redirection_error(t_split split, int i);
 char	*remove_quotes_for_redirection(char *str);
 int		create_pipes_array(int ***pipes, int cmd_count);
 void	cleanup_pipes(int **pipes, int cmd_count);
-void	cleanup_pipes_safe(int **pipes, int cmd_count);
 void	close_all_pipes(int **pipes, int cmd_count);
 void	setup_pipe_fds(t_pipe_setup_context *ctx);
 int		create_pipeline_pipes(int ***pipes, int cmd_count);

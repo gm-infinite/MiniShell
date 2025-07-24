@@ -103,12 +103,8 @@ int	execute_pipeline(t_split split, t_shell *shell)
 	if (!commands)
 		return (1);
 	if (cmd_count == 1)
-	{
 		result = handle_single_command(commands, shell);
-	}
 	else
-	{
 		result = execute_multi_command_pipeline(commands, cmd_count, shell);
-	}
 	return (result);
 }

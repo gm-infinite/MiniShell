@@ -12,11 +12,11 @@
 
 #include "../main/minishell.h"
 
-static int	heredoc_subprocess(t_heredoc_sub heresub, char *delim,
-					t_shell *shell, char *temp_filename)
+static int	heredoc_subprocess(t_heredoc_sub heresub, char *delim, t_pipeline_context *pipeline_ctx, char *temp_filename)
 {
 	pid_t	pid;
 	int		status;
+	int		i;
 
 	pid = fork();
 	if (pid < 0)
@@ -26,8 +26,20 @@ static int	heredoc_subprocess(t_heredoc_sub heresub, char *delim,
 		rl_catch_signals = 0;
 		signal(SIGINT, SIG_DFL);
 		signal(SIGQUIT, SIG_IGN);
-		process_heredoc_content(heresub.temp_fd, delim, shell,
-			heresub.should_expand);
+		process_heredoc_content(heresub.temp_fd, delim, pipeline_ctx->shell, heresub.should_expand);
+		free(delim);
+		free_split(&(pipeline_ctx->shell->split_input));
+		free_environment(pipeline_ctx->shell);
+		free(temp_filename);
+		free(pipeline_ctx->shell->current_input);
+		free_args(heresub.args);
+		free(pipeline_ctx->commands);
+		i = -1;
+		while (++i < pipeline_ctx->cmd_count - 1)
+			if (pipeline_ctx->pipes[i])
+				free(pipeline_ctx->pipes[i]);
+		free(pipeline_ctx->pids);
+		free(pipeline_ctx->pipes);
 		_exit(EXIT_SUCCESS);
 	}
 	waitpid(pid, &status, 0);
@@ -85,12 +97,13 @@ int	handle_heredoc_redirection(char **args, int j,
 	t_heredoc_sub	heresub;
 	char			*temp_filename;
 
+	heresub.args = args;
 	heresub.temp_fd = setup_heredoc_file(&processed_delimiter, &temp_filename,
 			i, args[j + 1]);
 	if (heresub.temp_fd == -1)
 		return (1);
 	heresub.should_expand = !delimiter_was_quoted(args[j + 1]);
-	if (heredoc_subprocess(heresub, processed_delimiter, pipeline_ctx->shell,
+	if (heredoc_subprocess(heresub, processed_delimiter, pipeline_ctx,
 			temp_filename) != 0)
 	{
 		close(heresub.temp_fd);

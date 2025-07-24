@@ -12,6 +12,22 @@
 
 #include "../../main/minishell.h"
 
+int	count_pipes(t_split split)
+{
+	int	i;
+	int	pipe_count;
+
+	pipe_count = 0;
+	i = 0;
+	while (i < split.size)
+	{
+		if (ft_strncmp(split.start[i], "|", 2) == 0)
+			pipe_count++;
+		i++;
+	}
+	return (pipe_count);
+}
+
 static t_split	*allocate_single_command(t_split split)
 {
 	t_split	*commands;
