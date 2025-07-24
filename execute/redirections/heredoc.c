@@ -29,10 +29,7 @@ static int	process_heredoc_loop(char *delimiter, int pipe_fd, t_shell *shell,
 	{
 		line = read_heredoc_input_line();
 		if (!line)
-		{
-			write_heredoc_warning_message(delimiter);
 			break ;
-		}
 		if (is_delimiter_match(line, delimiter))
 		{
 			free(line);
@@ -56,15 +53,63 @@ static int	process_heredoc_loop(char *delimiter, int pipe_fd, t_shell *shell,
 	return (0);
 }
 
-int	handle_here_doc(char *delimiter, int *pipe_fd, t_shell *shell, 
-		int should_expand)
+static void heredoc_sigint(int sig)
 {
-	if (pipe(pipe_fd) == -1)
-	{
-		perror("pipe");
-		return (1);
-	}
-	process_heredoc_loop(delimiter, pipe_fd[1], shell, should_expand);
-	close(pipe_fd[1]);
-	return (0);
+	(void)sig;
+    rl_cleanup_after_signal();
+    _exit(128 + SIGINT);
+}
+
+int handle_here_doc(char *delimiter,
+                    int *pipe_fd,      /* [0]=read, [1]=write */
+                    t_shell *shell,
+                    int should_expand)
+{
+    pid_t pid;
+    int status;
+
+    if (pipe(pipe_fd) == -1)
+    {
+        perror("pipe");
+        return (1);
+    }
+
+    pid = fork();
+    if (pid < 0)
+    {
+        perror("fork");
+        close(pipe_fd[0]);
+        close(pipe_fd[1]);
+        return (1);
+    }
+
+    if (pid == 0)
+    {
+        /* Child: disable Readline’s own handlers, install ours */
+        rl_catch_signals = 0;
+        signal(SIGINT, heredoc_sigint);
+        signal(SIGQUIT, SIG_IGN);
+
+        /* Do your existing loop to read lines & write to pipe_fd[1] */
+        process_heredoc_loop(delimiter, pipe_fd[1], shell, should_expand);
+
+        /* clean up and exit */
+        close(pipe_fd[1]);
+        close(pipe_fd[0]);
+        _exit(EXIT_SUCCESS);
+    }
+
+    /* Parent: close write‑end and wait for child */
+    close(pipe_fd[1]);
+    waitpid(pid, &status, 0);
+
+    /* If child was killed by SIGINT or exited with 128+SIGINT → user ^Cʼd */
+    if ((WIFSIGNALED(status) && WTERMSIG(status) == SIGINT) ||
+        (WIFEXITED(status) && WEXITSTATUS(status) == 128 + SIGINT))
+    {
+        close(pipe_fd[0]);
+        return (-1);
+    }
+
+    return (0);
 }

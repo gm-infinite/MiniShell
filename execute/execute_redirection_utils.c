@@ -21,8 +21,8 @@ int	setup_and_execute_pipeline(t_split *commands, int cmd_count,
 
 	if (!setup_pipeline_resources(&commands, &pipes, &pids, cmd_count))
 		return (1);
-	signal(SIGINT, SIG_IGN);
-	signal(SIGQUIT, SIG_IGN);
+	//signal(SIGINT, SIG_IGN);
+	//signal(SIGQUIT, SIG_IGN);
 	pipeline_ctx.commands = commands;
 	pipeline_ctx.pipes = pipes;
 	pipeline_ctx.pids = pids;

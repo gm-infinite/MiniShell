@@ -86,7 +86,9 @@ int	process_single_redirection(char **args, int i, t_redir_fds *fds,
 		t_shell *shell)
 {
 	t_redirect_info	redirect_info;
+	int				rc;
 
+	/* Parse the redirection (filename, type, etc.) */
 	redirect_info = get_redirect_info(args, i, shell);
 	if (redirect_info.redirect_type == -1)
 	{
@@ -95,14 +97,25 @@ int	process_single_redirection(char **args, int i, t_redir_fds *fds,
 	}
 	if (!redirect_info.processed_filename)
 		return (-1);
-	if (handle_redirection_type(&redirect_info, fds, shell, args[i + 1]) == -1)
+
+	/* Attempt the redirection; rc == -1 means error or user ^C in heredoc */
+	rc = handle_redirection_type(&redirect_info, fds, shell, args[i + 1]);
+	if (rc == -1)
 	{
-		perror(redirect_info.processed_filename);
+		/* Only print perror for non‑heredoc errors */
+		if (redirect_info.redirect_type != 1)
+			perror(redirect_info.processed_filename);
+
+		/* Clean up any allocated filename */
 		if (redirect_info.processed_filename != args[i + 1])
 			free(redirect_info.processed_filename);
+
 		return (-1);
 	}
+
+	/* If we malloc’ed a processed filename, free it now */
 	if (redirect_info.processed_filename != args[i + 1])
 		free(redirect_info.processed_filename);
+
 	return (0);
 }
