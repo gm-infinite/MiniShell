@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_redirection_utils.c                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 13:50:25 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/24 21:08:24 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/07/24 21:54:22 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ static int	setup_and_execute_pipeline(t_split *commands, int cmd_count,
 {
 	int					**pipes;
 	pid_t				*pids;
-	t_pipeline_context	pipeline_ctx;
+	t_pipe_ctx			pipeline_ctx;
 
 	if (!setup_pipeline_resources(&commands, &pipes, &pids, cmd_count))
 		return (1);

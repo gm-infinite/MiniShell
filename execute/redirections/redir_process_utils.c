@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redir_process_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 20:00:00 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/24 20:40:33 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/07/24 21:51:44 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ char	*process_filename(char *filename, t_shell *shell)
 	char	*expanded_with_quotes;
 	char	*final_result;
 
-	expanded_with_quotes = process_quote_aware_expansion(filename, shell);
+	expanded_with_quotes = process_q_expand(filename, shell);
 	if (!expanded_with_quotes)
 		return (NULL);
 	final_result = remove_quotes_for_redirection(expanded_with_quotes);

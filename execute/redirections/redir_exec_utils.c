@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redir_exec_utils.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 17:20:00 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/20 18:41:56 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/24 21:47:39 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ static void	restore_builtin_fds(int *saved_fds)
 	}
 }
 
-int	execute_builtin_with_redirect(t_redir_exec_context *ctx)
+int	execute_builtin_with_redirect(redir_exec_ctx *ctx)
 {
 	int	saved_fds[3];
 	int	exit_status;

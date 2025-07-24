@@ -6,14 +6,14 @@
 /*   By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 19:00:00 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/24 19:35:05 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/24 21:53:59 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../main/minishell.h"
 
 static void	free_everything_in_child(char *delim, t_heredoc_sub heresub,
-	t_pipeline_context *pipeline_ctx, char *temp_filename)
+	t_pipe_ctx *pipeline_ctx, char *temp_filename)
 {
 	int	i;
 
@@ -35,7 +35,7 @@ static void	free_everything_in_child(char *delim, t_heredoc_sub heresub,
 }
 
 static int	heredoc_subprocess(t_heredoc_sub heresub, char *delim,
-	t_pipeline_context *pipeline_ctx, char *temp_filename)
+	t_pipe_ctx *pipeline_ctx, char *temp_filename)
 {
 	pid_t	pid;
 	int		status;
@@ -88,7 +88,7 @@ static int	setup_heredoc_file(char **processed_delimiter, char **temp_filename,
 	return (temp_fd);
 }
 
-static void	update_command_filename(t_pipeline_context *pipeline_ctx, int i,
+static void	update_command_filename(t_pipe_ctx *pipeline_ctx, int i,
 		int j, char *temp_filename)
 {
 	int	split_pos;
@@ -104,7 +104,7 @@ static void	update_command_filename(t_pipeline_context *pipeline_ctx, int i,
 }
 
 int	handle_heredoc_redirection(char **args, int j,
-		t_pipeline_context *pipeline_ctx, int i)
+		t_pipe_ctx *pipeline_ctx, int i)
 {
 	char			*processed_delimiter;
 	t_heredoc_sub	heresub;

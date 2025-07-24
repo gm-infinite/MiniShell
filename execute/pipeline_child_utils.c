@@ -6,14 +6,14 @@
 /*   By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 19:00:00 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/24 18:51:13 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/24 21:53:59 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../main/minishell.h"
 
 static int	process_command_redirections(char **args,
-		t_pipeline_context *pipeline_ctx, int i)
+		t_pipe_ctx *pipeline_ctx, int i)
 {
 	int	j;
 
@@ -42,7 +42,7 @@ static int	process_command_redirections(char **args,
 	return (0);
 }
 
-int	preprocess_heredocs_in_pipeline(t_pipeline_context *pipeline_ctx)
+int	preprocess_heredocs_in_pipeline(t_pipe_ctx *pipeline_ctx)
 {
 	int		i;
 	char	**args;
@@ -67,7 +67,7 @@ int	preprocess_heredocs_in_pipeline(t_pipeline_context *pipeline_ctx)
 	return (0);
 }
 
-int	fork_pipeline_child(t_pipeline_context *pipeline_ctx, int i)
+int	fork_pipeline_child(t_pipe_ctx *pipeline_ctx, int i)
 {
 	t_pipe_child_context		ctx;
 	t_pipe_child_redir_params	params;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipeline_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 19:00:00 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/24 14:26:56 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/07/24 21:53:59 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ int	setup_pipeline_resources(t_split **commands, int ***pipes, pid_t **pids,
 	return (1);
 }
 
-int	execute_pipeline_children(t_pipeline_context *pipeline_ctx)
+int	execute_pipeline_children(t_pipe_ctx *pipeline_ctx)
 {
 	int	i;
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirections.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 14:15:09 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/24 15:42:30 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/07/24 21:48:25 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ char	**parse_redirections(t_split split, t_redir_fds *fds, t_shell *shell)
 	return (clean_args);
 }
 
-static int	handle_redirected_execution(t_redir_exec_context *ctx)
+static int	handle_redirected_execution(redir_exec_ctx *ctx)
 {
 	int	result;
 
@@ -105,8 +105,8 @@ static int	handle_redirected_execution(t_redir_exec_context *ctx)
 
 int	execute_with_redirections(t_split split, t_shell *shell)
 {
-	t_redir_exec_context	ctx;
-	t_redir_fds				fds;
+	redir_exec_ctx	ctx;
+	t_redir_fds		fds;
 
 	ctx.input_fd = STDIN_FILENO;
 	ctx.output_fd = STDOUT_FILENO;

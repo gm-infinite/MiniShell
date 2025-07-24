@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redir_quote_utils.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/20 20:00:00 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/20 16:52:01 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/24 21:51:44 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ static char	*process_quote_expansion_loop(char *str, t_shell *shell,
 	return (result);
 }
 
-char	*process_quote_aware_expansion(char *str, t_shell *shell)
+char	*process_q_expand(char *str, t_shell *shell)
 {
 	char	*result;
 	int		vars[4];

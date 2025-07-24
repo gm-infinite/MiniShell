@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redir_external.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/20 17:25:00 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/24 20:40:33 by kuzyilma         ###   ########.fr       */
+/*   Updated: 2025/07/24 21:47:39 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ static int	wait_for_child_exit(pid_t pid)
 	return (exit_status);
 }
 
-static void	child_setup_and_exec(t_redir_exec_context *ctx, char *executable)
+static void	child_setup_and_exec(redir_exec_ctx *ctx, char *executable)
 {
 	setup_child_signals();
 	setup_child_redirections(ctx->input_fd, ctx->output_fd, ctx->stderr_fd);
@@ -66,7 +66,7 @@ static void	child_setup_and_exec(t_redir_exec_context *ctx, char *executable)
 	exit(127);
 }
 
-int	execute_external_with_redirect(t_redir_exec_context *ctx)
+int	execute_external_with_redirect(redir_exec_ctx *ctx)
 {
 	char		*executable;
 	pid_t		pid;
