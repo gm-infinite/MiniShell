@@ -50,6 +50,16 @@ static char	**process_argument_expansion(char **args, t_shell *shell)
 	return (args);
 }
 
+t_pipeline_cleanup cleanup_assignment(t_pipe_child_params *params)
+{
+	return (t_pipeline_cleanup){
+		params->commands,
+		params->ctx->pipes,
+		params->pids,
+		params->ctx->cmd_count
+	};
+}
+
 void	execute_pipe_child_process(t_pipe_child_params *params)
 {
 	char				**args;
@@ -59,31 +69,27 @@ void	execute_pipe_child_process(t_pipe_child_params *params)
 	args = split_to_args(params->cmd);
 	if (!args || !args[0])
 	{
-		cleanup = {params->commands, params->ctx->pipes,
-			params->pids, params->ctx->cmd_count};
+		cleanup = cleanup_assignment(params);
 		free_child_pipeline_memory(args, params->shell, &cleanup);
 		exit(1);
 	}
 	args = process_argument_expansion(args, params->shell);
 	if (!args || !args[0])
 	{
-		cleanup = {params->commands, params->ctx->pipes,
-			params->pids, params->ctx->cmd_count};
+		cleanup = cleanup_assignment(params);
 		free_child_pipeline_memory(args, params->shell, &cleanup);
 		exit(0);
 	}
 	if (is_builtin(args[0]))
 	{
-		cleanup = {params->commands, params->ctx->pipes,
-			params->pids, params->ctx->cmd_count};
+		cleanup = cleanup_assignment(params);
 		builtin_result = execute_builtin(args, params->shell);
 		free_child_pipeline_memory(args, params->shell, &cleanup);
 		exit(builtin_result);
 	}
 	else
 	{
-		cleanup = {params->commands, params->ctx->pipes,
-			params->pids, params->ctx->cmd_count};
+		cleanup = cleanup_assignment(params);
 		execute_pipe_external_command(args, params->shell, &cleanup);
 	}
 }
@@ -92,16 +98,14 @@ void	execute_pipe_child(t_pipe_child_params *params)
 {
 	t_pipeline_cleanup	cleanup;
 
-	cleanup = {params->commands, params->ctx->pipes,
-		params->pids, params->ctx->cmd_count};
+	cleanup = cleanup_assignment(params);
 	setup_pipe_redirection(params->ctx->cmd_index, params->ctx->cmd_count,
 		params->ctx->pipes);
 	cleanup_pipe_descriptors(params->ctx->pipes, params->ctx->cmd_count);
 	setup_child_signals();
 	if (has_parentheses_in_split(params->cmd))
 	{
-		cleanup = {params->commands, params->ctx->pipes,
-			params->pids, params->ctx->cmd_count};
+		cleanup = cleanup_assignment(params);
 		parser_and_or(params->shell, params->cmd);
 		free_child_pipeline_memory(NULL, params->shell, &cleanup);
 		exit(params->shell->past_exit_status);
