@@ -12,6 +12,21 @@
 
 #include "../main/minishell.h"
 
+static int	close_fds_and_pipes(int ***pipes, int *i)
+{
+	perror("pipe");
+	free((*pipes)[*i]);
+	while (--*i >= 0)
+	{
+		close((*pipes)[*i][0]);
+		close((*pipes)[*i][1]);
+		free((*pipes)[*i]);
+	}
+	free(*pipes);
+	*pipes = NULL;
+	return (0);
+}
+
 int	create_pipes_array(int ***pipes, int cmd_count)
 {
 	int	i;
@@ -26,27 +41,13 @@ int	create_pipes_array(int ***pipes, int cmd_count)
 		if (!(*pipes)[i])
 		{
 			while (--i >= 0)
-			{
 				free((*pipes)[i]);
-			}
 			free(*pipes);
 			*pipes = NULL;
 			return (0);
 		}
 		if (pipe((*pipes)[i]) == -1)
-		{
-			perror("pipe");
-			free((*pipes)[i]);
-			while (--i >= 0)
-			{
-				close((*pipes)[i][0]);
-				close((*pipes)[i][1]);
-				free((*pipes)[i]);
-			}
-			free(*pipes);
-			*pipes = NULL;
-			return (0);
-		}
+			return (close_fds_and_pipes(pipes, &i));
 		i++;
 	}
 	return (1);
@@ -99,7 +100,7 @@ void	cleanup_pipes_safe(int **pipes, int cmd_count)
 	{
 		if (pipes[i][0] >= 0)
 			close(pipes[i][0]);
-		if (pipes[i][1] >= 0) 
+		if (pipes[i][1] >= 0)
 			close(pipes[i][1]);
 		free(pipes[i]);
 		pipes[i] = NULL;
