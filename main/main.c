@@ -3,52 +3,79 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/08 10:55:46 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/06/04 21:52:29 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/24 19:10:58 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-//initiates shell struct, signal's and start of readline sequence
-static void	start_shell(t_shell *shell)
+volatile sig_atomic_t	g_signal = 0;
+
+static void	begin_command_parsing_and_execution(t_shell *shell)
 {
-	// We need to handle signals at some point.
-	while (1)
+	char	*expanded_input;
+
+	if (!check_quotes(shell->current_input))
+		shell->past_exit_status = 2;
+	else
 	{
-		shell->current_input = readline("minishell > ");
-		if (shell->current_input == NULL)
-			safe_exit(shell);
-		add_history(shell->current_input);
-		if (!is_empty(shell->current_input))
+		sep_opt_arg(shell);
+		expanded_input = wildcard_input_modify(shell->current_input);
+		if (expanded_input && expanded_input != shell->current_input)
 		{
-			sep_opt_arg(shell);
-			shell->split_input = create_split_str(shell->current_input);
-			parser_and_or(shell, shell->split_input);
-			free_split(&(shell->split_input));
+			free(shell->current_input);
+			shell->current_input = expanded_input;
 		}
-		free(shell->current_input);
+		else if (expanded_input && expanded_input != shell->current_input)
+		{
+			free(shell->current_input);
+			shell->current_input = expanded_input;
+		}
+		shell->split_input = create_split_str(shell->current_input);
+		if (shell->split_input.size > 0)
+			parser_and_or(shell, shell->split_input);
+		free_split(&(shell->split_input));
 	}
 }
 
-// This is to stop some uninitilized values being used in if statements.
-// If shell struct grows, please put a defult initilize here.
-void	shell_init(t_shell *shell)
+static void	start_shell(t_shell *shell)
 {
-	shell->child_pid = -1;
-	shell->current_input = NULL;
-	shell->past_exit_status = 0;
-	shell->split_input = create_split(NULL, 0);
-	shell->child_pids = NULL;
-	shell->parent_or_child = 'p';
+	setup_signals();
+	while (!shell->should_exit)
+	{
+		g_signal = 0;
+		shell->prompt = readline(shell->terminal_prompt);
+		shell->current_input = shell->prompt;
+		if (shell->current_input == NULL)
+			safe_exit(shell);
+		if (g_signal == SIGINT)
+		{
+			shell->past_exit_status = 130;
+			g_signal = 0;
+		}
+		if (!is_empty(shell->current_input))
+		{
+			add_history(shell->current_input);
+			begin_command_parsing_and_execution(shell);
+		}
+		free(shell->current_input);
+	}
+	free_env(shell);
+	rl_clear_history();
+	exit(shell->exit_code);
 }
 
-int	main(void)
+int	main(int argc, char **argv, char **envp)
 {
 	t_shell	shell;
 
+	(void)argc;
+	(void)argv;
 	shell_init(&shell);
+	init_env(&shell, envp);
 	start_shell(&shell);
+	return (0);
 }

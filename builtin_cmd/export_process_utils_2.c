@@ -1,25 +1,20 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strncmp.c                                       :+:      :+:    :+:   */
+/*   export_process_utils_2.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/27 12:27:10 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/13 07:10:27 by emgenc           ###   ########.fr       */
+/*   Created: 2025/07/24 13:29:55 by kuzyilma          #+#    #+#             */
+/*   Updated: 2025/07/24 13:33:57 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../main/minishell.h"
 
-int	ft_strncmp(const char *s1, const char *s2, size_t n)
+void	export_error(char *arg)
 {
-	while (n--)
-	{
-		if (*s1 == '\0' || *s2 == '\0' || *s1 != *s2)
-			return (*(unsigned char *)s1 - *(unsigned char *)s2);
-		s1++;
-		s2++;
-	}
-	return (0);
+	write(STDERR_FILENO, "export: `", 9);
+	write(STDERR_FILENO, arg, ft_strlen(arg));
+	write(STDERR_FILENO, "': not a valid identifier\n", 26);
 }

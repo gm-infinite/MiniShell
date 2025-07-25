@@ -1,25 +1,40 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strncmp.c                                       :+:      :+:    :+:   */
+/*   exec_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/27 12:27:10 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/13 07:10:27 by emgenc           ###   ########.fr       */
+/*   Created: 2025/07/15 13:40:47 by emgenc            #+#    #+#             */
+/*   Updated: 2025/07/20 18:41:56 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../main/minishell.h"
 
-int	ft_strncmp(const char *s1, const char *s2, size_t n)
+char	**split_to_args(t_split split)
 {
-	while (n--)
+	char	**args;
+
+	args = allocate_args_array(split.size);
+	if (!args)
+		return (NULL);
+	if (copy_split_strings(args, split) == -1)
+		return (NULL);
+	return (args);
+}
+
+void	free_args(char **args)
+{
+	int	i;
+
+	if (!args)
+		return ;
+	i = 0;
+	while (args[i])
 	{
-		if (*s1 == '\0' || *s2 == '\0' || *s1 != *s2)
-			return (*(unsigned char *)s1 - *(unsigned char *)s2);
-		s1++;
-		s2++;
+		free(args[i]);
+		i++;
 	}
-	return (0);
+	free(args);
 }

@@ -1,25 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strncmp.c                                       :+:      :+:    :+:   */
+/*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/27 12:27:10 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/13 07:10:27 by emgenc           ###   ########.fr       */
+/*   Created: 2025/07/15 13:34:56 by emgenc            #+#    #+#             */
+/*   Updated: 2025/07/23 10:51:48 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../main/minishell.h"
 
-int	ft_strncmp(const char *s1, const char *s2, size_t n)
+int	builtin_env(t_shell *shell)
 {
-	while (n--)
+	int		i;
+	char	*eq_pos;
+
+	i = -1;
+	while (shell->envp[++i])
 	{
-		if (*s1 == '\0' || *s2 == '\0' || *s1 != *s2)
-			return (*(unsigned char *)s1 - *(unsigned char *)s2);
-		s1++;
-		s2++;
+		eq_pos = ft_strchr(shell->envp[i], '=');
+		if (eq_pos)
+			printf("%s\n", shell->envp[i]);
 	}
 	return (0);
 }

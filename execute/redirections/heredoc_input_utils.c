@@ -1,25 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strncmp.c                                       :+:      :+:    :+:   */
+/*   heredoc_input_utils.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/27 12:27:10 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/13 07:10:27 by emgenc           ###   ########.fr       */
+/*   Created: 2025/07/15 13:53:10 by emgenc            #+#    #+#             */
+/*   Updated: 2025/07/20 21:53:36 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../../main/minishell.h"
 
-int	ft_strncmp(const char *s1, const char *s2, size_t n)
+char	*read_heredoc(void)
 {
-	while (n--)
-	{
-		if (*s1 == '\0' || *s2 == '\0' || *s1 != *s2)
-			return (*(unsigned char *)s1 - *(unsigned char *)s2);
-		s1++;
-		s2++;
-	}
+	char	*line;
+
+	line = readline("> ");
+	return (line);
+}
+
+int	is_delimiter_match(char *line, char *delimiter)
+{
+	if (ft_strncmp(line, delimiter, ft_strlen(delimiter)) == 0
+		&& ft_strlen(line) == ft_strlen(delimiter))
+		return (1);
 	return (0);
 }

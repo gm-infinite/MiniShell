@@ -1,25 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strlen.c                                        :+:      :+:    :+:   */
+/*   exec_wildcard_utils.c                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/27 12:28:32 by emgenc            #+#    #+#             */
-/*   Updated: 2025/05/10 20:30:38 by kuzyilma         ###   ########.fr       */
+/*   Created: 2025/07/20 23:00:00 by emgenc            #+#    #+#             */
+/*   Updated: 2025/07/20 23:46:49 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../main/minishell.h"
+#include "../parser/wildcard_handle/wildcard_handler.h"
 
-size_t	ft_strlen(const char *s)
+void	handle_empty_pipe_args(char **args)
 {
-	const char	*str;
-
-	if (s == NULL || *s == '\0')
-		return (0);
-	str = s;
-	while (*str)
-		str++;
-	return (str - s);
+	if (args[0] && args[0][0] == '\0')
+		write(STDERR_FILENO, ": command not found\n", 20);
+	free_args(args);
+	if (args[0] && args[0][0] == '\0')
+		exit(127);
+	else
+		exit(0);
 }

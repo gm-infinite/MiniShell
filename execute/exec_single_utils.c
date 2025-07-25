@@ -1,25 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strlen.c                                        :+:      :+:    :+:   */
+/*   exec_single_utils.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/27 12:28:32 by emgenc            #+#    #+#             */
-/*   Updated: 2025/05/10 20:30:38 by kuzyilma         ###   ########.fr       */
+/*   Created: 2025/07/24 21:06:16 by kuzyilma          #+#    #+#             */
+/*   Updated: 2025/07/24 21:21:42 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include <stdlib.h>
+#include "../main/minishell.h"
+#include "../e-libft/libft.h"
 
-size_t	ft_strlen(const char *s)
+int	validate_exec(char **args, char *executable)
 {
-	const char	*str;
-
-	if (s == NULL || *s == '\0')
-		return (0);
-	str = s;
-	while (*str)
-		str++;
-	return (str - s);
+	if (!executable)
+		return (handle_executable_not_found(args));
+	if (ft_strncmp(executable, "__NOT_DIRECTORY__", 17) == 0)
+	{
+		write_notdir(args[0]);
+		free(executable);
+		return (126);
+	}
+	return (validate_executable(args[0], executable));
 }

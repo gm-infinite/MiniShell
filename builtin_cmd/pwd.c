@@ -1,25 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strncmp.c                                       :+:      :+:    :+:   */
+/*   pwd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/27 12:27:10 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/13 07:10:27 by emgenc           ###   ########.fr       */
+/*   Created: 2025/07/15 13:36:44 by emgenc            #+#    #+#             */
+/*   Updated: 2025/07/16 20:58:00 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../main/minishell.h"
 
-int	ft_strncmp(const char *s1, const char *s2, size_t n)
+int	builtin_pwd(void)
 {
-	while (n--)
+	char	cwd[PATH_MAX];
+
+	if (getcwd(cwd, sizeof(cwd)) == NULL)
 	{
-		if (*s1 == '\0' || *s2 == '\0' || *s1 != *s2)
-			return (*(unsigned char *)s1 - *(unsigned char *)s2);
-		s1++;
-		s2++;
+		perror("pwd");
+		return (1);
 	}
+	printf("%s\n", cwd);
 	return (0);
 }

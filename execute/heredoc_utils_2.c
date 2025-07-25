@@ -1,25 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strlen.c                                        :+:      :+:    :+:   */
+/*   heredoc_utils_2.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/10/27 12:28:32 by emgenc            #+#    #+#             */
-/*   Updated: 2025/05/10 20:30:38 by kuzyilma         ###   ########.fr       */
+/*   Created: 2025/07/24 14:23:40 by kuzyilma          #+#    #+#             */
+/*   Updated: 2025/07/24 14:30:37 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "../main/minishell.h"
 
-size_t	ft_strlen(const char *s)
+void	err_heredoc(char *processed_delimiter)
 {
-	const char	*str;
-
-	if (s == NULL || *s == '\0')
-		return (0);
-	str = s;
-	while (*str)
-		str++;
-	return (str - s);
+	write(STDERR_FILENO, "minishell: warning: here-document delimited by "
+		"end-of-file (wanted `", 68);
+	write(STDERR_FILENO, processed_delimiter, ft_strlen(processed_delimiter));
+	write(STDERR_FILENO, "')\n", 3);
 }
