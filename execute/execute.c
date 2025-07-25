@@ -48,7 +48,7 @@ static t_redir_fds	get_fds(int *fd_values)
 	return (ret);
 }
 
-void	execute_pipe_child_with_redirections(t_child_redir_params *params)
+void	execute_child_redir(t_child_redir_params *params)
 {
 	char				**args;
 	t_redir_fds			fds;

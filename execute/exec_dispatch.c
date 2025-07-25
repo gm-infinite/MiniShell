@@ -36,7 +36,7 @@ static int	dispatch_execution(t_split split, t_shell *shell,
 		int has_pipes, int has_redir)
 {
 	if (has_pipes > 0 && has_redir)
-		return (execute_pipeline_with_redirections(split, shell));
+		return (execute_pipe_redir(split, shell));
 	else if (has_pipes > 0)
 		return (execute_pipeline(split, shell));
 	else if (has_redir)

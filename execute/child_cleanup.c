@@ -22,7 +22,7 @@ void	free_child_memory(char **args, t_shell *shell)
 	}
 }
 
-void	free_heredoc_child_memory(t_shell *shell, t_heredoc_params *params)
+void	free_heredoc(t_shell *shell, t_heredoc_params *params)
 {
 	if (params->args)
 		free_args(params->args);

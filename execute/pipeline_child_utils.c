@@ -88,7 +88,7 @@ int	fork_pipe_child(t_pipe_ctx *pipeline_ctx, int i)
 		params.shell = pipeline_ctx->shell;
 		params.commands = pipeline_ctx->commands;
 		params.pids = pipeline_ctx->pids;
-		execute_pipe_child_with_redirections(&params);
+		execute_child_redir(&params);
 		exit(127);
 	}
 	return (0);

@@ -80,7 +80,7 @@ int	execute_external_with_redirect(t_redir_exec_ctx *ctx)
 	}
 	if (ft_strncmp(executable, "__NOT_DIRECTORY__", 17) == 0)
 	{
-		write_not_directory_error(ctx->args[0]);
+		write_notdir(ctx->args[0]);
 		free(executable);
 		return (126);
 	}

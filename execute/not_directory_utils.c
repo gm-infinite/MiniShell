@@ -37,7 +37,7 @@ static int	check_path_component_is_directory(char *path, int len)
 	return (result);
 }
 
-int	has_not_directory_error(char *path)
+int	not_dir(char *path)
 {
 	char	*ptr;
 	int		len;
@@ -58,7 +58,7 @@ int	has_not_directory_error(char *path)
 	return (0);
 }
 
-void	write_not_directory_error(char *filename)
+void	write_notdir(char *filename)
 {
 	write(STDERR_FILENO, filename, ft_strlen(filename));
 	write(STDERR_FILENO, ": Not a directory\n", 18);

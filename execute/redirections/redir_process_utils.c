@@ -68,9 +68,9 @@ int	clean_heredoc(char *processed_filename, t_redir_fds *fds)
 
 int	handle_input_redirection(char *processed_filename, t_redir_fds *fds)
 {
-	if (has_not_directory_error(processed_filename))
+	if (not_dir(processed_filename))
 	{
-		write_not_directory_error(processed_filename);
+		write_notdir(processed_filename);
 		errno = ENOTDIR;
 		return (-1);
 	}

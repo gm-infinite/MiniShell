@@ -38,11 +38,6 @@
 
 extern volatile sig_atomic_t	g_signal;
 
-/*
-** ============================================================================
-**                        CORE DATA STRUCTURES
-** ============================================================================
-*/
 typedef struct s_shell
 {
 	int		past_exit_status;
@@ -130,20 +125,20 @@ typedef struct s_child_ctx
 
 typedef struct s_child_params
 {
-	t_split					cmd;
+	t_split		cmd;
 	t_child_ctx	*ctx;
-	t_shell					*shell;
-	t_split					*commands;
-	pid_t					*pids;
+	t_shell		*shell;
+	t_split		*commands;
+	pid_t		*pids;
 }	t_child_params;
 
 typedef struct s_child_redir_params
 {
-	t_split					cmd;
+	t_split		cmd;
 	t_child_ctx	*ctx;
-	t_shell					*shell;
-	t_split					*commands;
-	pid_t					*pids;
+	t_shell		*shell;
+	t_split		*commands;
+	pid_t		*pids;
 }	t_child_redir_params;
 
 typedef struct s_paren_info
@@ -180,36 +175,19 @@ typedef struct s_pipe_cleaner
 	int		cmd_count;
 }	t_pipe_cleaner;
 
-/*
-** ────────────────────────────────────────────────────────────────────────────
-**                           CORE SHELL FUNCTIONS
-** ────────────────────────────────────────────────────────────────────────────
-** Primary shell control
-*/
 void					shell_init(t_shell *shell);
 void					safe_exit(t_shell *shell);
 int						is_empty(char *str);
 
-/*				
-** ─────				───────────────────────────────────────────────────────────────────────
-**      				                     SIGNAL HANDLING SUBSYSTEM
-** ─────				───────────────────────────────────────────────────────────────────────
-** Compr				ehensive signal management
-*/				
 void					setup_signals(void);
 void					signal_handler_child(int sig);
 void					setup_child_signals(void);
 
-/*				
-** ─────				───────────────────────────────────────────────────────────────────────
-**      				                  PARSING AND TOKENIZATION SUBSYSTEM
-** ─────				───────────────────────────────────────────────────────────────────────
-** Advan				ced command line parsing with operator precedence and grouping support
-*/				
 void					parser_and_or(t_shell *shell, t_split split);
 int						is_andor(char *str);
 t_split					paren_in_split(t_split cmd, t_shell *shell);
-void					process_segment(t_shell *shell, t_split split, int *vars, char *c_i);
+void					process_segment(t_shell *shell, t_split split,
+							int *vars, char *c_i);
 int						is_singlepar(char *start, char *end);
 void					remove_outer_par(char *start, char *end);
 void					clean_empties(t_split *split);
@@ -221,102 +199,98 @@ void					error_pipe_exec(char **args, char *executable,
 int						countchr_str(char *str, char c);
 int						countchr_not_quote(char *str, char c);
 void					sep_opt_arg(t_shell *shell);
-int						count_str_split(t_split split, const char *str, int flag);
+int						count_str_split(t_split split, const char *str,
+							int flag);
 char					*get_cut_indexs(t_split split);
 void					cut_out_par(t_split *split);
 int						check_op_errs(t_split split);
 int						check_par_errs(t_split split);
 
-/*
-** ────────────────────────────────────────────────────────────────────────────
-**                      ENVIRONMENT VARIABLE SUBSYSTEM
-** ────────────────────────────────────────────────────────────────────────────
-** Dynamic environment management with expansion and modification support
-*/
 char					*expandvar(char *str, t_shell *shell);
 char					*tilde(char *str, t_shell *shell);
 char					*get_env_value(char *var_name, t_shell *shell);
 void					init_env(t_shell *shell, char **envp);
 void					free_env(t_shell *shell);
-int						set_env_var(char *var_name, char *value, t_shell *shell);
+int						set_env_var(char *var_name, char *value,
+							t_shell *shell);
 int						replacevar(t_expand *holder, int flags);
 char					*expandvar_q(char *str, t_shell *shell);
 int						expand_dollar(t_expand *holder, t_shell *shell);
 int						expand_double_q(t_expand *holder);
 int						expand_single_q(t_expand *holder);
-void					init_expand_holder(t_expand *holder, char *tilde_expanded);
+void					init_expand_holder(t_expand *holder,
+							char *tilde_expanded);
 void					expander_loop(t_expand *holder, t_shell *shell);
 int						handle_special_chars(t_expand *holder);
 
-/*
-** ────────────────────────────────────────────────────────────────────────────
-**                          BUILT-IN COMMANDS SUBSYSTEM
-** ────────────────────────────────────────────────────────────────────────────
-** Implementation of shell built-in commands with proper argument handling
-*/
 int						is_builtin(char *cmd);
 int						execute_builtin(char **args, t_shell *shell);
 int						is_valid_var_name(const char *name);
 int						builtin_echo(char **args);
 int						builtin_cd(char **args, t_shell *shell);
-int						home_path(char **path, char **home, t_shell *shell);
+int						home_path(char **path, char **home,
+							t_shell *shell);
 int						oldpwd_path(char **path, t_shell *shell);
 int						builtin_pwd(void);
 int						builtin_export(char **args, t_shell *shell);
 int						builtin_unset(char **args, t_shell *shell);
 int						builtin_env(t_shell *shell);
 int						builtin_exit(char **args, t_shell *shell);
-int						append_env_var(char *var_name, char *value, t_shell *shell);
+int						append_env_var(char *var_name, char *value,
+							t_shell *shell);
 void					export_error(char *arg);
 void					option_error(char *arg, t_shell *shell);
-int						process_assign_export(char *arg, char *eq_pos, t_shell *shell);
-int						process_append_export(char *arg, char *eq_pos, t_shell *shell);
+int						process_assign_export(char *arg,
+							char *eq_pos, t_shell *shell);
+int						process_append_export(char *arg,
+							char *eq_pos, t_shell *shell);
 int						process_single_export(char *arg, t_shell *shell);
-int						new_env_var(char *var_name, char *value, t_shell *shell);
+int						new_env_var(char *var_name,
+							char *value, t_shell *shell);
 int						new_empty_envvar(char *var_name, t_shell *shell);
-int						copy_env_without_var(t_shell *shell, int remove_index, int count);
-int						find_env_var_index(t_shell *shell, char *var_name, int len);
+int						copy_env_without_var(t_shell *shell,
+							int remove_index, int count);
+int						find_env_var_index(t_shell *shell,
+							char *var_name, int len);
 int						count_env_vars(t_shell *shell);
 
-/*
-** ────────────────────────────────────────────────────────────────────────────
-**                        COMMAND EXECUTION SUBSYSTEM
-** ────────────────────────────────────────────────────────────────────────────
-** Comprehensive command execution with pipeline and redirection support
-*/
 int						execute_command(t_split split, t_shell *shell);
 char					**arg_expander_loop(char **args, t_shell *shell);
 char					*reconstructed_args(char **args);
 char					*wildcard_expand(char *reconstructed);
-int						execute_expanded_args(char *reconstructed, t_shell *shell);
+int						execute_expanded_args(char *reconstructed,
+							t_shell *shell);
 int						execute_pipeline(t_split split, t_shell *shell);
-int						execute_pipeline_with_redirections(t_split split, t_shell *shell);
-void					redirect_fds(int input_fd, int output_fd, int stderr_fd);
+int						execute_pipe_redir(t_split split, t_shell *shell);
+void					redirect_fds(int input_fd,
+							int output_fd, int stderr_fd);
 void					exec_err(char *cmd, char *message);
 void					execute_child_command(char **args, t_shell *shell);
 int						execute_single_command(char **args, t_shell *shell);
 int						count_pipes(t_split split);
 t_split					*split_by_pipes(t_split split, int *cmd_count);
-int						execute_pipe_command(t_split cmd, t_pipe_context *ctx, t_shell *shell);
+int						execute_pipe_command(t_split cmd,
+							t_pipe_context *ctx, t_shell *shell);
 void					expand_command_args(char **args, t_shell *shell);
 int						handle_builtin_command(char **args, t_pipe_context *ctx,
 							t_shell *shell);
-int						handle_external_command(char **args, t_pipe_context *ctx,
-							t_shell *shell);
+int						handle_external_command(char **args,
+							t_pipe_context *ctx, t_shell *shell);
 void					execute_pipe_child(t_child_params *params);
-char					**execute_expanded_args_split(char *reconstructed, char **args,
-							t_shell *shell);
-void					execute_pipe_external_command(char **args, t_shell *shell,
-							t_pipe_cleaner *cleanup);
+char					**execute_expanded_args_split(char *reconstructed,
+							char **args, t_shell *shell);
+void					execute_pipe_external_command(char **args,
+							t_shell *shell, t_pipe_cleaner *cleanup);
 void					setup_child(t_process_pipe_ctx *proc_ctx, int i);
 void					setup_pipe_signals(void);
 void					free_child_memory(char **args, t_shell *shell);
-void					free_heredoc_child_memory(t_shell *shell, t_heredoc_params *params);
+void					free_heredoc(t_shell *shell, t_heredoc_params *params);
 void					free_child_pipeline_memory(char **args, t_shell *shell,
 							t_pipe_cleaner *cleanup);
-void					execute_pipe_child_with_redirections(t_child_redir_params *params);
+void					execute_child_redir(t_child_redir_params *params);
 int						has_parentheses_in_split(t_split split);
-int						check_pipe_error(t_split split, int i, int has_parentheses);
+int						check_pipe_error(t_split split,
+							int i, int has_parentheses);
 int						check_redirection_error(t_split split, int i);
 char					*remove_quotes_for_redirection(char *str);
 int						create_pipes_array(int ***pipes, int cmd_count);
@@ -329,8 +303,8 @@ int						wait_for_children(pid_t *pids, int cmd_count);
 int						heredoc_redir(char **args, int j,
 							t_pipe_ctx *pipeline_ctx, int i);
 void					setup_child_redir(t_pipe_context *ctx);
-int						setup_pipe(t_split **commands, int ***pipes, pid_t **pids,
-							int cmd_count);
+int						setup_pipe(t_split **commands,
+							int ***pipes, pid_t **pids, int cmd_count);
 int						exec_pipe_child(t_pipe_ctx *pipeline_ctx);
 void					clean_pipe(t_split *commands, int **pipes, pid_t *pids,
 							int cmd_count);
@@ -343,12 +317,6 @@ int						heredoc_content(int temp_fd,
 int						heredoc_pipe(t_pipe_ctx *pipeline_ctx);
 int						fork_pipe_child(t_pipe_ctx *pipeline_ctx, int i);
 
-/*
-** ────────────────────────────────────────────────────────────────────────────
-**                          I/O REDIRECTION SUBSYSTEM
-** ────────────────────────────────────────────────────────────────────────────
-** Comprehensive input/output redirection with file and pipe support
-*/
 int						is_redirection(char *token);
 int						has_redirs(t_split split);
 int						validate_redirection_syntax(t_split split);
@@ -387,12 +355,6 @@ char					*handle_double_quote_case(char *result, int *i,
 char					**build_clean_args(char **args, int clean_count);
 int						count_clean_args(char **args);
 
-/*
-** ────────────────────────────────────────────────────────────────────────────
-**                            QUOTE PROCESSING SYSTEM
-** ────────────────────────────────────────────────────────────────────────────
-** Advanced quote handling with variable expansion and escape processing
-*/
 int						check_quotes(char *str);
 char					*process_quotes(char *str, t_shell *shell);
 void					process_args_quotes(char **args, t_shell *shell);
@@ -405,12 +367,6 @@ int						should_copy_character(char c, int *states);
 int						process_quote_character(char *str, char *result,
 							int *indices, int *states);
 
-/*
-** ────────────────────────────────────────────────────────────────────────────
-**                              UTILITY FUNCTIONS
-** ────────────────────────────────────────────────────────────────────────────
-** General-purpose utility functions for common operations
-*/
 char					**split_to_args(t_split split);
 char					**allocate_args_array(int size);
 int						copy_split_strings(char **args, t_split split);
@@ -429,8 +385,8 @@ int						check_single_par(t_split split);
 int						validate_and_process_args(char **args, t_shell *shell);
 int						validate_executable(char *cmd, char *executable);
 int						handle_executable_not_found(char **args);
-int						has_not_directory_error(char *path);
-void					write_not_directory_error(char *filename);
+int						not_dir(char *path);
+void					write_notdir(char *filename);
 void					handle_error_and_exit(char **args,
 							char *executable, t_shell *shell);
 void					error_pipe_exec(char **args,
@@ -449,9 +405,9 @@ int						handle_heredoc_parent(pid_t pid, int *pipe_fd);
 void					write_line_to_pipe(int pipe_fd, char *line);
 void					setup_pipe_redirection(int cmd_index,
 							int cmd_count, int **pipes);
-t_pipe_setup_ctx	get_pipe_ctx(int cmd_index, int cmd_count,
+t_pipe_setup_ctx		get_pipe_ctx(int cmd_index, int cmd_count,
 							int **pipes, int *fd_values);
-t_pipe_cleaner		get_cleanup(t_split *commands,
+t_pipe_cleaner			get_cleanup(t_split *commands,
 							int **pipes, pid_t *pids, int cmd_count);
 
 #endif

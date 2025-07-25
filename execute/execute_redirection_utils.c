@@ -76,7 +76,7 @@ void	execute_child_command(char **args, t_shell *shell)
 	execute_external_command(args, executable, shell);
 }
 
-int	execute_pipeline_with_redirections(t_split split, t_shell *shell)
+int	execute_pipe_redir(t_split split, t_shell *shell)
 {
 	t_split	*commands;
 	int		cmd_count;

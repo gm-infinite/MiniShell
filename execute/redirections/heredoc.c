@@ -41,7 +41,7 @@ int	handle_here_doc(int *pipe_fd, t_shell *shell, int should_expand,
 		execute_heredoc_child(params->delimiter, pipe_fd[1],
 			shell, should_expand);
 		close(pipe_fd[0]);
-		free_heredoc_child_memory(shell, params);
+		free_heredoc(shell, params);
 		exit(EXIT_SUCCESS);
 	}
 	return (handle_heredoc_parent(pid, pipe_fd));

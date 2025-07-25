@@ -35,10 +35,10 @@ static int	change_directory(char *path)
 {
 	char	*errmsg;
 
-	if (has_not_directory_error(path))
+	if (not_dir(path))
 	{
 		write(STDERR_FILENO, "cd: ", 4);
-		write_not_directory_error(path);
+		write_notdir(path);
 		return (1);
 	}
 	if (chdir(path) == -1)

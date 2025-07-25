@@ -36,7 +36,7 @@ static int	handle_executable_errors(char **args, char *executable)
 	}
 	if (ft_strncmp(executable, "__NOT_DIRECTORY__", 17) == 0)
 	{
-		write_not_directory_error(args[0]);
+		write_notdir(args[0]);
 		free(executable);
 		exit(126);
 	}

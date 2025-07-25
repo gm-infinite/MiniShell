@@ -106,7 +106,7 @@ static int	handle_redirected_execution(t_redir_exec_ctx *ctx)
 int	execute_with_redirections(t_split split, t_shell *shell)
 {
 	t_redir_exec_ctx	ctx;
-	t_redir_fds		fds;
+	t_redir_fds			fds;
 
 	ctx.input_fd = STDIN_FILENO;
 	ctx.output_fd = STDOUT_FILENO;

@@ -85,9 +85,9 @@ int	handle_executable_not_found(char **args)
 	}
 	if (ft_strchr(args[0], '/'))
 	{
-		if (has_not_directory_error(args[0]))
+		if (not_dir(args[0]))
 		{
-			write_not_directory_error(args[0]);
+			write_notdir(args[0]);
 			return (126);
 		}
 		if (access(args[0], F_OK) == 0 && stat(args[0], &file_stat) == 0

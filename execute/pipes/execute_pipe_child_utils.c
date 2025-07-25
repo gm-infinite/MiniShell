@@ -61,7 +61,7 @@ void	execute_pipe_external_command(char **args, t_shell *shell,
 	}
 	if (ft_strncmp(executable, "__NOT_DIRECTORY__", 17) == 0)
 	{
-		write_not_directory_error(args[0]);
+		write_notdir(args[0]);
 		free(executable);
 		free_child_pipeline_memory(args, shell, cleanup);
 		exit(126);

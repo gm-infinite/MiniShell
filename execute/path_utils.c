@@ -26,7 +26,7 @@ static char	*check_absolute_path(char *cmd)
 
 	if (ft_strchr(cmd, '/'))
 	{
-		if (has_not_directory_error(cmd))
+		if (not_dir(cmd))
 			return (ft_strdup("__NOT_DIRECTORY__"));
 		if (access(cmd, F_OK) == 0)
 		{
