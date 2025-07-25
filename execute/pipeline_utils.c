@@ -12,7 +12,7 @@
 
 #include "../main/minishell.h"
 
-static int	wait_for_children(pid_t *pids, int cmd_count)
+static int	wait_for_others(pid_t *pids, int cmd_count)
 {
 	int	status;
 	int	exit_status;
@@ -55,7 +55,7 @@ static void	cleanup_pipes_safe(int **pipes, int cmd_count)
 	free(pipes);
 }
 
-int	setup_pipeline_resources(t_split **commands, int ***pipes, pid_t **pids,
+int	setup_pipe(t_split **commands, int ***pipes, pid_t **pids,
 		int cmd_count)
 {
 	if (!create_pipes_array(pipes, cmd_count))
@@ -76,11 +76,11 @@ int	setup_pipeline_resources(t_split **commands, int ***pipes, pid_t **pids,
 	return (1);
 }
 
-int	execute_pipeline_children(t_pipe_ctx *pipeline_ctx)
+int	exec_pipe_child(t_pipe_ctx *pipeline_ctx)
 {
 	int	i;
 
-	if (preprocess_heredocs_in_pipeline(pipeline_ctx) != 0)
+	if (heredoc_pipe(pipeline_ctx) != 0)
 		return (1);
 	i = -1;
 	while (++i < pipeline_ctx->cmd_count)
@@ -89,10 +89,10 @@ int	execute_pipeline_children(t_pipe_ctx *pipeline_ctx)
 			return (1);
 	}
 	close_all_pipes(pipeline_ctx->pipes, pipeline_ctx->cmd_count);
-	return (wait_for_children(pipeline_ctx->pids, pipeline_ctx->cmd_count));
+	return (wait_for_others(pipeline_ctx->pids, pipeline_ctx->cmd_count));
 }
 
-void	cleanup_pipeline_resources(t_split *commands, int **pipes, pid_t *pids,
+void	clean_pipe(t_split *commands, int **pipes, pid_t *pids,
 		int cmd_count)
 {
 	if (pipes)

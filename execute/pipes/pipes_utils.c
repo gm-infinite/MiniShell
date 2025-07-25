@@ -12,7 +12,7 @@
 
 #include "../../main/minishell.h"
 
-int	create_pipeline_pipes(int ***pipes, int cmd_count)
+int	create_pipes(int ***pipes, int cmd_count)
 {
 	int	i;
 
@@ -40,7 +40,7 @@ int	create_pipeline_pipes(int ***pipes, int cmd_count)
 	return (1);
 }
 
-void	cleanup_pipeline_pipes(int **pipes, int cmd_count)
+void	pipe_clean(int **pipes, int cmd_count)
 {
 	int	i;
 
@@ -55,7 +55,7 @@ void	cleanup_pipeline_pipes(int **pipes, int cmd_count)
 	free(pipes);
 }
 
-int	wait_for_pipeline_processes(pid_t *pids, int cmd_count)
+int	wait_for_children(pid_t *pids, int cmd_count)
 {
 	int	i;
 	int	status;
@@ -81,7 +81,7 @@ int	wait_for_pipeline_processes(pid_t *pids, int cmd_count)
 	return (exit_status);
 }
 
-void	setup_child_redirection(t_pipe_context *ctx)
+void	setup_child_redir(t_pipe_context *ctx)
 {
 	int	i;
 

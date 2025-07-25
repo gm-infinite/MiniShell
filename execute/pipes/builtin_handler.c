@@ -22,7 +22,7 @@ int	handle_builtin_command(char **args, t_pipe_context *ctx, t_shell *shell)
 	if (pid == 0)
 	{
 		setup_child_signals();
-		setup_child_redirection(ctx);
+		setup_child_redir(ctx);
 		exit(execute_builtin(args, shell));
 	}
 	return (pid);

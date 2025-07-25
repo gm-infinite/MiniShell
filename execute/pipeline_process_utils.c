@@ -51,7 +51,7 @@ static int	heredoc_subprocess(t_heredoc_sub heresub, char *delim,
 		rl_catch_signals = 0;
 		signal(SIGINT, SIG_DFL);
 		signal(SIGQUIT, SIG_IGN);
-		process_heredoc_content(heresub.temp_fd, delim,
+		heredoc_content(heresub.temp_fd, delim,
 			pipeline_ctx->shell, heresub.should_expand);
 		free_everything_in_child(delim, heresub, pipeline_ctx, temp_filename);
 	}
@@ -72,7 +72,7 @@ static int	setup_heredoc_file(char **processed_delimiter, char **temp_filename,
 	*processed_delimiter = process_heredoc_delimiter(delimiter);
 	if (!*processed_delimiter)
 		return (-1);
-	*temp_filename = create_heredoc_filename(cmd_index);
+	*temp_filename = heredoc_filename(cmd_index);
 	if (!*temp_filename)
 	{
 		free(*processed_delimiter);
@@ -103,7 +103,7 @@ static void	update_command_filename(t_pipe_ctx *pipeline_ctx, int i,
 		free(temp_filename);
 }
 
-int	handle_heredoc_redirection(char **args, int j,
+int	heredoc_redir(char **args, int j,
 		t_pipe_ctx *pipeline_ctx, int i)
 {
 	char			*processed_delimiter;

@@ -12,7 +12,7 @@
 
 #include "../../main/minishell.h"
 
-static void	setup_child_redirections(int input_fd, int output_fd, int stderr_fd)
+static void	setup_child_redirs(int input_fd, int output_fd, int stderr_fd)
 {
 	if (input_fd != STDIN_FILENO)
 	{
@@ -59,7 +59,7 @@ static int	wait_for_child_exit(pid_t pid)
 static void	child_setup_and_exec(redir_exec_ctx *ctx, char *executable)
 {
 	setup_child_signals();
-	setup_child_redirections(ctx->input_fd, ctx->output_fd, ctx->stderr_fd);
+	setup_child_redirs(ctx->input_fd, ctx->output_fd, ctx->stderr_fd);
 	execve(executable, ctx->args, ctx->shell->envp);
 	perror("execve");
 	free_child_memory(ctx->args, ctx->shell);

@@ -21,7 +21,7 @@ static char	*ft_realloc_join(char *s1, char *s2)
 	return (result);
 }
 
-char	*create_heredoc_filename(int cmd_index)
+char	*heredoc_filename(int cmd_index)
 {
 	char			*result;
 	char			*temp_str;
@@ -40,7 +40,7 @@ char	*create_heredoc_filename(int cmd_index)
 	return (result);
 }
 
-int	read_heredoc_line(char **line)
+int	heredoc_rline(char **line)
 {
 	*line = readline("> ");
 	return (*line != NULL);
@@ -67,7 +67,7 @@ static void	process_and_write_heredoc_line(int temp_fd, char *line,
 	write(temp_fd, "\n", 1);
 }
 
-int	process_heredoc_content(int temp_fd, char *processed_delimiter,
+int	heredoc_content(int temp_fd, char *processed_delimiter,
 		t_shell *shell, int should_expand)
 {
 	char	*line;
@@ -76,9 +76,9 @@ int	process_heredoc_content(int temp_fd, char *processed_delimiter,
 	delimiter_len = ft_strlen(processed_delimiter);
 	while (1)
 	{
-		if (!read_heredoc_line(&line))
+		if (!heredoc_rline(&line))
 		{
-			write_heredoc_warning(processed_delimiter);
+			err_heredoc(processed_delimiter);
 			break ;
 		}
 		if (ft_strncmp(line, processed_delimiter, delimiter_len) == 0

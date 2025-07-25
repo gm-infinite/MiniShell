@@ -12,7 +12,7 @@
 
 #include "../main/minishell.h"
 
-void	write_heredoc_warning(char *processed_delimiter)
+void	err_heredoc(char *processed_delimiter)
 {
 	write(STDERR_FILENO, "minishell: warning: here-document delimited by "
 		"end-of-file (wanted `", 68);

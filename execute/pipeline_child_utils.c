@@ -27,7 +27,7 @@ static int	process_command_redirections(char **args,
 				write(STDERR_FILENO, "syntax error: missing filename\n", 32);
 				return (1);
 			}
-			if (handle_heredoc_redirection(args, j, pipeline_ctx, i) != 0)
+			if (heredoc_redir(args, j, pipeline_ctx, i) != 0)
 				return (1);
 			j += 2;
 		}
@@ -42,7 +42,7 @@ static int	process_command_redirections(char **args,
 	return (0);
 }
 
-int	preprocess_heredocs_in_pipeline(t_pipe_ctx *pipeline_ctx)
+int	heredoc_pipe(t_pipe_ctx *pipeline_ctx)
 {
 	int		i;
 	char	**args;

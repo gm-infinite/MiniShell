@@ -19,16 +19,16 @@ static int	setup_and_execute_pipeline(t_split *commands, int cmd_count,
 	pid_t				*pids;
 	t_pipe_ctx			pipeline_ctx;
 
-	if (!setup_pipeline_resources(&commands, &pipes, &pids, cmd_count))
+	if (!setup_pipe(&commands, &pipes, &pids, cmd_count))
 		return (1);
 	pipeline_ctx.commands = commands;
 	pipeline_ctx.pipes = pipes;
 	pipeline_ctx.pids = pids;
 	pipeline_ctx.cmd_count = cmd_count;
 	pipeline_ctx.shell = shell;
-	cmd_count = execute_pipeline_children(&pipeline_ctx);
+	cmd_count = exec_pipe_child(&pipeline_ctx);
 	setup_signals();
-	cleanup_pipeline_resources(commands, pipes, pids, pipeline_ctx.cmd_count);
+	clean_pipe(commands, pipes, pids, pipeline_ctx.cmd_count);
 	return (cmd_count);
 }
 

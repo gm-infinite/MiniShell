@@ -55,7 +55,7 @@ static int	create_pipeline_processes(t_process_pipeline_context *proc_ctx)
 static int	allocate_pipeline_resources(t_split *commands, int ***pipes,
 							pid_t **pids, int cmd_count)
 {
-	if (!create_pipeline_pipes(pipes, cmd_count))
+	if (!create_pipes(pipes, cmd_count))
 	{
 		free(commands);
 		return (0);
@@ -63,7 +63,7 @@ static int	allocate_pipeline_resources(t_split *commands, int ***pipes,
 	*pids = malloc(sizeof(pid_t) * cmd_count);
 	if (!*pids)
 	{
-		cleanup_pipeline_pipes(*pipes, cmd_count);
+		pipe_clean(*pipes, cmd_count);
 		free(commands);
 		return (0);
 	}
@@ -84,9 +84,9 @@ static int	execute_multi_command_pipeline(t_split *commands, int cmd_count,
 	proc_ctx.cmd_count = cmd_count;
 	proc_ctx.shell = shell;
 	exit_status = create_pipeline_processes(&proc_ctx);
-	cleanup_pipeline_pipes(proc_ctx.pipes, cmd_count);
+	pipe_clean(proc_ctx.pipes, cmd_count);
 	if (exit_status == 0)
-		exit_status = wait_for_pipeline_processes(proc_ctx.pids, cmd_count);
+		exit_status = wait_for_children(proc_ctx.pids, cmd_count);
 	setup_signals();
 	free(proc_ctx.pids);
 	free(commands);

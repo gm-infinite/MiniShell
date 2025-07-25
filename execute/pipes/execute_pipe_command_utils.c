@@ -54,7 +54,7 @@ static int	create_child_process(char **args, t_pipe_context *ctx,
 	if (pid == 0)
 	{
 		setup_child_signals();
-		setup_child_redirection(ctx);
+		setup_child_redir(ctx);
 		execute_child_process(args, executable, shell);
 	}
 	return (pid);

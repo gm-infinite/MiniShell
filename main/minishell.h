@@ -323,24 +323,24 @@ int						create_pipes_array(int ***pipes, int cmd_count);
 void					cleanup_pipes(int **pipes, int cmd_count);
 void					close_all_pipes(int **pipes, int cmd_count);
 void					setup_pipe_fds(t_pipe_setup_context *ctx);
-int						create_pipeline_pipes(int ***pipes, int cmd_count);
-void					cleanup_pipeline_pipes(int **pipes, int cmd_count);
-int						wait_for_pipeline_processes(pid_t *pids, int cmd_count);
-int						handle_heredoc_redirection(char **args, int j,
+int						create_pipes(int ***pipes, int cmd_count);
+void					pipe_clean(int **pipes, int cmd_count);
+int						wait_for_children(pid_t *pids, int cmd_count);
+int						heredoc_redir(char **args, int j,
 							t_pipe_ctx *pipeline_ctx, int i);
-void					setup_child_redirection(t_pipe_context *ctx);
-int						setup_pipeline_resources(t_split **commands, int ***pipes, pid_t **pids,
+void					setup_child_redir(t_pipe_context *ctx);
+int						setup_pipe(t_split **commands, int ***pipes, pid_t **pids,
 							int cmd_count);
-int						execute_pipeline_children(t_pipe_ctx *pipeline_ctx);
-void					cleanup_pipeline_resources(t_split *commands, int **pipes, pid_t *pids,
+int						exec_pipe_child(t_pipe_ctx *pipeline_ctx);
+void					clean_pipe(t_split *commands, int **pipes, pid_t *pids,
 							int cmd_count);
-char					*create_heredoc_filename(int cmd_index);
-int						read_heredoc_line(char **line);
-void					write_heredoc_warning(char *processed_delimiter);
-int						process_heredoc_content(int temp_fd,
+char					*heredoc_filename(int cmd_index);
+int						heredoc_rline(char **line);
+void					err_heredoc(char *processed_delimiter);
+int						heredoc_content(int temp_fd,
 							char *processed_delimiter,
 							t_shell *shell, int should_expand);
-int						preprocess_heredocs_in_pipeline(t_pipe_ctx *pipeline_ctx);
+int						heredoc_pipe(t_pipe_ctx *pipeline_ctx);
 int						fork_pipeline_child(t_pipe_ctx *pipeline_ctx, int i);
 
 /*
