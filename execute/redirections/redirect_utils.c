@@ -43,7 +43,7 @@ static int	handle_redirection_type(t_redirect_info *info, t_redir_fds *fds,
 	{
 		if (ft_strncmp(info->processed_filename, "/tmp/.minishell_heredoc_", 24)
 			== 0)
-			return (handle_heredoc_file_cleanup(info->processed_filename, fds));
+			return (clean_heredoc(info->processed_filename, fds));
 		else
 			return (handle_here_document(info->processed_filename, fds, shell,
 					params));

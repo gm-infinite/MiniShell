@@ -12,7 +12,7 @@
 
 #include "../main/minishell.h"
 
-void	print_export_error(char *arg)
+void	export_error(char *arg)
 {
 	write(STDERR_FILENO, "export: `", 9);
 	write(STDERR_FILENO, arg, ft_strlen(arg));

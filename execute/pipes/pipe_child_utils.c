@@ -12,11 +12,11 @@
 
 #include "../../main/minishell.h"
 
-void	setup_and_execute_child(t_process_pipeline_context *proc_ctx, int i)
+void	setup_child(t_process_pipe_ctx *proc_ctx, int i)
 {
-	t_pipe_child_context	ctx;
-	t_pipe_child_params		params;
-	t_pipeline_cleanup		cleanup;
+	t_child_ctx		ctx;
+	t_child_params	params;
+	t_pipe_cleaner	cleanup;
 
 	ctx.pipes = proc_ctx->pipes;
 	ctx.cmd_index = i;
@@ -35,7 +35,7 @@ void	setup_and_execute_child(t_process_pipeline_context *proc_ctx, int i)
 	exit(127);
 }
 
-void	setup_pipeline_signals(void)
+void	setup_pipe_signals(void)
 {
 	signal(SIGINT, SIG_IGN);
 	signal(SIGQUIT, SIG_IGN);

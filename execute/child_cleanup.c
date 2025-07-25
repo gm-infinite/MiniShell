@@ -18,7 +18,7 @@ void	free_child_memory(char **args, t_shell *shell)
 		free_args(args);
 	if (shell)
 	{
-		free_environment(shell);
+		free_env(shell);
 	}
 }
 
@@ -32,14 +32,14 @@ void	free_heredoc_child_memory(t_shell *shell, t_heredoc_params *params)
 		free(params->delimiter);
 	if (shell)
 	{
-		free_environment(shell);
+		free_env(shell);
 		free_split(&shell->split_input);
 		free(shell->current_input);
 	}
 }
 
 void	free_child_pipeline_memory(char **args, t_shell *shell,
-	t_pipeline_cleanup *cleanup)
+	t_pipe_cleaner *cleanup)
 {
 	int	i;
 
@@ -48,7 +48,7 @@ void	free_child_pipeline_memory(char **args, t_shell *shell,
 	if (shell)
 	{
 		free_split(&shell->split_input);
-		free_environment(shell);
+		free_env(shell);
 		free(shell->current_input);
 	}
 	if (cleanup)

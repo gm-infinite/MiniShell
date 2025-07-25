@@ -53,7 +53,7 @@ static void	finalize_new_envp(char **new_envp, char *new_var, t_shell *shell)
 	shell->envp = new_envp;
 }
 
-int	create_new_env_var(char *var_name, char *value, t_shell *shell)
+int	new_env_var(char *var_name, char *value, t_shell *shell)
 {
 	char	**new_envp;
 	char	*new_var;
@@ -71,7 +71,7 @@ int	create_new_env_var(char *var_name, char *value, t_shell *shell)
 	return (0);
 }
 
-int	create_env_var_no_value(char *var_name, t_shell *shell)
+int	new_empty_envvar(char *var_name, t_shell *shell)
 {
 	char	**new_envp;
 	char	*new_var;

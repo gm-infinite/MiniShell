@@ -45,7 +45,7 @@ static void	print_syntax_error(char *token)
 	write(STDERR_FILENO, "'\n", 2);
 }
 
-int	check_operator_syntax_errors(t_split split)
+int	check_op_errs(t_split split)
 {
 	int		i;
 	char	*last_token;
@@ -70,7 +70,7 @@ int	check_operator_syntax_errors(t_split split)
 	return (1);
 }
 
-int	check_parentheses_syntax_errors(t_split split)
+int	check_par_errs(t_split split)
 {
 	int	i;
 

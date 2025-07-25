@@ -67,10 +67,10 @@ int	heredoc_pipe(t_pipe_ctx *pipeline_ctx)
 	return (0);
 }
 
-int	fork_pipeline_child(t_pipe_ctx *pipeline_ctx, int i)
+int	fork_pipe_child(t_pipe_ctx *pipeline_ctx, int i)
 {
-	t_pipe_child_context		ctx;
-	t_pipe_child_redir_params	params;
+	t_child_ctx				ctx;
+	t_child_redir_params	params;
 
 	pipeline_ctx->pids[i] = fork();
 	if (pipeline_ctx->pids[i] == -1)

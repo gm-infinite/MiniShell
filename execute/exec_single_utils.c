@@ -14,7 +14,7 @@
 #include "../main/minishell.h"
 #include "../e-libft/libft.h"
 
-int	handle_executable_validation(char **args, char *executable)
+int	validate_exec(char **args, char *executable)
 {
 	if (!executable)
 		return (handle_executable_not_found(args));

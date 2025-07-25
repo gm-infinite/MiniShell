@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-void	init_environment(t_shell *shell, char **envp)
+void	init_env(t_shell *shell, char **envp)
 {
 	int	i;
 	int	count;
@@ -40,7 +40,7 @@ void	init_environment(t_shell *shell, char **envp)
 	shell->envp[i] = NULL;
 }
 
-void	free_environment(t_shell *shell)
+void	free_env(t_shell *shell)
 {
 	int	i;
 

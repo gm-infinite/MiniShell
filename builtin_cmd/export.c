@@ -75,7 +75,7 @@ static int	process_export_args(char **args, t_shell *shell)
 	{
 		if (args[i][0] == '-')
 		{
-			print_option_error(args[i], shell);
+			option_error(args[i], shell);
 			return (2);
 		}
 		eq_pos = ft_strchr(args[i], '=');

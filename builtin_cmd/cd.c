@@ -21,11 +21,11 @@ static int	path_error_checking(char **args, char **path, char **home,
 		return (1);
 	}
 	if (!args[1] || (args[1][0] == '~' && args[1][1] == '\0'))
-		return (handle_home_path(path, home, shell));
+		return (home_path(path, home, shell));
 	else if (args[1][0] == '-' && args[1][1] == '\0')
-		return (handle_oldpwd_path(path, shell));
+		return (oldpwd_path(path, shell));
 	else if (ft_strncmp(args[1], "--", 2) == 0 && args[1][2] == '\0')
-		return (handle_home_path(path, home, shell));
+		return (home_path(path, home, shell));
 	else
 		*path = args[1];
 	return (0);

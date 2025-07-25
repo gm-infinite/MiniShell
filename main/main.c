@@ -63,7 +63,7 @@ static void	start_shell(t_shell *shell)
 		}
 		free(shell->current_input);
 	}
-	free_environment(shell);
+	free_env(shell);
 	rl_clear_history();
 	exit(shell->exit_code);
 }
@@ -75,7 +75,7 @@ int	main(int argc, char **argv, char **envp)
 	(void)argc;
 	(void)argv;
 	shell_init(&shell);
-	init_environment(&shell, envp);
+	init_env(&shell, envp);
 	start_shell(&shell);
 	return (0);
 }

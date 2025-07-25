@@ -55,7 +55,7 @@ static int	process_redirections_loop(char **args, t_redir_fds *fds,
 	return (0);
 }
 
-char	**parse_redirections(t_split split, t_redir_fds *fds, t_shell *shell)
+char	**parse_redirs(t_split split, t_redir_fds *fds, t_shell *shell)
 {
 	char		**args;
 	char		**clean_args;
@@ -82,7 +82,7 @@ char	**parse_redirections(t_split split, t_redir_fds *fds, t_shell *shell)
 	return (clean_args);
 }
 
-static int	handle_redirected_execution(redir_exec_ctx *ctx)
+static int	handle_redirected_execution(t_redir_exec_ctx *ctx)
 {
 	int	result;
 
@@ -105,7 +105,7 @@ static int	handle_redirected_execution(redir_exec_ctx *ctx)
 
 int	execute_with_redirections(t_split split, t_shell *shell)
 {
-	redir_exec_ctx	ctx;
+	t_redir_exec_ctx	ctx;
 	t_redir_fds		fds;
 
 	ctx.input_fd = STDIN_FILENO;
@@ -115,7 +115,7 @@ int	execute_with_redirections(t_split split, t_shell *shell)
 	fds.input_fd = &ctx.input_fd;
 	fds.output_fd = &ctx.output_fd;
 	fds.stderr_fd = &ctx.stderr_fd;
-	ctx.args = parse_redirections(split, &fds, shell);
+	ctx.args = parse_redirs(split, &fds, shell);
 	if (!ctx.args)
 		return (1);
 	return (handle_redirected_execution(&ctx));

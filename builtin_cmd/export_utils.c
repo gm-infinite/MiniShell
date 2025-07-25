@@ -48,5 +48,5 @@ int	set_env_var(char *var_name, char *value, t_shell *shell)
 		}
 		i++;
 	}
-	return (create_new_env_var(var_name, value, shell));
+	return (new_env_var(var_name, value, shell));
 }

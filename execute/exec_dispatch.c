@@ -21,12 +21,12 @@ static int	execute_args_array(t_split split, t_shell *shell)
 	args = split_to_args(split);
 	if (!args)
 		return (1);
-	args = expand_args_variables(args, shell);
-	reconstructed = reconstruct_args_string(args);
+	args = arg_expander_loop(args, shell);
+	reconstructed = reconstructed_args(args);
 	free_args(args);
 	if (!reconstructed)
 		return (1);
-	reconstructed = apply_wildcard_expansion(reconstructed);
+	reconstructed = wildcard_expand(reconstructed);
 	exit_status = execute_expanded_args(reconstructed, shell);
 	free(reconstructed);
 	return (exit_status);
@@ -61,7 +61,7 @@ int	execute_command(t_split split, t_shell *shell)
 		return (syntax_error);
 	}
 	has_pipes = count_pipes(split);
-	has_redir = has_redirections(split);
+	has_redir = has_redirs(split);
 	exit_status = dispatch_execution(split, shell, has_pipes, has_redir);
 	shell->past_exit_status = exit_status;
 	return (exit_status);

@@ -12,7 +12,7 @@
 
 #include "../../main/minishell.h"
 
-int	is_and_or_operator(char *str)
+int	is_andor(char *str)
 {
 	if (!str)
 		return (0);

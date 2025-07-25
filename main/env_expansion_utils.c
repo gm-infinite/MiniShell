@@ -24,7 +24,7 @@ void	init_expand_holder(t_expand *holder, char *tilde_expanded)
 	holder->var_len = 0;
 }
 
-void	process_expansion_loop(t_expand *holder, t_shell *shell)
+void	expander_loop(t_expand *holder, t_shell *shell)
 {
 	int	expansion_result;
 
@@ -32,7 +32,7 @@ void	process_expansion_loop(t_expand *holder, t_shell *shell)
 	{
 		if (holder->result[holder->indx] == '$')
 		{
-			expansion_result = handle_dollar_expansion(holder, shell);
+			expansion_result = expand_dollar(holder, shell);
 			if (expansion_result == 0)
 				break ;
 			if (expansion_result == 1)

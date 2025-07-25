@@ -22,7 +22,7 @@ int	validate_and_process_args(char **args, t_shell *shell)
 	i = 0;
 	while (args[i])
 	{
-		expanded = expand_variables_quoted(args[i], shell);
+		expanded = expandvar_quoted(args[i], shell);
 		if (expanded && expanded != args[i])
 		{
 			free(args[i]);

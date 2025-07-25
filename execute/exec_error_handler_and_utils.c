@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   exec_error_handler_and_utils.c                     :+:      :+:    :+:   */
+/*   exec_err_handler_and_utils.c                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -12,10 +12,10 @@
 
 #include "../main/minishell.h"
 
-t_pipe_setup_context	get_pipe_ctx(int cmd_index, int cmd_count,
+t_pipe_setup_ctx	get_pipe_ctx(int cmd_index, int cmd_count,
 	int **pipes, int *fd_values)
 {
-	t_pipe_setup_context	ret;
+	t_pipe_setup_ctx	ret;
 
 	ret.cmd_count = cmd_count;
 	ret.cmd_index = cmd_index;
@@ -25,10 +25,10 @@ t_pipe_setup_context	get_pipe_ctx(int cmd_index, int cmd_count,
 	return (ret);
 }
 
-t_pipeline_cleanup	get_cleanup(t_split *commands, int **pipes,
+t_pipe_cleaner	get_cleanup(t_split *commands, int **pipes,
 		pid_t *pids, int cmd_count)
 {
-	t_pipeline_cleanup	ret;
+	t_pipe_cleaner	ret;
 
 	ret.commands = commands;
 	ret.pipes = pipes;
@@ -37,18 +37,18 @@ t_pipeline_cleanup	get_cleanup(t_split *commands, int **pipes,
 	return (ret);
 }
 
-void	write_exec_error_message(char *cmd, char *message)
+void	exec_err(char *cmd, char *message)
 {
 	write(STDERR_FILENO, cmd, ft_strlen(cmd));
 	write(STDERR_FILENO, message, ft_strlen(message));
 }
 
-void	handle_executable_error_and_exit(char **args, char *executable,
+void	handle_error_and_exit(char **args, char *executable,
 		t_shell *shell)
 {
 	if (!executable)
 	{
-		write_exec_error_message(args[0], ": command not found\n");
+		exec_err(args[0], ": command not found\n");
 		free_child_memory(args, shell);
 		exit(127);
 	}
@@ -61,12 +61,12 @@ void	handle_executable_error_and_exit(char **args, char *executable,
 	}
 }
 
-void	handle_pipeline_executable_error(char **args, char *executable,
-		t_shell *shell, t_pipeline_cleanup *cleanup)
+void	error_pipe_exec(char **args, char *executable,
+		t_shell *shell, t_pipe_cleaner *cleanup)
 {
 	if (!executable)
 	{
-		write_exec_error_message(args[0], ": command not found\n");
+		exec_err(args[0], ": command not found\n");
 		free_child_pipeline_memory(args, shell, cleanup);
 		exit(127);
 	}

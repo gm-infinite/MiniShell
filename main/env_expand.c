@@ -17,7 +17,7 @@ static int	handle_question_mark(t_expand *holder, t_shell *shell)
 	holder->var_value = ft_itoa(shell->past_exit_status);
 	if (!holder->var_value)
 		return (0);
-	if (!replace_var_with_value(holder, 3))
+	if (!replacevar(holder, 3))
 		return (0);
 	return (1);
 }
@@ -33,7 +33,7 @@ static int	process_var_expansion_internal(t_expand *holder, t_shell *shell)
 		holder->var_value = get_env_value(holder->var_name, shell);
 		if (!holder->var_value)
 			holder->var_value = "";
-		if (!replace_var_with_value(holder, 0))
+		if (!replacevar(holder, 0))
 		{
 			free(holder->var_name);
 			return (0);
@@ -55,7 +55,7 @@ static int	handle_var_name_expansion(t_expand *holder, t_shell *shell)
 	return (1);
 }
 
-int	handle_dollar_expansion(t_expand *holder, t_shell *shell)
+int	expand_dollar(t_expand *holder, t_shell *shell)
 {
 	if (holder->indx + 1 >= (int)ft_strlen(holder->result))
 	{
@@ -64,9 +64,9 @@ int	handle_dollar_expansion(t_expand *holder, t_shell *shell)
 	}
 	holder->var_start = &holder->result[holder->indx + 1];
 	if (*holder->var_start == '"')
-		return (handle_double_quote_expansion(holder));
+		return (expand_double_q(holder));
 	if (*holder->var_start == '\'')
-		return (handle_single_quote_expansion(holder));
+		return (expand_single_q(holder));
 	if (*holder->var_start == '?')
 	{
 		if (!handle_question_mark(holder, shell))
@@ -79,17 +79,17 @@ int	handle_dollar_expansion(t_expand *holder, t_shell *shell)
 	return (handle_special_chars(holder));
 }
 
-char	*expand_variables(char *str, t_shell *shell)
+char	*expandvar(char *str, t_shell *shell)
 {
 	t_expand	holder;
 	char		*tilde_expanded;
 
 	if (!str)
 		return (NULL);
-	tilde_expanded = expand_tilde(str, shell);
+	tilde_expanded = tilde(str, shell);
 	if (!tilde_expanded)
 		return (NULL);
 	init_expand_holder(&holder, tilde_expanded);
-	process_expansion_loop(&holder, shell);
+	expander_loop(&holder, shell);
 	return (holder.result);
 }

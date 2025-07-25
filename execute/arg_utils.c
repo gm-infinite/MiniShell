@@ -12,7 +12,7 @@
 
 #include "../main/minishell.h"
 
-int	has_redirections(t_split split)
+int	has_redirs(t_split split)
 {
 	int	i;
 

@@ -34,7 +34,7 @@ void	safe_exit(t_shell *shell)
 		free(shell->current_input);
 	if (shell->split_input.start != NULL)
 		free_split(&(shell->split_input));
-	free_environment(shell);
+	free_env(shell);
 	rl_clear_history();
 	printf("exit\n");
 	exit(shell->past_exit_status);

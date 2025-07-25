@@ -70,7 +70,7 @@ static t_split	handle_parentheses_removal(t_split cmd, t_paren_info info,
 	if (info.first_idx == 0 && info.last_idx == cmd.size - 1)
 	{
 		cut_out_par(&cmd);
-		return (process_parentheses_in_split(cmd, shell));
+		return (paren_in_split(cmd, shell));
 	}
 	cmd = remove_opening_paren(cmd, info.first_idx);
 	if (info.first_idx < info.last_idx)
@@ -82,10 +82,10 @@ static t_split	handle_parentheses_removal(t_split cmd, t_paren_info info,
 		cmd.start[info.last_idx][last_len - 1] = '\0';
 	else
 		cmd.size--;
-	return (process_parentheses_in_split(cmd, shell));
+	return (paren_in_split(cmd, shell));
 }
 
-t_split	process_parentheses_in_split(t_split cmd, t_shell *shell)
+t_split	paren_in_split(t_split cmd, t_shell *shell)
 {
 	t_paren_info	info;
 

@@ -12,7 +12,7 @@
 
 #include "../../main/minishell.h"
 
-int	is_single_parentheses_string(char *start, char *end)
+int	is_singlepar(char *start, char *end)
 {
 	if (start == end && (size_t)(countchr_str(start, '(')
 		+ countchr_str(start, ')')) == ft_strlen(start))
@@ -20,7 +20,7 @@ int	is_single_parentheses_string(char *start, char *end)
 	return (0);
 }
 
-void	remove_outer_parentheses(char *start, char *end)
+void	remove_outer_par(char *start, char *end)
 {
 	int	start_len;
 
@@ -33,7 +33,7 @@ void	remove_outer_parentheses(char *start, char *end)
 	}
 }
 
-void	cleanup_empty_elements(t_split *split)
+void	clean_empties(t_split *split)
 {
 	char	*start;
 	char	*end;

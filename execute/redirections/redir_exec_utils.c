@@ -58,7 +58,7 @@ static void	restore_builtin_fds(int *saved_fds)
 	}
 }
 
-int	execute_builtin_with_redirect(redir_exec_ctx *ctx)
+int	execute_builtin_with_redirect(t_redir_exec_ctx *ctx)
 {
 	int	saved_fds[3];
 	int	exit_status;

@@ -12,6 +12,27 @@
 
 #include "../../main/minishell.h"
 
+static void	init_expansion_vars(int *vars)
+{
+	vars[0] = 0;
+	vars[1] = 0;
+	vars[2] = 0;
+	vars[3] = 0;
+}
+
+static char	*handle_single_quote_case(char *result, int *i,
+		int *in_single_quotes, int in_double_quotes)
+{
+	if (!in_double_quotes)
+	{
+		result = handle_quote_char(result, '\'');
+		*in_single_quotes = !*in_single_quotes;
+		(*i)++;
+		return (result);
+	}
+	return (NULL);
+}
+
 static char	*process_quotes_and_expansions(char *str, char *result, int *vars)
 {
 	char	*temp_result;
@@ -67,7 +88,7 @@ char	*process_q_expand(char *str, t_shell *shell)
 
 	if (!str)
 		return (NULL);
-	result = init_expansion_result();
+	result = ft_calloc(1, 1);
 	if (!result)
 		return (NULL);
 	init_expansion_vars(vars);

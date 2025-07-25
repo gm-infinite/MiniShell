@@ -24,19 +24,6 @@ char	*handle_quote_char(char *result, char quote_char)
 	return (temp);
 }
 
-char	*handle_single_quote_case(char *result, int *i,
-		int *in_single_quotes, int in_double_quotes)
-{
-	if (!in_double_quotes)
-	{
-		result = handle_quote_char(result, '\'');
-		*in_single_quotes = !*in_single_quotes;
-		(*i)++;
-		return (result);
-	}
-	return (NULL);
-}
-
 char	*handle_double_quote_case(char *result, int *i,
 		int *in_double_quotes, int in_single_quotes)
 {
@@ -48,17 +35,4 @@ char	*handle_double_quote_case(char *result, int *i,
 		return (result);
 	}
 	return (NULL);
-}
-
-char	*init_expansion_result(void)
-{
-	return (ft_calloc(1, 1));
-}
-
-void	init_expansion_vars(int *vars)
-{
-	vars[0] = 0;
-	vars[1] = 0;
-	vars[2] = 0;
-	vars[3] = 0;
 }

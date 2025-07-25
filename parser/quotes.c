@@ -40,7 +40,7 @@ char	*process_quotes(char *str, t_shell *shell)
 
 	if (!str)
 		return (NULL);
-	expanded = expand_with_quotes(str, shell);
+	expanded = expandvar_q(str, shell);
 	if (!expanded)
 		return (NULL);
 	result = remove_quotes_from_string(expanded);

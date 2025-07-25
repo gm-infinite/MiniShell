@@ -13,7 +13,7 @@
 #include "../main/minishell.h"
 
 static void	execute_pipeline_external_command(char **args, char *executable,
-		t_shell *shell, t_pipeline_cleanup *cleanup)
+		t_shell *shell, t_pipe_cleaner *cleanup)
 {
 	execve(executable, args, shell->envp);
 	perror("execve");
@@ -22,7 +22,7 @@ static void	execute_pipeline_external_command(char **args, char *executable,
 }
 
 static void	execute_child_command_with_pipeline_cleanup(char **args,
-			t_shell *shell, t_pipeline_cleanup *cleanup)
+			t_shell *shell, t_pipe_cleaner *cleanup)
 {
 	char	*executable;
 	int		builtin_result;
@@ -34,7 +34,7 @@ static void	execute_child_command_with_pipeline_cleanup(char **args,
 		exit(builtin_result);
 	}
 	executable = find_executable(args[0], shell);
-	handle_pipeline_executable_error(args, executable, shell, cleanup);
+	error_pipe_exec(args, executable, shell, cleanup);
 	execute_pipeline_external_command(args, executable, shell, cleanup);
 }
 
@@ -48,13 +48,13 @@ static t_redir_fds	get_fds(int *fd_values)
 	return (ret);
 }
 
-void	execute_pipe_child_with_redirections(t_pipe_child_redir_params *params)
+void	execute_pipe_child_with_redirections(t_child_redir_params *params)
 {
-	char					**args;
-	t_redir_fds				fds;
-	t_pipe_setup_context	p;
-	int						fd_values[3];
-	t_pipeline_cleanup		cleanup;
+	char				**args;
+	t_redir_fds			fds;
+	t_pipe_setup_ctx	p;
+	int					fd_values[3];
+	t_pipe_cleaner		cleanup;
 
 	fd_values[0] = STDIN_FILENO;
 	fd_values[1] = STDOUT_FILENO;
@@ -63,7 +63,7 @@ void	execute_pipe_child_with_redirections(t_pipe_child_redir_params *params)
 	p = get_pipe_ctx(params->ctx->cmd_index, params->ctx->cmd_count,
 			params->ctx->pipes, fd_values);
 	setup_pipe_fds(&p);
-	args = parse_redirections(params->cmd, &fds, params->shell);
+	args = parse_redirs(params->cmd, &fds, params->shell);
 	cleanup = get_cleanup(params->commands, p.pipes, params->pids, p.cmd_count);
 	if (!args)
 	{

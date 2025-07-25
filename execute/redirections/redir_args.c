@@ -41,7 +41,7 @@ void	process_variable_expansion(char **args, t_shell *shell)
 	i = 0;
 	while (args[i])
 	{
-		expanded = expand_variables(args[i], shell);
+		expanded = expandvar(args[i], shell);
 		if (expanded && expanded != args[i])
 		{
 			free(args[i]);

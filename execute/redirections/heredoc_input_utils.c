@@ -12,7 +12,7 @@
 
 #include "../../main/minishell.h"
 
-char	*read_heredoc_input_line(void)
+char	*read_heredoc(void)
 {
 	char	*line;
 

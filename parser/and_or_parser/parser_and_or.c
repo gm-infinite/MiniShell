@@ -14,8 +14,8 @@
 
 static int	handle_syntax_validation(t_shell *shell, t_split split)
 {
-	if (!check_operator_syntax_errors(split)
-		|| !check_parentheses_syntax_errors(split)
+	if (!check_op_errs(split)
+		|| !check_par_errs(split)
 		|| paranthesis_parity_check(split) == 0)
 	{
 		if (paranthesis_parity_check(split) == 0 && !shell->in_subshell)
@@ -50,13 +50,13 @@ void	cut_out_par(t_split *split)
 
 	start = split->start[0];
 	end = split->start[split->size - 1];
-	if (is_single_parentheses_string(start, end))
+	if (is_singlepar(start, end))
 	{
 		split->size--;
 		return ;
 	}
-	remove_outer_parentheses(start, end);
-	cleanup_empty_elements(split);
+	remove_outer_par(start, end);
+	clean_empties(split);
 }
 
 static void	parse_and_or(t_shell *shell, t_split split, char *c_i)
@@ -72,7 +72,7 @@ static void	parse_and_or(t_shell *shell, t_split split, char *c_i)
 		if (vars[2] < split.size)
 			vars[1] += countchr_not_quote(split.start[vars[2]], '(');
 		if (vars[1] == 0 && (vars[2] == split.size
-				|| is_and_or_operator(split.start[vars[2]])))
+				|| is_andor(split.start[vars[2]])))
 			process_segment(shell, split, vars, c_i);
 		if (vars[2] < split.size)
 			vars[1] -= countchr_not_quote(split.start[vars[2]], ')');

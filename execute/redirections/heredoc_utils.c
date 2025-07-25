@@ -19,7 +19,7 @@ static void	process_and_write_line(char *line, int pipe_fd, t_shell *shell,
 
 	if (should_expand && shell)
 	{
-		expanded_line = expand_variables(line, shell);
+		expanded_line = expandvar(line, shell);
 		if (expanded_line)
 		{
 			write_line_to_pipe(pipe_fd, expanded_line);
@@ -39,7 +39,7 @@ static int	process_heredoc_loop(char *delimiter, int pipe_fd, t_shell *shell,
 
 	while (1)
 	{
-		line = read_heredoc_input_line();
+		line = read_heredoc();
 		if (!line || is_delimiter_match(line, delimiter))
 		{
 			if (line)

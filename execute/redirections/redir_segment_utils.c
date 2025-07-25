@@ -54,7 +54,7 @@ static char	*process_expandable_segment(char *result, char *str, int *range,
 		free(result);
 		return (NULL);
 	}
-	expanded = expand_variables(segment, shell);
+	expanded = expandvar(segment, shell);
 	free(segment);
 	return (join_expanded_segment(result, expanded));
 }

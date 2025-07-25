@@ -83,7 +83,7 @@ static int	process_single_quote_content(t_expand *holder, int i, char *content)
 	return (0);
 }
 
-int	handle_single_quote_expansion(t_expand *holder)
+int	expand_single_q(t_expand *holder)
 {
 	int		i;
 	char	*content;
@@ -109,7 +109,7 @@ int	handle_single_quote_expansion(t_expand *holder)
 	return (1);
 }
 
-int	handle_double_quote_expansion(t_expand *holder)
+int	expand_double_q(t_expand *holder)
 {
 	int		i;
 	char	*content;

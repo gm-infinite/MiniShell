@@ -53,7 +53,7 @@ static void	process_and_write_heredoc_line(int temp_fd, char *line,
 
 	if (should_expand && shell)
 	{
-		expanded_line = expand_variables(line, shell);
+		expanded_line = expandvar(line, shell);
 		if (expanded_line)
 		{
 			write(temp_fd, expanded_line, ft_strlen(expanded_line));

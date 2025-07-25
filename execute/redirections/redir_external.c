@@ -56,7 +56,7 @@ static int	wait_for_child_exit(pid_t pid)
 	return (exit_status);
 }
 
-static void	child_setup_and_exec(redir_exec_ctx *ctx, char *executable)
+static void	child_setup_and_exec(t_redir_exec_ctx *ctx, char *executable)
 {
 	setup_child_signals();
 	setup_child_redirs(ctx->input_fd, ctx->output_fd, ctx->stderr_fd);
@@ -66,7 +66,7 @@ static void	child_setup_and_exec(redir_exec_ctx *ctx, char *executable)
 	exit(127);
 }
 
-int	execute_external_with_redirect(redir_exec_ctx *ctx)
+int	execute_external_with_redirect(t_redir_exec_ctx *ctx)
 {
 	char		*executable;
 	pid_t		pid;

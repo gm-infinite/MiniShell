@@ -48,7 +48,7 @@ static void	write_pipe_error_message(char *cmd, char *message)
 }
 
 void	execute_pipe_external_command(char **args, t_shell *shell,
-	t_pipeline_cleanup *cleanup)
+	t_pipe_cleaner *cleanup)
 {
 	char	*executable;
 

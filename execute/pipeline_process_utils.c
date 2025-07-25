@@ -20,7 +20,7 @@ static void	free_everything_in_child(char *delim, t_heredoc_sub heresub,
 	i = -1;
 	free(delim);
 	free_split(&(pipeline_ctx->shell->split_input));
-	free_environment(pipeline_ctx->shell);
+	free_env(pipeline_ctx->shell);
 	free(temp_filename);
 	free(pipeline_ctx->shell->current_input);
 	free_args(heresub.args);

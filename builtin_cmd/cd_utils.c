@@ -12,7 +12,7 @@
 
 #include "../main/minishell.h"
 
-int	handle_home_path(char **path, char **home, t_shell *shell)
+int	home_path(char **path, char **home, t_shell *shell)
 {
 	*home = get_env_value("HOME", shell);
 	if (!(*home))
@@ -24,7 +24,7 @@ int	handle_home_path(char **path, char **home, t_shell *shell)
 	return (0);
 }
 
-int	handle_oldpwd_path(char **path, t_shell *shell)
+int	oldpwd_path(char **path, t_shell *shell)
 {
 	*path = get_env_value("OLDPWD", shell);
 	if (!(*path))

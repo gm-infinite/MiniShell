@@ -12,23 +12,23 @@
 
 #include "../main/minishell.h"
 
-char	*expand_variables_quoted(char *str, t_shell *shell)
+char	*expandvar_quoted(char *str, t_shell *shell)
 {
 	char	*result;
 	char	*tilde_expanded;
 
 	if (!str)
 		return (NULL);
-	tilde_expanded = expand_tilde(str, shell);
+	tilde_expanded = tilde(str, shell);
 	if (!tilde_expanded)
 		return (NULL);
-	result = expand_with_quotes(tilde_expanded, shell);
+	result = expandvar_q(tilde_expanded, shell);
 	if (result != tilde_expanded && tilde_expanded)
 		free(tilde_expanded);
 	return (result);
 }
 
-char	**expand_args_variables(char **args, t_shell *shell)
+char	**arg_expander_loop(char **args, t_shell *shell)
 {
 	int		i;
 	char	*expanded;
@@ -36,7 +36,7 @@ char	**expand_args_variables(char **args, t_shell *shell)
 	i = -1;
 	while (args[++i])
 	{
-		expanded = expand_variables_quoted(args[i], shell);
+		expanded = expandvar_quoted(args[i], shell);
 		if (expanded != args[i])
 		{
 			free(args[i]);
@@ -46,7 +46,7 @@ char	**expand_args_variables(char **args, t_shell *shell)
 	return (args);
 }
 
-char	*reconstruct_args_string(char **args)
+char	*reconstructed_args(char **args)
 {
 	char	*reconstructed;
 	char	*temp;
@@ -71,7 +71,7 @@ char	*reconstruct_args_string(char **args)
 	return (reconstructed);
 }
 
-char	*apply_wildcard_expansion(char *reconstructed)
+char	*wildcard_expand(char *reconstructed)
 {
 	char	*wildcard_expanded;
 

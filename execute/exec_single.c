@@ -75,7 +75,7 @@ static int	execute_external_command(char **args, t_shell *shell)
 	int		validation_result;
 
 	executable = find_executable(args[0], shell);
-	validation_result = handle_executable_validation(args, executable);
+	validation_result = validate_exec(args, executable);
 	if (validation_result != 0)
 	{
 		if (executable)

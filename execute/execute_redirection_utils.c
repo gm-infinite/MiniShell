@@ -72,7 +72,7 @@ void	execute_child_command(char **args, t_shell *shell)
 		exit(builtin_result);
 	}
 	executable = find_executable(args[0], shell);
-	handle_executable_error_and_exit(args, executable, shell);
+	handle_error_and_exit(args, executable, shell);
 	execute_external_command(args, executable, shell);
 }
 

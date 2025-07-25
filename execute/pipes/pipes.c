@@ -29,7 +29,7 @@ static int	handle_single_command(t_split *commands, t_shell *shell)
 	return (exit_status);
 }
 
-static int	create_pipeline_processes(t_process_pipeline_context *proc_ctx)
+static int	create_pipeline_processes(t_process_pipe_ctx *proc_ctx)
 {
 	int	i;
 	int	exit_status;
@@ -46,7 +46,7 @@ static int	create_pipeline_processes(t_process_pipeline_context *proc_ctx)
 			break ;
 		}
 		else if (proc_ctx->pids[i] == 0)
-			setup_and_execute_child(proc_ctx, i);
+			setup_child(proc_ctx, i);
 		i++;
 	}
 	return (exit_status);
@@ -73,13 +73,13 @@ static int	allocate_pipeline_resources(t_split *commands, int ***pipes,
 static int	execute_multi_command_pipeline(t_split *commands, int cmd_count,
 		t_shell *shell)
 {
-	t_process_pipeline_context	proc_ctx;
-	int							exit_status;
+	t_process_pipe_ctx	proc_ctx;
+	int					exit_status;
 
 	if (!allocate_pipeline_resources(commands, &proc_ctx.pipes,
 			&proc_ctx.pids, cmd_count))
 		return (1);
-	setup_pipeline_signals();
+	setup_pipe_signals();
 	proc_ctx.commands = commands;
 	proc_ctx.cmd_count = cmd_count;
 	proc_ctx.shell = shell;

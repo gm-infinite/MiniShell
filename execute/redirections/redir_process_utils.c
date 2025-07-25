@@ -57,7 +57,7 @@ char	*process_heredoc_delimiter(char *filename)
 	return (result);
 }
 
-int	handle_heredoc_file_cleanup(char *processed_filename, t_redir_fds *fds)
+int	clean_heredoc(char *processed_filename, t_redir_fds *fds)
 {
 	*fds->input_fd = open(processed_filename, O_RDONLY);
 	if (*fds->input_fd == -1)

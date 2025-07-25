@@ -12,7 +12,7 @@
 
 #include "../main/minishell.h"
 
-void	print_option_error(char *arg, t_shell *shell)
+void	option_error(char *arg, t_shell *shell)
 {
 	write(STDERR_FILENO, "bash: export: ", 14);
 	write(STDERR_FILENO, arg, ft_strlen(arg));
@@ -31,7 +31,7 @@ int	process_assign_export(char *arg, char *eq_pos, t_shell *shell)
 		return (1);
 	if (!is_valid_var_name(var_name))
 	{
-		print_export_error(arg);
+		export_error(arg);
 		free(var_name);
 		return (1);
 	}
@@ -58,7 +58,7 @@ int	process_append_export(char *arg, char *eq_pos, t_shell *shell)
 		return (1);
 	if (!is_valid_var_name(var_name))
 	{
-		print_export_error(arg);
+		export_error(arg);
 		free(var_name);
 		return (1);
 	}
@@ -104,11 +104,11 @@ int	process_single_export(char *arg, t_shell *shell)
 
 	if (!is_valid_var_name(arg))
 	{
-		print_export_error(arg);
+		export_error(arg);
 		return (1);
 	}
 	len = ft_strlen(arg);
 	if (check_existing_var(arg, len, shell))
 		return (0);
-	return (create_env_var_no_value(arg, shell));
+	return (new_empty_envvar(arg, shell));
 }

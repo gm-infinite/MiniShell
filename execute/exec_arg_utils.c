@@ -63,7 +63,7 @@ void	process_and_check_args(char **args, t_shell *shell)
 	i = -1;
 	while (args[++i])
 	{
-		expanded = expand_variables_quoted(args[i], shell);
+		expanded = expandvar_quoted(args[i], shell);
 		if (expanded != args[i])
 		{
 			free(args[i]);

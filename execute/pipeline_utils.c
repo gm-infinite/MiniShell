@@ -85,7 +85,7 @@ int	exec_pipe_child(t_pipe_ctx *pipeline_ctx)
 	i = -1;
 	while (++i < pipeline_ctx->cmd_count)
 	{
-		if (fork_pipeline_child(pipeline_ctx, i) != 0)
+		if (fork_pipe_child(pipeline_ctx, i) != 0)
 			return (1);
 	}
 	close_all_pipes(pipeline_ctx->pipes, pipeline_ctx->cmd_count);

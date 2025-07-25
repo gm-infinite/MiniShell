@@ -40,7 +40,7 @@ static void	process_quote_expansion_loop(t_expand *holder, t_shell *shell,
 			*in_double_quotes = !*in_double_quotes;
 		else if (holder->result[holder->indx] == '$' && !*in_single_quotes)
 		{
-			expansion_result = handle_dollar_expansion(holder, shell);
+			expansion_result = expand_dollar(holder, shell);
 			if (expansion_result == 0)
 				break ;
 			if (expansion_result == 1)
@@ -50,7 +50,7 @@ static void	process_quote_expansion_loop(t_expand *holder, t_shell *shell,
 	}
 }
 
-char	*expand_with_quotes(char *str, t_shell *shell)
+char	*expandvar_q(char *str, t_shell *shell)
 {
 	t_expand	holder;
 	char		*tilde_expanded;
@@ -59,7 +59,7 @@ char	*expand_with_quotes(char *str, t_shell *shell)
 
 	if (!str)
 		return (NULL);
-	tilde_expanded = expand_tilde(str, shell);
+	tilde_expanded = tilde(str, shell);
 	if (!tilde_expanded)
 		return (NULL);
 	init_quote_expansion(&holder, tilde_expanded,

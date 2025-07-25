@@ -29,22 +29,22 @@ static char	**process_argument_expansion(char **args, t_shell *shell)
 {
 	char	*reconstructed;
 
-	args = expand_args_variables(args, shell);
-	reconstructed = reconstruct_args_string(args);
+	args = arg_expander_loop(args, shell);
+	reconstructed = reconstructed_args(args);
 	if (!reconstructed)
 	{
 		process_args_quotes(args, shell);
 		return (args);
 	}
-	reconstructed = apply_wildcard_expansion(reconstructed);
+	reconstructed = wildcard_expand(reconstructed);
 	args = execute_expanded_args_split(reconstructed, args, shell);
 	free(reconstructed);
 	return (args);
 }
 
-static t_pipeline_cleanup	cleanup_assignment(t_pipe_child_params *params)
+static t_pipe_cleaner	cleanup_assignment(t_child_params *params)
 {
-	t_pipeline_cleanup	ret;
+	t_pipe_cleaner	ret;
 
 	ret.commands = params->commands;
 	ret.pipes = params->ctx->pipes;
@@ -53,11 +53,11 @@ static t_pipeline_cleanup	cleanup_assignment(t_pipe_child_params *params)
 	return (ret);
 }
 
-static void	execute_pipe_child_process(t_pipe_child_params *params)
+static void	execute_pipe_child_process(t_child_params *params)
 {
-	char				**args;
-	int					builtin_result;
-	t_pipeline_cleanup	cleanup;
+	char			**args;
+	int				builtin_result;
+	t_pipe_cleaner	cleanup;
 
 	args = split_to_args(params->cmd);
 	cleanup = cleanup_assignment(params);
@@ -82,9 +82,9 @@ static void	execute_pipe_child_process(t_pipe_child_params *params)
 		execute_pipe_external_command(args, params->shell, &cleanup);
 }
 
-void	execute_pipe_child(t_pipe_child_params *params)
+void	execute_pipe_child(t_child_params *params)
 {
-	t_pipeline_cleanup	cleanup;
+	t_pipe_cleaner	cleanup;
 
 	cleanup = cleanup_assignment(params);
 	setup_pipe_redirection(params->ctx->cmd_index, params->ctx->cmd_count,

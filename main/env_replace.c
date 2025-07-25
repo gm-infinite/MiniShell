@@ -61,7 +61,7 @@ static void	cleanup_replacement(char *before, char *after, int flags,
 		free(holder->var_value);
 }
 
-int	replace_var_with_value(t_expand *holder, int flags)
+int	replacevar(t_expand *holder, int flags)
 {
 	char	*before;
 	char	*after;

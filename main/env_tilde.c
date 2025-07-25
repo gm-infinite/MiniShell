@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-char	*expand_tilde(char *str, t_shell *shell)
+char	*tilde(char *str, t_shell *shell)
 {
 	char	*home;
 

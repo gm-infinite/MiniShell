@@ -81,7 +81,7 @@ void	close_all_pipes(int **pipes, int cmd_count)
 	}
 }
 
-void	setup_pipe_fds(t_pipe_setup_context *ctx)
+void	setup_pipe_fds(t_pipe_setup_ctx *ctx)
 {
 	if (ctx->cmd_index > 0)
 		*(ctx->input_fd) = ctx->pipes[ctx->cmd_index - 1][0];
