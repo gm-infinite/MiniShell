@@ -6,7 +6,7 @@
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 16:44:37 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/30 17:10:06 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/31 16:03:56 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,5 +44,6 @@ t_redir_fds	get_fds(int *fd_values)
 	ret.input_fd = &fd_values[0];
 	ret.output_fd = &fd_values[1];
 	ret.stderr_fd = &fd_values[2];
+	ret.preprocessed_heredoc = 0;
 	return (ret);
 }

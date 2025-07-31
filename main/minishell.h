@@ -6,7 +6,7 @@
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 11:11:41 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/31 13:58:48 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/31 16:03:38 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,6 +109,7 @@ typedef struct s_redir_fds
 	int	*input_fd;
 	int	*output_fd;
 	int	*stderr_fd;
+	int	preprocessed_heredoc;
 }	t_redir_fds;
 
 typedef struct s_heredoc_params

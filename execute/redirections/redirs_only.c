@@ -6,7 +6,7 @@
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 12:20:46 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/31 09:06:42 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/31 16:18:26 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,6 +93,7 @@ int	execute_with_redirections(t_split split, t_shell *shell)
 	fds.input_fd = &ctx.input_fd;
 	fds.output_fd = &ctx.output_fd;
 	fds.stderr_fd = &ctx.stderr_fd;
+	fds.preprocessed_heredoc = 0;
 	ctx.args = parse_redirs(split, &fds, shell);
 	if (!ctx.args)
 		return (1);

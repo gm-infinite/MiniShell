@@ -6,7 +6,7 @@
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 16:41:24 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/31 13:56:57 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/31 16:04:15 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,7 @@ void execute_child_redir(t_child_redir_params *params)
 
     // Now build our redirection context
     fds = get_fds(fd_values);
+	fds.preprocessed_heredoc = (hfd >= 0);
     p   = get_pipe_ctx(params->ctx->cmd_index,
                        params->ctx->cmd_count,
                        params->ctx->pipes,

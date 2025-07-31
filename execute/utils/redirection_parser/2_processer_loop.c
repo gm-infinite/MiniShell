@@ -6,7 +6,7 @@
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 14:56:59 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/31 14:05:01 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/31 16:04:39 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ int process_single_redir(int i, t_redir_fds *fds, t_shell *shell,
 
     // If this is a here-doc AND stdin was pre-set by preprocess_heredocs,
     // skip re-processing it in the child.
-    if (redirect_info.redirect_type == 1 && *fds->input_fd != STDIN_FILENO)
+    if (redirect_info.redirect_type == 1 && fds->preprocessed_heredoc)
 	{
 		if (redirect_info.processed_filename != params->args[i+1])
         	free(redirect_info.processed_filename);

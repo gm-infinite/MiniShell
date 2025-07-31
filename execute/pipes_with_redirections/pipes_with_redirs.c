@@ -6,7 +6,7 @@
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 12:33:52 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/31 13:55:32 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/31 16:11:20 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,27 +14,58 @@
 
 static int preprocess_heredocs(t_pipe_ctx *ctx)
 {
+    // 1) allocate and initialize
     ctx->heredoc_fds = malloc(sizeof(int) * ctx->cmd_count);
     if (!ctx->heredoc_fds) return 0;
+    for (int i = 0; i < ctx->cmd_count; ++i)
+        ctx->heredoc_fds[i] = -1;
 
-    for (int i = 0; i < ctx->cmd_count; ++i) {
-        char **args = ctx->commands[i].start;
-        int fd = -1;
-        for (int j = 0; args[j]; j++) {
-            if (is_redirection(args[j]) == 1) {
-                // args[j+1] is the delimiter
-                char *delim = process_heredoc_delimiter(args[j+1]);
-                int should_expand = !delimiter_was_quoted(args[j+1]);
-                // call your working pipe-based handler directly
-                if (handle_here_doc(&fd, ctx->shell, should_expand,
-                                    &(t_heredoc_params){delim,args,NULL}) != 0) {
-                    free(delim);
-                    return 0; // error
+    // 2) walk each command
+    for (int i = 0; i < ctx->cmd_count; ++i)
+    {
+        char **tokens = ctx->commands[i].start;
+        int    sz     = ctx->commands[i].size;
+        int    fd     = -1;
+
+        for (int j = 0; j < sz; ++j)
+        {
+            if (is_redirection(tokens[j]) == 1)  // "<<"
+            {
+                // last heredoc wins: if one already set, close it
+                if (fd >= 0) {
+                    close(fd);
+                    fd = -1;
                 }
+
+                char *delim = process_heredoc_delimiter(tokens[j + 1]);
+                if (!delim) return 0;
+
+                int should_expand = !delimiter_was_quoted(tokens[j + 1]);
+
+                // >>> use a real 2-int array for pipe()
+                int pipe_fd[2];
+                t_heredoc_params p = {
+                    .delimiter  = delim,
+                    .args       = tokens,
+                    .clean_args = NULL
+                };
+
+                if (handle_here_doc(pipe_fd, ctx->shell, should_expand, &p) != 0) {
+                    free(delim);
+                    // on failure, close any fd we opened earlier for this command
+                    if (fd >= 0) { close(fd); fd = -1; }
+                    return 0;
+                }
+
+                // parent: write-end is already closed in handle_heredoc_parent
+                fd = pipe_fd[0];
+
                 free(delim);
+                // NOTE: we are NOT mutating tokens here anymore.
             }
         }
-        ctx->heredoc_fds[i] = fd;
+
+        ctx->heredoc_fds[i] = fd;   // -1 if none
     }
     return 1;
 }

@@ -6,7 +6,7 @@
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 16:43:13 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/30 17:13:49 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/31 16:12:39 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,10 @@ void	handle_empty_pipe_args(char **args)
 void	setup_pipe_fds(t_pipe_setup_ctx *ctx)
 {
 	if (ctx->cmd_index > 0)
-		*(ctx->input_fd) = ctx->pipes[ctx->cmd_index - 1][0];
+	{
+		if (*(ctx->input_fd) == STDIN_FILENO)
+			*(ctx->input_fd) = ctx->pipes[ctx->cmd_index - 1][0];
+	}
 	if (ctx->cmd_index < ctx->cmd_count - 1)
 		*(ctx->output_fd) = ctx->pipes[ctx->cmd_index][1];
 }
