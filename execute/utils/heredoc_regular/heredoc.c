@@ -6,7 +6,7 @@
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 12:27:58 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/31 13:58:19 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/31 17:59:41 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,22 @@ static int	handle_heredoc_parent(pid_t pid, int *pipe_fd)
 	return (0);
 }
 
+static void	restore_signals(void (*old_sigint)(int), void (*old_sigquit)(int))
+{
+	signal(SIGINT, old_sigint);
+	signal(SIGQUIT, old_sigquit);
+}
+
+static int	handle_fork_error(int *pipe_fd, void (*old_sigint)(int),
+		void (*old_sigquit)(int))
+{
+	perror("fork");
+	close(pipe_fd[0]);
+	close(pipe_fd[1]);
+	restore_signals(old_sigint, old_sigquit);
+	return (1);
+}
+
 int	handle_here_doc(int *pipe_fd, t_shell *shell, int should_expand,
 					t_heredoc_params *params)
 {
@@ -71,21 +87,13 @@ int	handle_here_doc(int *pipe_fd, t_shell *shell, int should_expand,
 	old_sigquit = signal(SIGQUIT, SIG_IGN);
 	pid = fork();
 	if (pid < 0)
-	{
-		perror("fork");
-		close(pipe_fd[0]);
-		close(pipe_fd[1]);
-		signal(SIGINT, old_sigint);
-		signal(SIGQUIT, old_sigquit);
-		return (1);
-	}
+		return (handle_fork_error(pipe_fd, old_sigint, old_sigquit));
 	if (pid == 0)
 		exec_hdoc_chld(params->delimiter, pipe_fd[1], shell, should_expand);
 	ret = handle_heredoc_parent(pid, pipe_fd);
 	if (ret == -1)
 		write(STDOUT_FILENO, "\n", 1);
-	signal(SIGINT, old_sigint);
-	signal(SIGQUIT, old_sigquit);
+	restore_signals(old_sigint, old_sigquit);
 	return (ret);
 }
 

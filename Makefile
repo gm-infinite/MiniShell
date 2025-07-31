@@ -6,7 +6,7 @@
 #    By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/25 10:52:25 by emgenc            #+#    #+#              #
-#    Updated: 2025/07/31 10:50:36 by emgenc           ###   ########.fr        #
+#    Updated: 2025/07/31 16:21:43 by emgenc           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -64,7 +64,7 @@ SRC = $(addprefix main/, $(MAIN_SRC)) \
       $(addprefix parser/wildcard_handle/, $(WILDCARD_SRC)) \
 
 CC = cc
-CFLAGS = -Wall -Werror -Wextra -g
+CFLAGS = -Wall -Werror -Wextra
 LIBFT = e-libft/libft.a
 LFLAGS = -lreadline
 OSRC = $(SRC:.c=.o)

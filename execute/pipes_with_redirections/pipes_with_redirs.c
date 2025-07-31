@@ -6,68 +6,76 @@
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 12:33:52 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/31 16:11:20 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/31 18:29:00 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../main/minishell.h"
 
-static int preprocess_heredocs(t_pipe_ctx *ctx)
+static void assign_params(t_heredoc_params *p, char **tokens, char *delim)
 {
-    // 1) allocate and initialize
-    ctx->heredoc_fds = malloc(sizeof(int) * ctx->cmd_count);
-    if (!ctx->heredoc_fds) return 0;
-    for (int i = 0; i < ctx->cmd_count; ++i)
-        ctx->heredoc_fds[i] = -1;
+	p->delimiter = delim;
+	p->args = tokens;
+	p->clean_args = NULL;
+}
 
-    // 2) walk each command
-    for (int i = 0; i < ctx->cmd_count; ++i)
-    {
-        char **tokens = ctx->commands[i].start;
-        int    sz     = ctx->commands[i].size;
-        int    fd     = -1;
+static int fd_closer(int *fd)
+{
+	if (*fd >= 0)
+	{
+		close(*fd);
+		*fd = -1;
+	}
+	return (0);
+}
 
-        for (int j = 0; j < sz; ++j)
-        {
-            if (is_redirection(tokens[j]) == 1)  // "<<"
-            {
-                // last heredoc wins: if one already set, close it
-                if (fd >= 0) {
-                    close(fd);
-                    fd = -1;
-                }
+static int	preprocess_heredocs(t_pipe_ctx *ctx)
+{
+	char	**tokens;
+	int		sz;
+	int		fd;
+	int		i;
+	int		j;
+	char	*delim;
+	int		should_expand;
+	int		pipe_fd[2];
+	t_heredoc_params p;
 
-                char *delim = process_heredoc_delimiter(tokens[j + 1]);
-                if (!delim) return 0;
-
-                int should_expand = !delimiter_was_quoted(tokens[j + 1]);
-
-                // >>> use a real 2-int array for pipe()
-                int pipe_fd[2];
-                t_heredoc_params p = {
-                    .delimiter  = delim,
-                    .args       = tokens,
-                    .clean_args = NULL
-                };
-
-                if (handle_here_doc(pipe_fd, ctx->shell, should_expand, &p) != 0) {
-                    free(delim);
-                    // on failure, close any fd we opened earlier for this command
-                    if (fd >= 0) { close(fd); fd = -1; }
-                    return 0;
-                }
-
-                // parent: write-end is already closed in handle_heredoc_parent
-                fd = pipe_fd[0];
-
-                free(delim);
-                // NOTE: we are NOT mutating tokens here anymore.
-            }
-        }
-
-        ctx->heredoc_fds[i] = fd;   // -1 if none
-    }
-    return 1;
+	ctx->heredoc_fds = malloc(sizeof(int) * ctx->cmd_count);
+	if (!ctx->heredoc_fds)
+		return (0);
+	i = -1;
+	while (++i < ctx->cmd_count)
+		ctx->heredoc_fds[i] = -1;
+	i = -1;
+	while (++i < ctx->cmd_count)
+	{
+		tokens = ctx->commands[i].start;
+		sz = ctx->commands[i].size;
+		fd = -1;
+		j = -1;
+		while (++j < sz)
+		{
+			if (is_redirection(tokens[j]) == 1)
+			{
+				fd_closer(&fd);
+				delim = process_heredoc_delimiter(tokens[j + 1]);
+				if (!delim)
+					return (0);
+				should_expand = !delimiter_was_quoted(tokens[j + 1]);
+				assign_params(&p, tokens, delim);
+				if (handle_here_doc(pipe_fd, ctx->shell, should_expand, &p) != 0)
+				{
+					free(delim);
+					return (fd_closer(&fd));
+				}
+				fd = pipe_fd[0];
+				free(delim);
+			}
+		}
+		ctx->heredoc_fds[i] = fd;
+	}
+	return (1);
 }
 
 static int	wait_for_others(pid_t *pids, int cmd_count)
@@ -107,51 +115,53 @@ static int	exec_pipe_child(t_pipe_ctx *pipeline_ctx)
 	return (wait_for_others(pipeline_ctx->pids, pipeline_ctx->cmd_count));
 }
 
-static int setup_and_execute_pipeline(t_split *commands, int cmd_count,
-                                      t_shell *shell)
+static void	setup_pipeline_ctx(t_pipe_ctx *pipeline_ctx, t_split *commands,
+	t_shell *shell, int cmd_count)
 {
-    int       **pipes;
-    pid_t     *pids;
-    t_pipe_ctx pipeline_ctx;
+	pipeline_ctx->commands = commands;
+	pipeline_ctx->shell = shell;
+	pipeline_ctx->cmd_count = cmd_count;
+	pipeline_ctx->heredoc_fds = NULL;
+}
 
-    if (!setup_pipe(&commands, &pipes, &pids, cmd_count))
-        return (1);
+static void	close_heredoc_fds(t_pipe_ctx *pipeline_ctx)
+{
+	int	i;
 
-    pipeline_ctx.commands     = commands;
-    pipeline_ctx.pipes        = pipes;
-    pipeline_ctx.pids         = pids;
-    pipeline_ctx.cmd_count    = cmd_count;
-    pipeline_ctx.shell        = shell;
-    pipeline_ctx.heredoc_fds  = NULL;
+	i = -1;
+	while (++i < pipeline_ctx->cmd_count)
+		if (pipeline_ctx->heredoc_fds[i] >= 0)
+			close(pipeline_ctx->heredoc_fds[i]);
+	free(pipeline_ctx->heredoc_fds);
+	pipeline_ctx->heredoc_fds = NULL;
+}
 
-    if (!preprocess_heredocs(&pipeline_ctx))
-        return (1);
+static int	setup_and_execute_pipeline(t_split *commands, int cmd_count,
+	t_shell *shell)
+{
+	int			**pipes;
+	pid_t		*pids;
+	t_pipe_ctx	pipeline_ctx;
+	void		(*old_sigint)(int);
+	void		(*old_sigquit)(int);
 
-    /* Temporarily ignore SIGINT/SIGQUIT in the main shell */
-    void (*old_sigint)(int)  = signal(SIGINT,  SIG_IGN);
-    void (*old_sigquit)(int) = signal(SIGQUIT, SIG_IGN);
-
-    cmd_count = exec_pipe_child(&pipeline_ctx);
-
-    /* Restore the shell’s signal handlers */
-    signal(SIGINT,  old_sigint);
-    signal(SIGQUIT, old_sigquit);
-    setup_signals();
-
-    /* Close & free all heredoc fds */
-    if (pipeline_ctx.heredoc_fds)
-    {
-        for (int i = 0; i < pipeline_ctx.cmd_count; ++i)
-        {
-            if (pipeline_ctx.heredoc_fds[i] >= 0)
-                close(pipeline_ctx.heredoc_fds[i]);
-        }
-        free(pipeline_ctx.heredoc_fds);
-        pipeline_ctx.heredoc_fds = NULL;
-    }
-
-    clean_pipe(commands, pipes, pids, pipeline_ctx.cmd_count);
-    return (cmd_count);
+	if (!setup_pipe(&commands, &pipes, &pids, cmd_count))
+		return (1);
+	setup_pipeline_ctx(&pipeline_ctx, commands, shell, cmd_count);
+	pipeline_ctx.pipes = pipes;
+	pipeline_ctx.pids = pids;
+	if (!preprocess_heredocs(&pipeline_ctx))
+		return (1);
+	old_sigint = signal(SIGINT, SIG_IGN);
+	old_sigquit = signal(SIGQUIT, SIG_IGN);
+	cmd_count = exec_pipe_child(&pipeline_ctx);
+	signal(SIGINT, old_sigint);
+	signal(SIGQUIT, old_sigquit);
+	setup_signals();
+	if (pipeline_ctx.heredoc_fds)
+		close_heredoc_fds(&pipeline_ctx);
+	clean_pipe(commands, pipes, pids, pipeline_ctx.cmd_count);
+	return (cmd_count);
 }
 
 int	execute_pipe_redir(t_split split, t_shell *shell)

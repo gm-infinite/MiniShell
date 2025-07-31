@@ -6,7 +6,7 @@
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 16:41:24 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/31 16:04:15 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/31 17:21:11 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,16 @@ static void	execute_pipeline_external_command(char **args, char *executable,
 	perror("execve");
 	free_child_pipeline_memory(args, shell, cleanup);
 	exit(127);
+}
+
+static void	fd_initializer(t_child_redir_params *params, int *fd_values)
+{
+	fd_values[0] = STDIN_FILENO;
+	fd_values[1] = STDOUT_FILENO;
+	fd_values[2] = STDERR_FILENO;
+	fd_values[3] = params->ctx->heredoc_fds[params->ctx->cmd_index];
+	if (fd_values[3] >= 0)
+		fd_values[0] = fd_values[3];
 }
 
 static void	error_pipe_exec(char **args, char *executable,
@@ -57,53 +67,33 @@ static void	execute_child_command_with_pipeline_cleanup(char **args,
 	execute_pipeline_external_command(args, executable, shell, cleanup);
 }
 
-void execute_child_redir(t_child_redir_params *params)
+void	execute_child_redir(t_child_redir_params *params)
 {
-    char            **args;
-    t_redir_fds      fds;
-    t_pipe_setup_ctx p;
-    int              fd_values[3];
-    t_pipe_cleaner   cleanup;
-    int              hfd;
+	char				**args;
+	t_redir_fds			fds;
+	t_pipe_setup_ctx	p;
+	int					fd_values[4];
+	t_pipe_cleaner		cleanup;
 
-    // Default stdin/stdout/stderr
-    fd_values[0] = STDIN_FILENO;
-    fd_values[1] = STDOUT_FILENO;
-    fd_values[2] = STDERR_FILENO;
-
-    // If we preprocessed a heredoc for this command, use its read‐end
-    hfd = params->ctx->heredoc_fds[params->ctx->cmd_index];
-    if (hfd >= 0)
-        fd_values[0] = hfd;
-
-    // Now build our redirection context
-    fds = get_fds(fd_values);
-	fds.preprocessed_heredoc = (hfd >= 0);
-    p   = get_pipe_ctx(params->ctx->cmd_index,
-                       params->ctx->cmd_count,
-                       params->ctx->pipes,
-                       fd_values);
-    setup_pipe_fds(&p);
-
-    // Parse any remaining redirections (e.g. files), now with correct stdin
-    args = parse_redirs(params->cmd, &fds, params->shell);
-    cleanup = get_cleanup(params->commands, p.pipes, params->pids, p.cmd_count);
-    if (!args)
-    {
-        free_child_pipeline_memory(NULL, params->shell, &cleanup);
-        exit(1);
-    }
-
-    // Apply the fds (including heredoc fd if set)
-    redirect_fds(fd_values[0], fd_values[1], fd_values[2]);
-    close_all_pipes(params->ctx->pipes, params->ctx->cmd_count);
-    setup_child_signals();
-    process_and_check_args(args, params->shell);
-
-    // Execute the actual command
-    execute_child_command_with_pipeline_cleanup(args, params->shell, &cleanup);
+	fd_initializer(params, fd_values);
+	fds = get_fds(fd_values);
+	fds.preprocessed_heredoc = (fd_values[3] >= 0);
+	p = get_pipe_ctx(params->ctx->cmd_index, params->ctx->cmd_count,
+			params->ctx->pipes, fd_values);
+	setup_pipe_fds(&p);
+	args = parse_redirs(params->cmd, &fds, params->shell);
+	cleanup = get_cleanup(params->commands, p.pipes, params->pids, p.cmd_count);
+	if (!args)
+	{
+		free_child_pipeline_memory(NULL, params->shell, &cleanup);
+		exit(1);
+	}
+	redirect_fds(fd_values[0], fd_values[1], fd_values[2]);
+	close_all_pipes(params->ctx->pipes, params->ctx->cmd_count);
+	setup_child_signals();
+	process_and_check_args(args, params->shell);
+	execute_child_command_with_pipeline_cleanup(args, params->shell, &cleanup);
 }
-
 
 int	fork_pipe_child(t_pipe_ctx *pipeline_ctx, int i)
 {
