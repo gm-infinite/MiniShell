@@ -6,11 +6,38 @@
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 12:33:52 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/31 12:50:36 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/31 13:55:32 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../main/minishell.h"
+
+static int preprocess_heredocs(t_pipe_ctx *ctx)
+{
+    ctx->heredoc_fds = malloc(sizeof(int) * ctx->cmd_count);
+    if (!ctx->heredoc_fds) return 0;
+
+    for (int i = 0; i < ctx->cmd_count; ++i) {
+        char **args = ctx->commands[i].start;
+        int fd = -1;
+        for (int j = 0; args[j]; j++) {
+            if (is_redirection(args[j]) == 1) {
+                // args[j+1] is the delimiter
+                char *delim = process_heredoc_delimiter(args[j+1]);
+                int should_expand = !delimiter_was_quoted(args[j+1]);
+                // call your working pipe-based handler directly
+                if (handle_here_doc(&fd, ctx->shell, should_expand,
+                                    &(t_heredoc_params){delim,args,NULL}) != 0) {
+                    free(delim);
+                    return 0; // error
+                }
+                free(delim);
+            }
+        }
+        ctx->heredoc_fds[i] = fd;
+    }
+    return 1;
+}
 
 static int	wait_for_others(pid_t *pids, int cmd_count)
 {
@@ -49,30 +76,51 @@ static int	exec_pipe_child(t_pipe_ctx *pipeline_ctx)
 	return (wait_for_others(pipeline_ctx->pids, pipeline_ctx->cmd_count));
 }
 
-static int	setup_and_execute_pipeline(t_split *commands, int cmd_count,
-	t_shell *shell)
+static int setup_and_execute_pipeline(t_split *commands, int cmd_count,
+                                      t_shell *shell)
 {
-	int					**pipes;
-	pid_t				*pids;
-	t_pipe_ctx			pipeline_ctx;
+    int       **pipes;
+    pid_t     *pids;
+    t_pipe_ctx pipeline_ctx;
 
-	if (!setup_pipe(&commands, &pipes, &pids, cmd_count))
-		return (1);
-	pipeline_ctx.commands = commands;
-	pipeline_ctx.pipes = pipes;
-	pipeline_ctx.pids = pids;
-	pipeline_ctx.cmd_count = cmd_count;
-	pipeline_ctx.shell = shell;
-	void (*old_sigint)(int);
-	void (*old_sigquit)(int);
-	old_sigint = signal(SIGINT, SIG_IGN);
-	old_sigquit = signal(SIGQUIT, SIG_IGN);
-	cmd_count = exec_pipe_child(&pipeline_ctx);
-	signal(SIGINT, old_sigint);
-	signal(SIGQUIT, old_sigquit);
-	setup_signals();
-	clean_pipe(commands, pipes, pids, pipeline_ctx.cmd_count);
-	return (cmd_count);
+    if (!setup_pipe(&commands, &pipes, &pids, cmd_count))
+        return (1);
+
+    pipeline_ctx.commands     = commands;
+    pipeline_ctx.pipes        = pipes;
+    pipeline_ctx.pids         = pids;
+    pipeline_ctx.cmd_count    = cmd_count;
+    pipeline_ctx.shell        = shell;
+    pipeline_ctx.heredoc_fds  = NULL;
+
+    if (!preprocess_heredocs(&pipeline_ctx))
+        return (1);
+
+    /* Temporarily ignore SIGINT/SIGQUIT in the main shell */
+    void (*old_sigint)(int)  = signal(SIGINT,  SIG_IGN);
+    void (*old_sigquit)(int) = signal(SIGQUIT, SIG_IGN);
+
+    cmd_count = exec_pipe_child(&pipeline_ctx);
+
+    /* Restore the shell’s signal handlers */
+    signal(SIGINT,  old_sigint);
+    signal(SIGQUIT, old_sigquit);
+    setup_signals();
+
+    /* Close & free all heredoc fds */
+    if (pipeline_ctx.heredoc_fds)
+    {
+        for (int i = 0; i < pipeline_ctx.cmd_count; ++i)
+        {
+            if (pipeline_ctx.heredoc_fds[i] >= 0)
+                close(pipeline_ctx.heredoc_fds[i]);
+        }
+        free(pipeline_ctx.heredoc_fds);
+        pipeline_ctx.heredoc_fds = NULL;
+    }
+
+    clean_pipe(commands, pipes, pids, pipeline_ctx.cmd_count);
+    return (cmd_count);
 }
 
 int	execute_pipe_redir(t_split split, t_shell *shell)

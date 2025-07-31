@@ -6,7 +6,7 @@
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 12:27:58 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/31 10:44:25 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/31 13:58:19 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,7 +89,7 @@ int	handle_here_doc(int *pipe_fd, t_shell *shell, int should_expand,
 	return (ret);
 }
 
-static int	delimiter_was_quoted(char *filename)
+int	delimiter_was_quoted(char *filename)
 {
 	int	i;
 

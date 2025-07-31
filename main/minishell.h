@@ -6,7 +6,7 @@
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 11:11:41 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/31 10:49:54 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/31 13:58:48 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,7 @@ typedef struct s_pipe_ctx
 	pid_t	*pids;
 	int		cmd_count;
 	t_shell	*shell;
+	int		*heredoc_fds;
 }	t_pipe_ctx;
 
 typedef struct s_redir_exec_ctx
@@ -100,6 +101,7 @@ typedef struct s_process_pipe_ctx
 	pid_t	*pids;
 	int		cmd_count;
 	t_shell	*shell;
+	int		*heredoc_fds;
 }	t_process_pipe_ctx;
 
 typedef struct s_redir_fds
@@ -121,6 +123,7 @@ typedef struct s_child_ctx
 	int		**pipes;
 	int		cmd_index;
 	int		cmd_count;
+	int		*heredoc_fds;
 }			t_child_ctx;
 
 typedef struct s_child_params
@@ -195,6 +198,7 @@ void					process_segment(t_shell *shell, t_split split,
 							int *vars, char *c_i);
 int						is_singlepar(char *start, char *end);
 void					remove_outer_par(char *start, char *end);
+int						delimiter_was_quoted(char *filename);
 void					clean_empties(t_split *split);
 int						validate_exec(char **args, char *executable);
 void					handle_error_and_exit(char **args, char *executable,
@@ -325,6 +329,8 @@ int						clean_heredoc(char *processed_filename,
 int						handle_here_document(char *processed_delimiter,
 							t_redir_fds *fds, t_shell *shell,
 							t_heredoc_params *params);
+int						handle_here_doc(int *pipe_fd, t_shell *shell,
+							int should_expand, t_heredoc_params *params);
 int						exec_child_process(char **args, char *executable,
 							t_shell *shell);
 int						handle_parent_process(pid_t pid, char *executable);
