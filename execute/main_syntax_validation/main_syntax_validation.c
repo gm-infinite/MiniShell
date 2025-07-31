@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main_syntax_validation.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 14:37:52 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/30 17:07:10 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/31 20:01:38 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ static int	handle_redirection_token(t_split split, int *i)
 	return (0);
 }
 
-int	has_parentheses_in_split(t_split split)
+static int	has_parentheses_in_split(t_split split)
 {
 	int	i;
 

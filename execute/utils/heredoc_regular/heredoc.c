@@ -3,41 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   heredoc.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 12:27:58 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/31 17:59:41 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/31 18:54:41 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../main/minishell.h"
-
-void	process_and_write_line(char *line, int pipe_fd, t_shell *shell,
-		int should_expand)
-{
-	char	*expanded_line;
-
-	if (should_expand && shell)
-	{
-		expanded_line = expandvar(line, shell);
-		if (expanded_line)
-		{
-			write(pipe_fd, expanded_line, ft_strlen(expanded_line));
-			write(pipe_fd, "\n", 1);
-			free(expanded_line);
-		}
-		else
-		{
-			write(pipe_fd, line, ft_strlen(line));
-			write(pipe_fd, "\n", 1);
-		}
-	}
-	else
-	{
-		write(pipe_fd, line, ft_strlen(line));
-		write(pipe_fd, "\n", 1);
-	}
-}
 
 static int	handle_heredoc_parent(pid_t pid, int *pipe_fd)
 {
@@ -95,22 +68,6 @@ int	handle_here_doc(int *pipe_fd, t_shell *shell, int should_expand,
 		write(STDOUT_FILENO, "\n", 1);
 	restore_signals(old_sigint, old_sigquit);
 	return (ret);
-}
-
-int	delimiter_was_quoted(char *filename)
-{
-	int	i;
-
-	if (!filename)
-		return (0);
-	i = 0;
-	while (filename[i])
-	{
-		if (filename[i] == '\'' || filename[i] == '"')
-			return (1);
-		i++;
-	}
-	return (0);
 }
 
 int	handle_here_document(char *processed_delimiter, t_redir_fds *fds,

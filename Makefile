@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+         #
+#    By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/07/25 10:52:25 by emgenc            #+#    #+#              #
-#    Updated: 2025/07/31 16:21:43 by emgenc           ###   ########.fr        #
+#    Updated: 2025/07/31 19:27:34 by kuzyilma         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,13 +22,13 @@ EXECUTE_SRC = execute.c signal.c validate_executable.c
 EXEC_BUILTINS_SRC = exec_builtin_with_redirs.c
 EXEC_SYNTAX_VALIDATION_SRC = excess_parantheses_remover.c main_syntax_validation.c
 PIPES_SRC = create_pipes.c external_commands.c pipe_clean.c pipe_executor.c pipes_only.c process_expanded_args.c parentheses_removal.c
-PIPES_WITH_REDIRS_SRC = getters.c p_w_r_execution_engine.c pipes_with_redirs.c utils_for_p_w_r.c
+PIPES_WITH_REDIRS_SRC = p_w_r_utils.c getters.c p_w_r_execution_engine.c pipes_with_redirs.c pipes_with_redirs_2.c utils_for_p_w_r.c
 REDIR_SRC = redirs_only.c exec_extern_with_redirs.c
 SIMPLE_CMD_SRC = simple_command_executor.c
 
 EXEC_UTILS_SRC = arg_expander_loop.c check_if_path_is_dir.c cleanup.c dollar_expander.c expandvar_quoted.c pipe_utils.c split_by_pipes.c split_to_args.c tilde_handler.c
 EXECUTABLE_FINDER_SRC = executable_finder.c utils_for_finder.c
-HEREDOC_REGULAR_SRC = child_handler.c heredoc.c quote_remover_for_redir.c
+HEREDOC_REGULAR_SRC = child_handler.c heredoc.c quote_remover_for_redir.c heredoc_utils.c
 PROCESS_ARGS_QUOTES_SRC = process_args_quotes.c process_args_quotes_utils.c
 REDIR_PARSER_SRC = 1_parse_redirections.c clean_heredoc.c 2_processer_loop.c handle_expandable_part.c quote_expander.c redirection_type_handler.c
 SINGLE_COMMAND_SRC = execute_single_command.c handlers_for_single.c

@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   quote_expander.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 15:00:56 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/30 17:33:13 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/31 20:05:33 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../../main/minishell.h"
 
-char	*handle_double_quote_case(char *result, int *i,
+static char	*handle_double_quote_case(char *result, int *i,
 		int *in_double_quotes, int in_single_quotes)
 {
 	if (!in_single_quotes)

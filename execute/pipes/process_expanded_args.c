@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   process_expanded_args.c                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 15:51:01 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/30 17:09:46 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/31 20:03:24 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../main/minishell.h"
 
-char	**execute_expanded_args_split(char *reconstructed, char **args,
+static char	**execute_expanded_args_split(char *reconstructed, char **args,
 		t_shell *shell)
 {
 	char	*wildcard_expanded;

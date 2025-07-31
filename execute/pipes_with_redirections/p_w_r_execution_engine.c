@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   p_w_r_execution_engine.c                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 16:41:24 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/31 17:21:11 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/31 18:57:27 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,32 +93,4 @@ void	execute_child_redir(t_child_redir_params *params)
 	setup_child_signals();
 	process_and_check_args(args, params->shell);
 	execute_child_command_with_pipeline_cleanup(args, params->shell, &cleanup);
-}
-
-int	fork_pipe_child(t_pipe_ctx *pipeline_ctx, int i)
-{
-	t_child_ctx				ctx;
-	t_child_redir_params	params;
-
-	pipeline_ctx->pids[i] = fork();
-	if (pipeline_ctx->pids[i] == -1)
-	{
-		perror("fork");
-		return (1);
-	}
-	else if (pipeline_ctx->pids[i] == 0)
-	{
-		ctx.pipes = pipeline_ctx->pipes;
-		ctx.cmd_index = i;
-		ctx.cmd_count = pipeline_ctx->cmd_count;
-		ctx.heredoc_fds = pipeline_ctx->heredoc_fds;
-		params.cmd = pipeline_ctx->commands[i];
-		params.ctx = &ctx;
-		params.shell = pipeline_ctx->shell;
-		params.commands = pipeline_ctx->commands;
-		params.pids = pipeline_ctx->pids;
-		execute_child_redir(&params);
-		exit(127);
-	}
-	return (0);
 }

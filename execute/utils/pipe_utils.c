@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipe_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 11:05:09 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/30 17:16:50 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/31 20:04:00 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ static int	close_fds_and_pipes(int ***pipes, int *i)
 	return (0);
 }
 
-int	create_pipes_array(int ***pipes, int cmd_count)
+static int	create_pipes_array(int ***pipes, int cmd_count)
 {
 	int	i;
 

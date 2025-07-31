@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   2_processer_loop.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
+/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 14:56:59 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/31 18:07:09 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/31 19:26:07 by kuzyilma         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ static char	*get_processed_filename(char **args, int i, int redirect_type,
 		return (process_filename(args[i + 1], shell));
 }
 
-static t_redirect_info	get_redirect_info(char **args, int i, t_shell *shell)
+t_redirect_info	get_redirect_info(char **args, int i, t_shell *shell)
 {
 	t_redirect_info	info;
 
@@ -52,7 +52,7 @@ static t_redirect_info	get_redirect_info(char **args, int i, t_shell *shell)
 	return (info);
 }
 
-static int	after_handle(t_redirect_info *redirect_info,
+int	after_handle(t_redirect_info *redirect_info,
 	t_heredoc_params *params, int i)
 {
 	if (redirect_info->redirect_type != 1 && errno != ENOTDIR)
@@ -60,35 +60,6 @@ static int	after_handle(t_redirect_info *redirect_info,
 	if (redirect_info->processed_filename != params->args[i + 1])
 		free(redirect_info->processed_filename);
 	return (-1);
-}
-
-int	process_single_redir(int i, t_redir_fds *fds,
-	t_shell *shell, t_heredoc_params *params)
-{
-	t_redirect_info	redirect_info;
-	int				rc;
-
-	redirect_info = get_redirect_info(params->args, i, shell);
-	if (redirect_info.redirect_type == 1 && fds->preprocessed_heredoc)
-	{
-		if (redirect_info.processed_filename != params->args[i + 1])
-			free(redirect_info.processed_filename);
-		return (0);
-	}
-	if (redirect_info.redirect_type == -1)
-	{
-		write(STDERR_FILENO, "syntax error: missing filename\n", 32);
-		return (-1);
-	}
-	if (!redirect_info.processed_filename)
-		return (-1);
-	params->delimiter = params->args[i + 1];
-	rc = handle_redirection_type(&redirect_info, fds, shell, params);
-	if (rc == -1)
-		return (after_handle(&redirect_info, params, i));
-	if (redirect_info.processed_filename != params->args[i + 1])
-		free(redirect_info.processed_filename);
-	return (0);
 }
 
 int	process_redirections_loop(char **args, t_redir_fds *fds,
