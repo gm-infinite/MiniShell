@@ -6,7 +6,7 @@
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 12:33:52 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/31 03:24:45 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/31 12:50:36 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,13 @@ static int	setup_and_execute_pipeline(t_split *commands, int cmd_count,
 	pipeline_ctx.pids = pids;
 	pipeline_ctx.cmd_count = cmd_count;
 	pipeline_ctx.shell = shell;
+	void (*old_sigint)(int);
+	void (*old_sigquit)(int);
+	old_sigint = signal(SIGINT, SIG_IGN);
+	old_sigquit = signal(SIGQUIT, SIG_IGN);
 	cmd_count = exec_pipe_child(&pipeline_ctx);
+	signal(SIGINT, old_sigint);
+	signal(SIGQUIT, old_sigquit);
 	setup_signals();
 	clean_pipe(commands, pipes, pids, pipeline_ctx.cmd_count);
 	return (cmd_count);
