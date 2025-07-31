@@ -6,7 +6,7 @@
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/25 11:11:14 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/25 12:33:53 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/31 12:41:09 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,11 +105,9 @@ static void	start_shell(t_shell *shell)
 			shell->past_exit_status = 130;
 			g_signal = 0;
 		}
+		add_history(shell->current_input);
 		if (!is_empty(shell->current_input))
-		{
-			add_history(shell->current_input);
 			begin_command_parsing_and_execution(shell);
-		}
 		free(shell->current_input);
 	}
 	free_env(shell);
