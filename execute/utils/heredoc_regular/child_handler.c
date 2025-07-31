@@ -6,7 +6,7 @@
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/30 14:51:21 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/31 10:44:21 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/31 12:38:50 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ static int	process_heredoc_loop(char *delimiter, int pipe_fd, t_shell *shell,
 	while (1)
 	{
 		line = readline("> ");
-		if (line == NULL || !line || *line == '\0')
+		if (line == NULL || !line)
 		{
 			write(STDERR_FILENO, "minishell: warning: here-document delimited"
 				" by end-of-file (wanted `", 68);
@@ -62,4 +62,5 @@ void	exec_hdoc_chld(char *delimiter, int pipe_fd,
 	signal(SIGQUIT, SIG_IGN);
 	process_heredoc_loop(delimiter, pipe_fd, shell, should_expand);
 	close(pipe_fd);
+	exit(0);
 }
