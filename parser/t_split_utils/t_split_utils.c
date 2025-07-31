@@ -3,30 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   t_split_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/08 10:53:30 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/03/25 16:13:24 by kuzyilma         ###   ########.fr       */
+/*   Created: 2025/07/25 11:03:41 by emgenc            #+#    #+#             */
+/*   Updated: 2025/07/25 12:28:45 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "t_split.h"
-
-int	strnsplit(t_split split, char *find)
-{
-	int	i;
-
-	if (find == NULL || *find == '\0')
-		return (-2);
-	i = 0;
-	while (i < split.size)
-	{
-		if (ft_strncmp(split.start[i], find, ft_strlen(find)) == 0)
-			return (i);
-		i++;
-	}
-	return (-1);
-}
 
 t_split	create_split(char **start, int size)
 {
@@ -69,26 +53,4 @@ void	free_split(t_split *split)
 	free(split->start);
 	split->start = NULL;
 	split->size = 0;
-}
-
-void	rearrange_split(t_split *split)
-{
-	int	i;
-	int	j;
-
-	i = 0;
-	while (split->start[i] != NULL)
-		i++;
-	j = i + 1;
-	while (j < split->size)
-	{
-		if (split->start[j] != NULL)
-		{
-			split->start[i] = split->start[j];
-			split->start[j] = NULL;
-			i++;
-		}
-		j++;
-	}
-	split->size = i;
 }

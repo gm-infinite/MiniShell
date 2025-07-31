@@ -3,14 +3,42 @@
 /*                                                        :::      ::::::::   */
 /*   wildcard_handle.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/15 13:19:03 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/04/15 14:54:16 by kuzyilma         ###   ########.fr       */
+/*   Created: 2025/07/25 11:00:18 by emgenc            #+#    #+#             */
+/*   Updated: 2025/07/25 12:14:14 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "wildcard_handler.h"
+
+static char	*ft_strjoin_sq_f(char **to_free, const char *to_add)
+{
+	char	*ret;
+	int		ret_size;
+
+	if (*to_free == NULL)
+	{
+		ret_size = ft_strlen(to_add) + 3;
+		ret = (char *)ft_calloc(ret_size, sizeof(char));
+		if (ret == NULL)
+			return (NULL);
+		ft_strlcpy(ret, "'", ret_size);
+	}
+	else
+	{
+		ret_size = ft_strlen(*to_free) + ft_strlen(to_add) + 4;
+		ret = (char *)ft_calloc(ret_size, sizeof(char));
+		if (ret == NULL)
+			return (NULL);
+		ft_strlcpy(ret, *to_free, ret_size);
+		ft_strlcat(ret, " '", ret_size);
+		free(*to_free);
+	}
+	ft_strlcat(ret, to_add, ret_size);
+	ft_strlcat(ret, "'", ret_size);
+	return (ret);
+}
 
 static int	count_dir_entries(const char *directory)
 {

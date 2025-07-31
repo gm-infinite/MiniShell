@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser_and_or_process_utils.c                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/20 19:15:24 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/07/24 18:49:37 by emgenc           ###   ########.fr       */
+/*   Created: 2025/07/25 11:06:34 by emgenc            #+#    #+#             */
+/*   Updated: 2025/07/25 11:06:43 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
