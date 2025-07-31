@@ -6,7 +6,7 @@
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/15 13:36:19 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/30 15:19:42 by emgenc           ###   ########.fr       */
+/*   Updated: 2025/07/31 13:11:34 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ static int	print_sorted_env(t_shell *shell)
 	while (printer < count)
 	{
 		if (!(sorted_env[printer][0] == '_' && sorted_env[printer][1] == '='))
-			printf("declare -x %s\n", sorted_env[printer]);
+			append_double_quotes(sorted_env[printer]);
 		printer++;
 	}
 	free(sorted_env);
