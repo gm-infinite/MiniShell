@@ -3,16 +3,65 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/08 10:55:46 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/07/24 19:10:58 by emgenc           ###   ########.fr       */
+/*   Created: 2025/07/25 11:11:14 by emgenc            #+#    #+#             */
+/*   Updated: 2025/07/31 12:41:09 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 volatile sig_atomic_t	g_signal = 0;
+
+static void	init_env(t_shell *shell, char **envp)
+{
+	int	i;
+	int	count;
+
+	count = 0;
+	while (envp[count])
+		count++;
+	shell->envp = malloc(sizeof(char *) * (count + 1));
+	if (!shell->envp)
+		return ;
+	i = 0;
+	while (i < count)
+	{
+		shell->envp[i] = ft_strdup(envp[i]);
+		if (!shell->envp[i])
+		{
+			while (--i >= 0)
+				free(shell->envp[i]);
+			free(shell->envp);
+			shell->envp = NULL;
+			return ;
+		}
+		i++;
+	}
+	shell->envp[i] = NULL;
+}
+
+static int	check_quotes(char *str)
+{
+	int	i;
+	int	single_open;
+	int	double_open;
+
+	if (!str)
+		return (1);
+	i = -1;
+	single_open = 0;
+	double_open = 0;
+	while (str[++i])
+	{
+		if (str[i] == '\'' && !double_open)
+			single_open = !single_open;
+		else if (str[i] == '"' && !single_open)
+			double_open = !double_open;
+	}
+	return (single_open == 0 && double_open == 0);
+}
 
 static void	begin_command_parsing_and_execution(t_shell *shell)
 {
@@ -56,11 +105,9 @@ static void	start_shell(t_shell *shell)
 			shell->past_exit_status = 130;
 			g_signal = 0;
 		}
+		add_history(shell->current_input);
 		if (!is_empty(shell->current_input))
-		{
-			add_history(shell->current_input);
 			begin_command_parsing_and_execution(shell);
-		}
 		free(shell->current_input);
 	}
 	free_env(shell);

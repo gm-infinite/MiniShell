@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   and_or_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/22 18:55:15 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/07/22 18:58:02 by kuzyilma         ###   ########.fr       */
+/*   Created: 2025/07/25 11:05:57 by emgenc            #+#    #+#             */
+/*   Updated: 2025/07/25 11:06:06 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

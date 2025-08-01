@@ -5,33 +5,63 @@
 #                                                     +:+ +:+         +:+      #
 #    By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2025/02/13 12:36:09 by kuzyilma          #+#    #+#              #
-#    Updated: 2025/07/24 21:21:42 by kuzyilma         ###   ########.fr        #
+#    Created: 2025/07/25 10:52:25 by emgenc            #+#    #+#              #
+#    Updated: 2025/07/31 19:27:34 by kuzyilma         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-# Source files organized by functionality
-MAIN_SRC = main.c main_utils.c environment.c env_expand.c env_expand_utils.c env_quote_utils.c env_expansion_utils.c env_replace.c env_tilde.c
-BUILTIN_SRC = builtin_utils.c cd.c cd_utils.c echo.c env.c exit.c export.c export_utils.c export_env.c export_append.c export_process_utils.c pwd.c unset.c unset_utils.c export_process_utils_2.c
-EXECUTE_SRC = execute.c exec_utils.c exec_args_utils.c signal.c exec_single.c exec_single_utils.c exec_parentheses.c exec_dispatch.c exec_arg_process_utils.c pipe_management.c arg_utils.c path_utils.c path_search_utils.c exec_validation.c pipeline_utils.c heredoc_utils.c pipeline_process_utils.c pipeline_child_utils.c exec_arg_utils.c exec_wildcard_utils.c execute_redirection_utils.c child_cleanup.c heredoc_utils_2.c not_directory_utils.c exec_error_handler_and_utils.c
-PIPES_SRC = pipes.c split_by_pipes.c execute_pipe_command.c execute_pipe_child.c execute_pipe_child_utils.c pipes_utils.c pipe_child_utils.c execute_pipe_command_utils.c builtin_handler.c
-REDIR_SRC = redirections.c heredoc.c heredoc_utils.c heredoc_input_utils.c redir_utils.c redir_syntax.c redirect_utils.c redir_quote_utils.c redir_process_utils.c redir_segment_utils.c redir_char_utils.c redir_exec_utils.c redir_external.c redir_args.c redir_syntax_utils.c redir_type_utils.c
-PARSER_SRC = quotes.c quotes_utils.c quotes_processing_utils.c
+MAIN_SRC = main.c main_utils.c
+ENV_SRC = environment.c replacevar.c variable_expander.c
+
+BUILTIN_SRC = builtin_utils.c env_and_echo.c exit.c
+UNSET_SRC = unset.c unset_utils.c
+CD_SRC = cd.c cd_utils.c
+EXPORT_SRC = export.c export_utils.c export_env.c export_append.c export_process_utils.c export_process_utils_2.c
+
+EXECUTE_SRC = execute.c signal.c validate_executable.c
+EXEC_BUILTINS_SRC = exec_builtin_with_redirs.c
+EXEC_SYNTAX_VALIDATION_SRC = excess_parantheses_remover.c main_syntax_validation.c
+PIPES_SRC = create_pipes.c external_commands.c pipe_clean.c pipe_executor.c pipes_only.c process_expanded_args.c parentheses_removal.c
+PIPES_WITH_REDIRS_SRC = p_w_r_utils.c getters.c p_w_r_execution_engine.c pipes_with_redirs.c pipes_with_redirs_2.c utils_for_p_w_r.c
+REDIR_SRC = redirs_only.c exec_extern_with_redirs.c
+SIMPLE_CMD_SRC = simple_command_executor.c
+
+EXEC_UTILS_SRC = arg_expander_loop.c check_if_path_is_dir.c cleanup.c dollar_expander.c expandvar_quoted.c pipe_utils.c split_by_pipes.c split_to_args.c tilde_handler.c
+EXECUTABLE_FINDER_SRC = executable_finder.c utils_for_finder.c
+HEREDOC_REGULAR_SRC = child_handler.c heredoc.c quote_remover_for_redir.c heredoc_utils.c
+PROCESS_ARGS_QUOTES_SRC = process_args_quotes.c process_args_quotes_utils.c
+REDIR_PARSER_SRC = 1_parse_redirections.c clean_heredoc.c 2_processer_loop.c handle_expandable_part.c quote_expander.c redirection_type_handler.c
+SINGLE_COMMAND_SRC = execute_single_command.c handlers_for_single.c
+
 SPLIT_SRC = t_split_utils.c ft_split_quotes.c t_split_utils2.c
 AOPSR_SRC = parser_and_or.c parser_and_or_process_utils.c parser_and_or_parentheses_utils.c and_or_utils.c parser_and_or2.c syntax.c parser_and_or_utils.c
 SOA_SRC = sep_opt_arg.c
 WILDCARD_SRC = wildcard_handle.c wildcard_filter.c wildcard_filter2.c wildcard_filter2_utils.c wildcard_quote_utils.c wildcard_utils.c
 
 SRC = $(addprefix main/, $(MAIN_SRC)) \
+      $(addprefix main/environment/, $(ENV_SRC)) \
       $(addprefix builtin_cmd/, $(BUILTIN_SRC)) \
+      $(addprefix builtin_cmd/export/, $(EXPORT_SRC)) \
+      $(addprefix builtin_cmd/cd/, $(CD_SRC)) \
+      $(addprefix builtin_cmd/unset/, $(UNSET_SRC)) \
       $(addprefix execute/, $(EXECUTE_SRC)) \
+      $(addprefix execute/builtins_with_redirects/, $(EXEC_BUILTINS_SRC)) \
+      $(addprefix execute/main_syntax_validation/, $(EXEC_SYNTAX_VALIDATION_SRC)) \
       $(addprefix execute/pipes/, $(PIPES_SRC)) \
+      $(addprefix execute/pipes_with_redirections/, $(PIPES_WITH_REDIRS_SRC)) \
       $(addprefix execute/redirections/, $(REDIR_SRC)) \
-      $(addprefix parser/, $(PARSER_SRC)) \
+      $(addprefix execute/simple_command/, $(SIMPLE_CMD_SRC)) \
+      $(addprefix execute/utils/, $(EXEC_UTILS_SRC)) \
+      $(addprefix execute/utils/executable_finder/, $(EXECUTABLE_FINDER_SRC)) \
+      $(addprefix execute/utils/heredoc_for_pipes/, $(HEREDOC_FOR_PIPES_SRC)) \
+      $(addprefix execute/utils/heredoc_regular/, $(HEREDOC_REGULAR_SRC)) \
+      $(addprefix execute/utils/process_args_quotes/, $(PROCESS_ARGS_QUOTES_SRC)) \
+      $(addprefix execute/utils/redirection_parser/, $(REDIR_PARSER_SRC)) \
+      $(addprefix execute/utils/single_command/, $(SINGLE_COMMAND_SRC)) \
       $(addprefix parser/t_split_utils/, $(SPLIT_SRC)) \
       $(addprefix parser/and_or_parser/, $(AOPSR_SRC)) \
       $(addprefix parser/sep_opt_arg/, $(SOA_SRC)) \
-      $(addprefix parser/wildcard_handle/, $(WILDCARD_SRC))
+      $(addprefix parser/wildcard_handle/, $(WILDCARD_SRC)) \
 
 CC = cc
 CFLAGS = -Wall -Werror -Wextra
@@ -58,7 +88,7 @@ clean:
 
 fclean: clean
 	make fclean -C ./e-libft
-	rm -f $(NAME) 
+	rm -f $(NAME) minishell_bonus
 
 re: fclean all
 
@@ -68,4 +98,4 @@ main: all
 	clear
 
 
-.PHONY: all clean fclean re main
+.PHONY: all clean fclean re main bonus

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   t_split_utils2.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/10 20:52:36 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/05/10 21:26:57 by kuzyilma         ###   ########.fr       */
+/*   Created: 2025/07/25 11:03:51 by emgenc            #+#    #+#             */
+/*   Updated: 2025/07/25 11:04:43 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

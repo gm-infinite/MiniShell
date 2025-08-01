@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   wildcard_utils.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/01 14:02:22 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/06/01 16:02:08 by kuzyilma         ###   ########.fr       */
+/*   Created: 2025/07/25 11:02:44 by emgenc            #+#    #+#             */
+/*   Updated: 2025/07/25 12:13:56 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,32 +29,4 @@ int	ft_strrcmp(const char *s1, const char *s2)
 		s1i--;
 	}
 	return (s1[0] - s2[s2i]);
-}
-
-char	*ft_strjoin_sq_f(char **to_free, const char *to_add)
-{
-	char	*ret;
-	int		ret_size;
-
-	if (*to_free == NULL)
-	{
-		ret_size = ft_strlen(to_add) + 3;
-		ret = (char *)ft_calloc(ret_size, sizeof(char));
-		if (ret == NULL)
-			return (NULL);
-		ft_strlcpy(ret, "'", ret_size);
-	}
-	else
-	{
-		ret_size = ft_strlen(*to_free) + ft_strlen(to_add) + 4;
-		ret = (char *)ft_calloc(ret_size, sizeof(char));
-		if (ret == NULL)
-			return (NULL);
-		ft_strlcpy(ret, *to_free, ret_size);
-		ft_strlcat(ret, " '", ret_size);
-		free(*to_free);
-	}
-	ft_strlcat(ret, to_add, ret_size);
-	ft_strlcat(ret, "'", ret_size);
-	return (ret);
 }

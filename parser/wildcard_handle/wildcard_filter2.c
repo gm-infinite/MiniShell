@@ -5,12 +5,27 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/01 13:57:09 by kuzyilma          #+#    #+#             */
-/*   Updated: 2025/07/19 09:26:40 by emgenc           ###   ########.fr       */
+/*   Created: 2025/07/25 11:00:02 by emgenc            #+#    #+#             */
+/*   Updated: 2025/07/25 12:16:09 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "wildcard_handler.h"
+
+static void	restore_asterisks_in_filter(t_split *filter)
+{
+	int	i;
+	int	j;
+
+	i = -1;
+	while (++i < filter->size && filter->start[i])
+	{
+		j = -1;
+		while (filter->start[i][++j])
+			if (filter->start[i][j] == '\001')
+				filter->start[i][j] = '*';
+	}
+}
 
 static void	extract_wildcard_parts(char *processed_wildcard, t_split *filter)
 {
@@ -82,7 +97,7 @@ void	apply_filter(t_split cur_dir, char *check_list, char *wildcard)
 	processed_wildcard = process_wildcard_pattern(wildcard);
 	if (!processed_wildcard)
 		return ;
-	filter = create_filter(wildcard);
+	filter = create_filter(processed_wildcard);
 	apply_filter_minlen(filter, cur_dir, check_list, processed_wildcard);
 	apply_filter_start(filter, cur_dir, check_list);
 	apply_filter_end(filter, cur_dir, check_list);

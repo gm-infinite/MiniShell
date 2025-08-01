@@ -3,14 +3,27 @@
 /*                                                        :::      ::::::::   */
 /*   builtin_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/15 13:29:46 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/23 17:56:30 by kuzyilma         ###   ########.fr       */
+/*   Created: 2025/07/25 11:15:45 by emgenc            #+#    #+#             */
+/*   Updated: 2025/07/30 13:27:31 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../main/minishell.h"
+
+static int	builtin_pwd(void)
+{
+	char	cwd[PATH_MAX];
+
+	if (getcwd(cwd, sizeof(cwd)) == NULL)
+	{
+		perror("pwd");
+		return (1);
+	}
+	printf("%s\n", cwd);
+	return (0);
+}
 
 int	is_valid_var_name(const char *name)
 {

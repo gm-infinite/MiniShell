@@ -3,76 +3,76 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: kuzyilma <kuzyilma@student.42istanbul.c    +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/15 13:50:25 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/24 21:13:03 by kuzyilma         ###   ########.fr       */
+/*   Created: 2025/07/25 11:27:11 by emgenc            #+#    #+#             */
+/*   Updated: 2025/07/30 15:32:29 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../main/minishell.h"
+#include "../parser/wildcard_handle/wildcard_handler.h"
 
-static void	execute_pipeline_external_command(char **args, char *executable,
-		t_shell *shell, t_pipe_cleaner *cleanup)
+static int	has_redirs(t_split split)
 {
-	execve(executable, args, shell->envp);
-	perror("execve");
-	free_child_pipeline_memory(args, shell, cleanup);
-	exit(127);
-}
+	int	i;
 
-static void	execute_child_command_with_pipeline_cleanup(char **args,
-			t_shell *shell, t_pipe_cleaner *cleanup)
-{
-	char	*executable;
-	int		builtin_result;
-
-	if (is_builtin(args[0]))
+	i = 0;
+	while (i < split.size)
 	{
-		builtin_result = execute_builtin(args, shell);
-		free_child_pipeline_memory(args, shell, cleanup);
-		exit(builtin_result);
+		if (is_redirection(split.start[i]))
+			return (1);
+		i++;
 	}
-	executable = find_executable(args[0], shell);
-	error_pipe_exec(args, executable, shell, cleanup);
-	execute_pipeline_external_command(args, executable, shell, cleanup);
+	return (0);
 }
 
-static t_redir_fds	get_fds(int *fd_values)
+static int	dispatch_execution(t_split split, t_shell *shell,
+		int has_pipes, int has_redir)
 {
-	t_redir_fds	ret;
-
-	ret.input_fd = &fd_values[0];
-	ret.output_fd = &fd_values[1];
-	ret.stderr_fd = &fd_values[2];
-	return (ret);
+	if (has_pipes > 0 && has_redir)
+		return (execute_pipe_redir(split, shell));
+	else if (has_pipes > 0)
+		return (execute_pipeline(split, shell));
+	else if (has_redir)
+		return (execute_with_redirections(split, shell));
+	else
+		return (execute_args_array(split, shell));
 }
 
-void	execute_child_redir(t_child_redir_params *params)
+int	execute_command(t_split split, t_shell *shell)
 {
-	char				**args;
-	t_redir_fds			fds;
-	t_pipe_setup_ctx	p;
-	int					fd_values[3];
-	t_pipe_cleaner		cleanup;
+	int	exit_status;
+	int	has_pipes;
+	int	has_redir;
+	int	syntax_error;
 
-	fd_values[0] = STDIN_FILENO;
-	fd_values[1] = STDOUT_FILENO;
-	fd_values[2] = STDERR_FILENO;
-	fds = get_fds(fd_values);
-	p = get_pipe_ctx(params->ctx->cmd_index, params->ctx->cmd_count,
-			params->ctx->pipes, fd_values);
-	setup_pipe_fds(&p);
-	args = parse_redirs(params->cmd, &fds, params->shell);
-	cleanup = get_cleanup(params->commands, p.pipes, params->pids, p.cmd_count);
-	if (!args)
+	if (split.size == 0)
+		return (0);
+	syntax_error = validate_redirection_syntax(split);
+	if (syntax_error != 0)
 	{
-		free_child_pipeline_memory(NULL, params->shell, &cleanup);
-		exit(1);
+		shell->past_exit_status = syntax_error;
+		return (syntax_error);
 	}
-	redirect_fds(fd_values[0], fd_values[1], fd_values[2]);
-	close_all_pipes(params->ctx->pipes, params->ctx->cmd_count);
-	setup_child_signals();
-	process_and_check_args(args, params->shell);
-	execute_child_command_with_pipeline_cleanup(args, params->shell, &cleanup);
+	has_pipes = count_pipes(split);
+	has_redir = has_redirs(split);
+	exit_status = dispatch_execution(split, shell, has_pipes, has_redir);
+	shell->past_exit_status = exit_status;
+	return (exit_status);
+}
+
+int	is_redirection(char *token)
+{
+	if (!token)
+		return (0);
+	if (ft_strncmp(token, "<<", 3) == 0 && ft_strlen(token) == 2)
+		return (1);
+	if (ft_strncmp(token, ">>", 3) == 0 && ft_strlen(token) == 2)
+		return (2);
+	if (ft_strncmp(token, "<", 2) == 0 && ft_strlen(token) == 1)
+		return (3);
+	if (ft_strncmp(token, ">", 2) == 0 && ft_strlen(token) == 1)
+		return (4);
+	return (0);
 }

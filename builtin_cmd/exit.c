@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: emgenc <emgenc@student.42.fr>              +#+  +:+       +#+        */
+/*   By: emgenc <emgenc@student.42istanbul.com.t    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/15 13:31:37 by emgenc            #+#    #+#             */
-/*   Updated: 2025/07/24 19:19:27 by emgenc           ###   ########.fr       */
+/*   Created: 2025/07/25 11:16:52 by emgenc            #+#    #+#             */
+/*   Updated: 2025/07/30 22:15:02 by emgenc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,20 +60,15 @@ static int	is_valid_number(char *arg)
 	return (1);
 }
 
-static void	write_exit_error(char *arg)
-{
-	write(STDERR_FILENO, "exit: ", 6);
-	write(STDERR_FILENO, arg, ft_strlen(arg));
-	write(STDERR_FILENO, ": numeric argument required\n", 28);
-}
-
 static int	validate_numeric_arg(char *arg, t_shell *shell)
 {
 	char		*endptr;
 
 	if (!is_valid_number(arg))
 	{
-		write_exit_error(arg);
+		write(STDERR_FILENO, "exit: ", 6);
+		write(STDERR_FILENO, arg, ft_strlen(arg));
+		write(STDERR_FILENO, ": numeric argument required\n", 28);
 		shell->should_exit = 1;
 		shell->exit_code = 2;
 		return (0);
@@ -82,7 +77,9 @@ static int	validate_numeric_arg(char *arg, t_shell *shell)
 	ft_strtoll(arg, &endptr, 10);
 	if (errno == ERANGE || *endptr != '\0')
 	{
-		write_exit_error(arg);
+		write(STDERR_FILENO, "exit: ", 6);
+		write(STDERR_FILENO, arg, ft_strlen(arg));
+		write(STDERR_FILENO, ": numeric argument required\n", 28);
 		shell->should_exit = 1;
 		shell->exit_code = 2;
 		return (0);
@@ -93,22 +90,28 @@ static int	validate_numeric_arg(char *arg, t_shell *shell)
 int	builtin_exit(char **args, t_shell *shell)
 {
 	int	exit_code;
+	int	already_printed;
 
+	already_printed = 0;
 	if (args[1])
 	{
 		if (!validate_numeric_arg(args[1], shell))
 			return (shell->exit_code);
 		if (args[2])
 		{
+			write(STDERR_FILENO, "exit\n", 5);
 			write(STDERR_FILENO, "exit: too many arguments\n", 25);
-			return (1);
+			already_printed = 1;
 		}
 		exit_code = ft_atoi(args[1]) & 255;
 	}
 	else
 		exit_code = shell->past_exit_status;
-	shell->should_exit = 1;
+	shell->should_exit = !already_printed;
+	if (already_printed == 1)
+		exit_code = 1;
 	shell->exit_code = exit_code;
-	printf("exit\n");
+	if (!already_printed)
+		printf("exit\n");
 	return (exit_code);
 }
